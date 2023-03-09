@@ -6,6 +6,7 @@ import com.netology.MyApp.R
 import com.netology.MyApp.databinding.ActivityMainBinding
 import com.netology.nmedia.viewmodel.PostViewModel
 import androidx.activity.viewModels
+import com.netology.nmedia.viewmodel.PostFormatter.formatCount
 
 
 class MainActivity : AppCompatActivity() {
@@ -21,22 +22,19 @@ class MainActivity : AppCompatActivity() {
                 published.text = post.published
                 content.text = post.content
                 avatar.setImageResource(post.authorAvatar)
-                if (post.likedByMe) {
-                    like.setImageResource(R.drawable.ic_liked_24)
-                }
-                likesCount.text = viewModel.formatCount(post.likes)
-                repostCount.text = viewModel.formatCount(post.shares)
-                viewsCount.text = viewModel.formatCount(post.views)
+                likesCount.text = formatCount(post.likes)
+                repostCount.text = formatCount(post.shares)
+                viewsCount.text = formatCount(post.views)
                 like.setOnClickListener {
                     viewModel.like()
-                    like.setImageResource(
-                        if (post.likedByMe) R.drawable.ic_liked_24 else R.drawable.ic_like_24
-                    )
-                    likesCount.text = viewModel.formatCount(post.likes)
                 }
                 repost.setOnClickListener {
                     viewModel.share()
-                    repostCount.text = viewModel.formatCount(post.shares)
+                }
+                if (post.likedByMe) {
+                    like.setImageResource(R.drawable.ic_liked_24)
+                } else {
+                    like.setImageResource(R.drawable.ic_like_24)
                 }
             }
 

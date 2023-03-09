@@ -9,6 +9,5 @@ class PostViewModel: ViewModel() {
     val data = repository.get()
     fun like() = repository.like()
     fun share() = repository.share()
-    fun formatCount(count: Int) = repository.formatCount(count)
 
     }
