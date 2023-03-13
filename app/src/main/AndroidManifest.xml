@@ -12,7 +12,7 @@
         android:theme="@style/Theme.MyApp"
         tools:targetApi="31">
         <activity
-            android:name="com.netology.nmedia.MainActivity"
+            android:name="com.netology.nmedia.activity.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

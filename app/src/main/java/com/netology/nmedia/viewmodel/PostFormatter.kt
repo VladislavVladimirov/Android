@@ -1,10 +1,10 @@
-package com.netology.nmedia
+package com.netology.nmedia.viewmodel
 
 import java.math.RoundingMode
 import java.text.DecimalFormat
 
-object PostService {
-    fun formatCount(count: Int): String? {
+object PostFormatter {
+    fun formatCount(count: Int):String? {
         when (count) {
             in 0..999 -> return count.toString()
             in 1000..9999 -> {
