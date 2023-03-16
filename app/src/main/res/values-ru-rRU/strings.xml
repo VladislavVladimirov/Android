@@ -7,4 +7,5 @@
     <string name="description_like_button">Лайк</string>
     <string name="description_repost_button">Репост</string>
     <string name="description_views">Просмотры</string>
+    <string name="description_scroll_view">Лента постов</string>
 </resources>
