@@ -7,5 +7,9 @@
     <string name="description_like_button">Лайк</string>
     <string name="description_repost_button">Репост</string>
     <string name="description_views">Просмотры</string>
-    <string name="description_scroll_view">Лента постов</string>
+    <string name="menu_remove">Удалить</string>
+    <string name="menu_edit">Редактировать</string>
+    <string name="post_text">Введите текст</string>
+    <string name="description_post_publish">Опубликовать пост</string>
+    <string name="error_empty_content">Содержимое поста не может быть пустым</string>
 </resources>
