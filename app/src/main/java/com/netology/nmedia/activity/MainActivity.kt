@@ -1,6 +1,7 @@
 package com.netology.nmedia.activity
 
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.netology.MyApp.databinding.ActivityMainBinding
@@ -14,6 +15,7 @@ import com.netology.nmedia.util.AndroidUtils
 
 
 class MainActivity : AppCompatActivity() {
+    lateinit var binding: ActivityMainBinding
     val viewModel: PostViewModel by viewModels()
 
     private val interaction = object : OnInteractionListener {
@@ -31,12 +33,14 @@ class MainActivity : AppCompatActivity() {
 
         override fun onEdit(post: Post) {
             viewModel.edit(post)
+            binding.editGroup.visibility = View.VISIBLE
+            binding.editPreview.text = post.content
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding = ActivityMainBinding.inflate(layoutInflater)
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         val adapter = PostsAdapter(interaction)
         binding.list.adapter = adapter
@@ -69,6 +73,15 @@ class MainActivity : AppCompatActivity() {
                 setText("")
                 clearFocus()
                 AndroidUtils.hideKeyboard(this)
+            }
+        }
+        binding.cancelEdit.setOnClickListener {
+            with(binding.content) {
+                binding.editGroup.visibility = View.GONE
+                setText("")
+                clearFocus()
+                AndroidUtils.hideKeyboard(this)
+                viewModel.reset()
             }
         }
     }

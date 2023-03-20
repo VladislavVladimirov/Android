@@ -31,6 +31,7 @@ class PostViewModel : ViewModel() {
     }
     fun edit(post: Post) {
         edited.value = post
+
     }
 
     fun changeContent(content: String) {
@@ -41,6 +42,9 @@ class PostViewModel : ViewModel() {
             }
             edited.value = it.copy(content = text)
         }
+    }
+    fun reset() {
+        edited.value = empty
     }
 
     fun likeById(id: Long) = repository.likeById(id)

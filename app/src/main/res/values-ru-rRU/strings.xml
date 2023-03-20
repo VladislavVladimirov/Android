@@ -12,4 +12,6 @@
     <string name="post_text">Введите текст</string>
     <string name="description_post_publish">Опубликовать пост</string>
     <string name="error_empty_content">Содержимое поста не может быть пустым</string>
+    <string name="description_cancel">Отменить</string>
+    <string name="description_edit_message">Редактировать сообщение</string>
 </resources>
