@@ -4,8 +4,11 @@
     <dimen name="avatar_size">48dp</dimen>
     <dimen name="edit_field_height">24dp</dimen>
     <dimen name="edit_padding_start">48dp</dimen>
+    <dimen name="layout_margin_end">48dp</dimen>
     <dimen name="margin_default">16dp</dimen>
     <dimen name="margin_counter">8dp</dimen>
     <dimen name="action_size">24dp</dimen>
-    <dimen name="posts_avatar_size">48dp</dimen>
+    <dimen name="icon_button_min_size">48dp</dimen>
+    <dimen name="icon_button_padding">12dp</dimen>
+
 </resources>
