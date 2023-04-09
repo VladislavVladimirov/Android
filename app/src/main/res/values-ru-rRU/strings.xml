@@ -14,4 +14,8 @@
     <string name="error_empty_content">Содержимое поста не может быть пустым</string>
     <string name="description_cancel">Отменить</string>
     <string name="description_edit_message">Редактировать сообщение</string>
+    <string name="chooser_share_post">Поделиться</string>
+    <string name="ok">Ок</string>
+    <string name="add_post">Добавить пост</string>
+    <string name="new_post">Новая запись</string>
 </resources>

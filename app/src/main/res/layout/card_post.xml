@@ -5,10 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="@dimen/common_spacing"
-    android:background="@drawable/background_post"
+    android:background="@drawable/background_rounded_grey_900"
     android:layout_marginBottom="@dimen/margin_counter"
     tools:context="com.netology.nmedia.activity.MainActivity"
-
     >
 
 

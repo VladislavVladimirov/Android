@@ -12,12 +12,29 @@
         android:theme="@style/Theme.MyApp"
         tools:targetApi="31">
         <activity
-            android:name="com.netology.nmedia.activity.MainActivity"
+            android:name=".NewPostActivity"
+            android:exported="false" />
+        <activity
+            android:name=".NewPostResultContract"
+            android:exported="false" />
+        <activity
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".IntentHandlerActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
     </application>

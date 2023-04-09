@@ -1,8 +1,10 @@
 package com.netology.nmedia.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.activity.result.launch
 import androidx.appcompat.app.AppCompatActivity
 import com.netology.MyApp.databinding.ActivityMainBinding
 import com.netology.nmedia.viewmodel.PostViewModel
@@ -25,6 +27,13 @@ class MainActivity : AppCompatActivity() {
 
         override fun onShare(post: Post) {
             viewModel.shareById(post.id)
+            val intent = Intent().apply{
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT,post.content)
+                type = "text/plain"
+            }
+            val shareIntent = Intent.createChooser(intent, getString(R.string.chooser_share_post))
+            startActivity(shareIntent)
         }
 
         override fun onRemove(post: Post) {
@@ -33,8 +42,6 @@ class MainActivity : AppCompatActivity() {
 
         override fun onEdit(post: Post) {
             viewModel.edit(post)
-            binding.editGroup.visibility = View.VISIBLE
-            binding.editPreview.text = post.content
         }
     }
 
@@ -83,6 +90,14 @@ class MainActivity : AppCompatActivity() {
                 AndroidUtils.hideKeyboard(this)
                 viewModel.reset()
             }
+        }
+        val newPostLauncher = registerForActivityResult(NewPostResultContract()) { result ->
+            result ?: return@registerForActivityResult
+            viewModel.changeContent(result)
+            viewModel.save()
+        }
+        binding.fab.setOnClickListener {
+            newPostLauncher.launch()
         }
     }
 }

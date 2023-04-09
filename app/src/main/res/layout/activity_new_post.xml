@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/grey_900"
+    tools:context="com.netology.nmedia.activity.NewPostActivity">
+
+
+    <TextView
+        android:id="@+id/filler"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@color/grey_800"
+        android:textSize="@dimen/header_text_size"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/cancelEdit"
+        app:layout_constraintBottom_toBottomOf="@id/cancelEdit"
+        />
+    <ImageButton
+        android:id="@+id/cancelEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/grey_800"
+        android:contentDescription="@string/description_cancel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_cancel_48"
+        tools:ignore="SpeakableTextPresentCheck" />
+
+
+    <TextView
+        android:id="@+id/header_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/new_post"
+        android:textSize="@dimen/header_text_size"
+        android:layout_marginHorizontal="@dimen/common_spacing"
+        app:layout_constraintStart_toEndOf="@id/cancelEdit"
+        app:layout_constraintTop_toTopOf="@id/cancelEdit"
+        app:layout_constraintBottom_toBottomOf="@id/cancelEdit"
+
+     />
+
+    <ImageButton
+        android:id="@+id/save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/grey_800"
+        android:contentDescription="@string/description_post_publish"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_confirm_48"
+        />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrierContent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="cancelEdit,save,header_title" />
+    <EditText
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/post_text"
+        android:importantForAutofill="no"
+        android:inputType="textMultiLine"
+        android:padding="@dimen/common_spacing"
+        android:background="@android:color/transparent"
+        app:layout_constraintTop_toBottomOf="@id/barrierContent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:textSize="@dimen/new_post_preview_text_size"
+
+        />
+</androidx.constraintlayout.widget.ConstraintLayout>
