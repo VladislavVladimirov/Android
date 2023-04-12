@@ -5,7 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.netology.MyApp.databinding.ActivityNewPostBinding
-import ru.netology.nmedia.databinding.ActivityNewPostBinding
+
 
 class NewPostActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
