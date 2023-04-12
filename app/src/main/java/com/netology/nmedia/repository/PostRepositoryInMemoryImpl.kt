@@ -140,7 +140,7 @@ class PostRepositoryInMemoryImpl : PostRepository {
 
     override fun save(post: Post) {
         if (post.id == 0L) {
-            posts =  posts + listOf(
+            posts =  listOf(
                 post.copy(
                     id = nextId++,
                     author = "Нетология. Университет интернет-профессий будущего",
@@ -151,7 +151,7 @@ class PostRepositoryInMemoryImpl : PostRepository {
                     views = 0,
                     authorAvatar = R.drawable.ic_launcher_foreground
                 )
-            )
+            ) + posts
             data.value = posts
             return
         }

@@ -19,35 +19,40 @@ import com.netology.nmedia.util.AndroidUtils
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
     val viewModel: PostViewModel by viewModels()
-
-    private val interaction = object : OnInteractionListener {
-        override fun onLike(post: Post) {
-            viewModel.likeById(post.id)
-        }
-
-        override fun onShare(post: Post) {
-            viewModel.shareById(post.id)
-            val intent = Intent().apply {
-                action = Intent.ACTION_SEND
-                putExtra(Intent.EXTRA_TEXT, post.content)
-                type = "text/plain"
-            }
-            val shareIntent = Intent.createChooser(intent, getString(R.string.chooser_share_post))
-            startActivity(shareIntent)
-
-        }
-
-        override fun onRemove(post: Post) {
-            viewModel.removeById(post.id)
-        }
-
-        override fun onEdit(post: Post) {
-            viewModel.edit(post)
-
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
+        val editPostLauncher = registerForActivityResult(EditPostResultContract()) { result ->
+            result ?: return@registerForActivityResult
+            viewModel.changeContent(result)
+            viewModel.save()
+        }
+        val interaction = object : OnInteractionListener {
+            override fun onLike(post: Post) {
+                viewModel.likeById(post.id)
+            }
+
+            override fun onShare(post: Post) {
+                viewModel.shareById(post.id)
+                val intent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(Intent.EXTRA_TEXT, post.content)
+                    type = "text/plain"
+                }
+                val shareIntent =
+                    Intent.createChooser(intent, getString(R.string.chooser_share_post))
+                startActivity(shareIntent)
+
+            }
+
+            override fun onRemove(post: Post) {
+                viewModel.removeById(post.id)
+            }
+
+            override fun onEdit(post: Post) {
+                viewModel.edit(post)
+                editPostLauncher.launch(post.content)
+
+            }
+        }
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -56,18 +61,10 @@ class MainActivity : AppCompatActivity() {
         viewModel.data.observe(this) { posts ->
             adapter.submitList(posts)
         }
-        val editPostLauncher = registerForActivityResult(EditPostResultContract()) { result ->
-            result ?: return@registerForActivityResult
-            viewModel.changeContent(result)
-            viewModel.save()
-        }
-
-
         viewModel.edited.observe(this) { post ->
             if (post.id == 0L) {
                 return@observe
             }
-
         }
         val newPostLauncher = registerForActivityResult(NewPostResultContract()) { result ->
             result ?: return@registerForActivityResult
