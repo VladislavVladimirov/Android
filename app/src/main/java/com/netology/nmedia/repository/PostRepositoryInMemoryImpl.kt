@@ -17,7 +17,8 @@ class PostRepositoryInMemoryImpl : PostRepository {
             likes = 126,
             shares = 76,
             views = 4543,
-            authorAvatar = R.drawable.ic_launcher_foreground
+            authorAvatar = R.drawable.ic_launcher_foreground,
+            videoLink = "https://www.youtube.com/watch?v=AmkFinWb3qQ"
         ),
         Post(
             id = nextId++,
@@ -28,7 +29,8 @@ class PostRepositoryInMemoryImpl : PostRepository {
             likes = 999,
             shares = 120,
             views = 6764,
-            authorAvatar = R.drawable.ic_launcher_foreground
+            authorAvatar = R.drawable.ic_launcher_foreground,
+            videoLink = ""
 
         ),
         Post(
@@ -40,7 +42,8 @@ class PostRepositoryInMemoryImpl : PostRepository {
             likes = 343225,
             shares = 203231,
             views = 1023202,
-            authorAvatar = R.drawable.ic_launcher_foreground
+            authorAvatar = R.drawable.ic_launcher_foreground,
+            videoLink = ""
         ),
         Post(
             id = nextId++,
@@ -51,7 +54,8 @@ class PostRepositoryInMemoryImpl : PostRepository {
             likes = 34543,
             shares = 20127,
             views = 100200,
-            authorAvatar = R.drawable.ic_launcher_foreground
+            authorAvatar = R.drawable.ic_launcher_foreground,
+            videoLink = "https://www.youtube.com/watch?v=8Guwqx504Mc"
         ),
         Post(
             id = nextId++,
@@ -62,7 +66,8 @@ class PostRepositoryInMemoryImpl : PostRepository {
             likes = 656564,
             shares = 23234,
             views = 3243434,
-            authorAvatar = R.drawable.ic_launcher_foreground
+            authorAvatar = R.drawable.ic_launcher_foreground,
+            videoLink = ""
         ),
         Post(
             id = nextId++,
@@ -73,7 +78,8 @@ class PostRepositoryInMemoryImpl : PostRepository {
             likes = 11,
             shares = 3,
             views = 76,
-            authorAvatar = R.drawable.ic_launcher_foreground
+            authorAvatar = R.drawable.ic_launcher_foreground,
+            videoLink = ""
         ),
         Post(
             id = nextId++,
@@ -84,7 +90,8 @@ class PostRepositoryInMemoryImpl : PostRepository {
             likes = 9022,
             shares = 1472,
             views = 24504,
-            authorAvatar = R.drawable.ic_launcher_foreground
+            authorAvatar = R.drawable.ic_launcher_foreground,
+            videoLink = ""
         ),
         Post(
             id = nextId++,
@@ -95,7 +102,8 @@ class PostRepositoryInMemoryImpl : PostRepository {
             likes = 765,
             shares = 321,
             views = 3427,
-            authorAvatar = R.drawable.ic_launcher_foreground
+            authorAvatar = R.drawable.ic_launcher_foreground,
+            videoLink = ""
         ),
         Post(
             id = nextId++,
@@ -106,7 +114,8 @@ class PostRepositoryInMemoryImpl : PostRepository {
             likes = 345,
             shares = 201,
             views = 1002,
-            authorAvatar = R.drawable.ic_launcher_foreground
+            authorAvatar = R.drawable.ic_launcher_foreground,
+            videoLink = "https://www.youtube.com/watch?v=Fu9MyF-yjGo"
         )
     )
     private val data = MutableLiveData(posts)

@@ -4,9 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.google.android.material.snackbar.BaseTransientBottomBar
-import com.google.android.material.snackbar.Snackbar
-import com.netology.MyApp.R
 import com.netology.MyApp.databinding.ActivityEditPostBinding
 
 

@@ -1,7 +1,7 @@
 package com.netology.nmedia.activity
 
-
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.result.launch
 import androidx.activity.viewModels
@@ -62,7 +62,16 @@ class MainActivity : AppCompatActivity() {
                 editPostLauncher.launch(post.content)
 
             }
+
+            override fun onPlay(post: Post) {
+                val playIntent = Intent(Intent.ACTION_VIEW, Uri.parse(post.videoLink))
+                if (playIntent.resolveActivity(packageManager) != null) {
+                    startActivity(playIntent)
+                }
+            }
         })
+
+
 
         binding.list.adapter = adapter
         viewModel.data.observe(this) { posts ->
@@ -73,5 +82,8 @@ class MainActivity : AppCompatActivity() {
             newPostLauncher.launch()
         }
 
-    }
+
+
+
+}
 }

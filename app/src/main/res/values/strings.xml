@@ -17,6 +17,7 @@
     <string name="ok">OK</string>
     <string name="add_post">Add post</string>
     <string name="new_post">New post</string>
+    <string name="description_video_preview">Video preview</string>
 
 
 </resources>
