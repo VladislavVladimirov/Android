@@ -12,7 +12,12 @@
     <string name="description_post_publish">Publish post</string>
     <string name="error_empty_content">"Content can't be empty"</string>
     <string name="description_cancel">Cancel </string>
-    <string name="description_edit_message">Edit Message </string>
+    <string name="description_edit_post">"Edit post "</string>
+    <string name="chooser_share_post">Share</string>
+    <string name="ok">OK</string>
+    <string name="add_post">Add post</string>
+    <string name="new_post">New post</string>
+    <string name="description_video_preview">Video preview</string>
 
 
 </resources>
