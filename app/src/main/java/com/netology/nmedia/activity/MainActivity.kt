@@ -82,8 +82,5 @@ class MainActivity : AppCompatActivity() {
             newPostLauncher.launch()
         }
 
-
-
-
-}
+    }
 }
