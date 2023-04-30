@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/grey_900"
-    tools:context="com.netology.nmedia.activity.EditPostActivity">
+    tools:context="com.netology.nmedia.activity.EditPostFragment">
 
     <TextView
         android:id="@+id/header_background"
@@ -48,7 +48,8 @@
         android:layout_marginTop="@dimen/edit_text_margin_top"
         android:textSize="@dimen/new_post_preview_text_size"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/header_background" />
+        app:layout_constraintTop_toBottomOf="@id/header_background"
+         />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/ok"

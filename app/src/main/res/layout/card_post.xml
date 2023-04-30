@@ -7,7 +7,7 @@
     android:layout_marginBottom="@dimen/margin_counter"
     android:background="@drawable/background_rounded_grey_900"
     android:padding="@dimen/common_spacing"
-    tools:context="com.netology.nmedia.activity.MainActivity">
+    tools:context="com.netology.nmedia.activity.FeedFragment">
 
 
     <ImageView
