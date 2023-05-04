@@ -18,6 +18,7 @@ interface OnInteractionListener {
     fun onRemove(post: Post) {}
     fun onEdit(post: Post) {}
     fun onPlay(post: Post) {}
+    fun onPostClick(post: Post) {}
 }
 
 class PostsAdapter(
@@ -78,6 +79,9 @@ class PostViewHolder(
                         }
                     }
                 }.show()
+            }
+            root.setOnClickListener {
+                onInteractionListener.onPostClick(post)
             }
             youtubePlayerPreview1.setOnClickListener{
                 onInteractionListener.onPlay(post)
