@@ -5,6 +5,8 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import com.netology.MyApp.R
 import com.netology.nmedia.dto.Post
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class PostDaoImpl(private val db: SQLiteDatabase) : PostDao {
     companion object {
@@ -83,13 +85,15 @@ class PostDaoImpl(private val db: SQLiteDatabase) : PostDao {
     }
 
     override fun save(post: Post): Post {
+        val formatter = DateTimeFormatter.ofPattern("d MMMM yyyy в HH:mm")
+        val current = LocalDateTime.now().format(formatter).toString()
         val values = ContentValues().apply {
             if (post.id != 0L) {
                 put(PostColumns.COLUMN_ID, post.id)
             }
             put(PostColumns.COLUMN_AUTHOR, "Нетология. Университет интернет-профессий будущего")
             put(PostColumns.COLUMN_CONTENT, post.content)
-            put(PostColumns.COLUMN_PUBLISHED, "Только что")
+            put(PostColumns.COLUMN_PUBLISHED, current)
             put(PostColumns.COLUMN_LIKED_BY_ME, post.likedByMe)
             put(PostColumns.COLUMN_LIKES, post.likes)
             put(PostColumns.COLUMN_SHARES, post.shares)
