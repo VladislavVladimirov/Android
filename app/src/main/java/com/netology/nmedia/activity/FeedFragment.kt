@@ -68,6 +68,7 @@ class FeedFragment : Fragment() {
             }
 
             override fun onPostClick(post: Post) {
+                viewModel.viewPostById(post.id)
                 findNavController().navigate(R.id.action_feedFragment_to_postFragment,
                     Bundle().apply {
                         textArg = post.id.toString()
