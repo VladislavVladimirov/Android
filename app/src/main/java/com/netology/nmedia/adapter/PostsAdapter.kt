@@ -50,7 +50,7 @@ class PostViewHolder(
             share.text = PostFormatter.formatCount(post.shares)
             views.text = PostFormatter.formatCount(post.views)
             like.isChecked = post.likedByMe
-            if (post.videoLink != "") {
+            if (post.content.contains("youtube")) {
                 previewGroup.visibility = View.VISIBLE
             } else {
                 previewGroup.visibility = View.GONE

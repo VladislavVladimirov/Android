@@ -62,13 +62,13 @@ class PostFragment : Fragment() {
             }
 
             override fun onPlay(post: Post) {
-                val playIntent = Intent(Intent.ACTION_VIEW, Uri.parse(post.videoLink))
+                val playIntent = Intent(Intent.ACTION_VIEW, Uri.parse(post.content))
                 if (playIntent.resolveActivity(requireContext().packageManager) != null) {
                     startActivity(playIntent)
                 }
             }
         }
-        val id = requireArguments().textArg!!.toLong()
+        val id = requireNotNull(requireArguments().textArg).toLong()
         binding.postContent.apply {
             viewModel.data.observe(viewLifecycleOwner) { it ->
                 val viewHolder = PostViewHolder(binding.postContent, listener)
