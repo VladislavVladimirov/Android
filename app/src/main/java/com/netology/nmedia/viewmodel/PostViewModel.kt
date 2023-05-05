@@ -5,6 +5,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.netology.nmedia.db.AppDb
 import com.netology.nmedia.dto.Post
+import com.netology.nmedia.repository.DraftRepository
+import com.netology.nmedia.repository.DraftRepositorySharedPrefsImpl
 import com.netology.nmedia.repository.PostRepository
 import com.netology.nmedia.repository.PostRepositorySQLiteImpl
 
@@ -24,9 +26,9 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: PostRepository = PostRepositorySQLiteImpl(
         AppDb.getInstance(application).postDao
     )
+    private val draftRepository: DraftRepository = DraftRepositorySharedPrefsImpl(application)
     val data = repository.getAll()
     private val edited = MutableLiveData(empty)
-    private var draft = ""
     fun save() {
         edited.value?.let {
             repository.save(it)
@@ -58,10 +60,13 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     fun removeById(id: Long) = repository.removeById(id)
     fun viewPostById(id: Long) = repository.viewPostById(id)
     fun getDraft(): String {
-        return draft
+        return draftRepository.getDraft()
     }
     fun saveDraft(text: String) {
-        draft = text
+        draftRepository.saveDraft(text)
+    }
+    fun clearDraft() {
+        draftRepository.clearDraft()
     }
 
 

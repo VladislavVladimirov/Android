@@ -23,8 +23,7 @@ class PostViewHolder(
             views.text = PostFormatter.formatCount(post.views)
             like.isChecked = post.likedByMe
             if (
-                (post.content.contains("m.youtube.com")) ||
-                (post.content.contains("www.youtube.com")) ||
+                (post.content.contains("youtube.com")) ||
                 (post.content.contains("youtu.be"))
             ) {
                 previewGroup.visibility = View.VISIBLE
@@ -59,6 +58,7 @@ class PostViewHolder(
             root.setOnClickListener {
                 onInteractionListener.onPostClick(post)
             }
+
             youtubePlayerPreview1.setOnClickListener{
                 onInteractionListener.onPlay(post)
             }

@@ -8,14 +8,10 @@ import com.netology.nmedia.dto.Post
 class PostRepositorySQLiteImpl(private val dao: PostDao): PostRepository {
     private var posts = emptyList<Post>()
     private val data = MutableLiveData(posts)
-    private var draft = ""
 
     init {
         posts = dao.getAll()
         data.value = posts
-        dao.getDraft()?.let {
-            draft = it
-        }
     }
 
     override fun getAll(): LiveData<List<Post>> = data
@@ -63,13 +59,5 @@ class PostRepositorySQLiteImpl(private val dao: PostDao): PostRepository {
             if (it.id != id) it else it.copy(views = it.views + 1)
         }
         data.value = posts
-    }
-
-    override fun saveDraft(content: String) {
-        draft = dao.saveDraft(content)
-    }
-
-    override fun getDraft(): String {
-        return draft
     }
 }

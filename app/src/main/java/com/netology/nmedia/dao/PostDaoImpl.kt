@@ -24,12 +24,6 @@ class PostDaoImpl(private val db: SQLiteDatabase) : PostDao {
             
         );
     """.trimIndent()
-
-        val DDL_DRAFT = """
-            CREATE TABLE ${DraftColumns.TABLE} (
-            ${DraftColumns.COLUMN_CONTENT} TEXT NOT NULL DEFAULT (empty)
-            );
-        """.trimIndent()
     }
 
     object PostColumns {
@@ -54,53 +48,6 @@ class PostDaoImpl(private val db: SQLiteDatabase) : PostDao {
             COLUMN_VIEWS,
             COLUMN_AUTHOR_AVATAR
         )
-    }
-    object DraftColumns {
-        const val TABLE = "draft"
-        const val COLUMN_CONTENT = "content"
-        val ALL_COLUMNS = arrayOf(
-            COLUMN_CONTENT
-        )
-    }
-
-    override fun getDraft(): String? {
-        db.query(
-            DraftColumns.TABLE,
-            DraftColumns.ALL_COLUMNS,
-            null,
-            null,
-            null,
-            null,
-            null
-        ).use {
-            return if (it.moveToNext()) mapDraft(it) else null
-        }
-    }
-
-    private fun mapDraft(cursor: Cursor): String {
-        with(cursor) {
-            return getString(getColumnIndexOrThrow(DraftColumns.COLUMN_CONTENT))
-        }
-    }
-
-    override fun saveDraft(content: String): String {
-        val values = ContentValues().apply {
-            put(DraftColumns.COLUMN_CONTENT, content)
-        }
-        db.delete(DraftColumns.TABLE, null, null)
-        db.replace(DraftColumns.TABLE, null, values)
-        db.query(
-            DraftColumns.TABLE,
-            DraftColumns.ALL_COLUMNS,
-            null,
-            null,
-            null,
-            null,
-            null,
-        ).use {
-            it.moveToNext()
-            return mapDraft(it)
-        }
     }
 
     override fun getAll(): List<Post> {
@@ -207,4 +154,5 @@ class PostDaoImpl(private val db: SQLiteDatabase) : PostDao {
         )
     }
 }
+
 

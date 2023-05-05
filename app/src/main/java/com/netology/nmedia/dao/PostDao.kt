@@ -9,7 +9,4 @@ interface PostDao {
     fun removeById(id: Long)
     fun save(post: Post): Post
     fun viewPostById(id: Long)
-    fun saveDraft(content: String): String
-    fun getDraft(): String?
-
 }
