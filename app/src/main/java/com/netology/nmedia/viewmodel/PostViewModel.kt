@@ -26,11 +26,13 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     )
     val data = repository.getAll()
     private val edited = MutableLiveData(empty)
+    var draft = repository.getDraft()
     fun save() {
         edited.value?.let {
             repository.save(it)
         }
         edited.value = empty
+        saveDraft("")
     }
     fun edit(post: Post) {
         edited.value = post
@@ -46,7 +48,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             edited.value = it.copy(content = text)
         }
     }
-    fun cancelEdit() {
+    fun clearEditedValue() {
         edited.value?.let {
             edited.value = empty
         }
@@ -56,6 +58,10 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     fun shareById(id: Long) = repository.shareById(id)
     fun removeById(id: Long) = repository.removeById(id)
     fun viewPostById(id: Long) = repository.viewPostById(id)
+    fun saveDraft(content: String) {
+        draft = content
+        repository.saveDraft(content)
+    }
 
 
 }

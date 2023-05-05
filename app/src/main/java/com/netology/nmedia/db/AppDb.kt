@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase
 import com.netology.nmedia.dao.PostDao
 import com.netology.nmedia.dao.PostDaoImpl
 
+
 class AppDb private constructor(db: SQLiteDatabase ) {
     val postDao: PostDao = PostDaoImpl(db)
 
@@ -15,7 +16,7 @@ class AppDb private constructor(db: SQLiteDatabase ) {
         fun getInstance(context: Context): AppDb {
             return instance ?: synchronized(this) {
                 instance ?: AppDb(
-                    buildDatabase(context, arrayOf(PostDaoImpl.DDL))
+                    buildDatabase(context, arrayOf(PostDaoImpl.DDL, PostDaoImpl.DDL_DRAFT))
                 ).also { instance = it }
             }
         }

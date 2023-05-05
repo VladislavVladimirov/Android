@@ -81,7 +81,7 @@ class FeedFragment : Fragment() {
             adapter.submitList(posts)
         }
         binding.add.setOnClickListener {
-            viewModel.cancelEdit()
+            viewModel.clearEditedValue()
             findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
         }
         return binding.root
