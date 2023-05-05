@@ -8,7 +8,7 @@ import com.netology.nmedia.dto.Post
 import com.netology.nmedia.repository.DraftRepository
 import com.netology.nmedia.repository.DraftRepositorySharedPrefsImpl
 import com.netology.nmedia.repository.PostRepository
-import com.netology.nmedia.repository.PostRepositorySQLiteImpl
+import com.netology.nmedia.repository.PostRepositoryImpl
 
 private val empty = Post(
     id = 0,
@@ -23,8 +23,8 @@ private val empty = Post(
 )
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository: PostRepository = PostRepositorySQLiteImpl(
-        AppDb.getInstance(application).postDao
+    private val repository: PostRepository = PostRepositoryImpl(
+        AppDb.getInstance(context = application).postDao()
     )
     private val draftRepository: DraftRepository = DraftRepositorySharedPrefsImpl(application)
     val data = repository.getAll()

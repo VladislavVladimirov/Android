@@ -2,6 +2,8 @@ package com.netology.nmedia.viewmodel
 
 import java.math.RoundingMode
 import java.text.DecimalFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 object PostFormatter {
     fun formatCount(count: Int):String? {
@@ -28,6 +30,8 @@ object PostFormatter {
         }
         return null
     }
-
-
+    fun syncTime() : String {
+        val formatter = DateTimeFormatter.ofPattern("d MMMM yyyy в HH:mm")
+        return LocalDateTime.now().format(formatter).toString()
+    }
 }
