@@ -62,7 +62,8 @@ class PostFragment : Fragment() {
             }
 
             override fun onPlay(post: Post) {
-                val playIntent = Intent(Intent.ACTION_VIEW, Uri.parse(post.content))
+                val url = Uri.parse(post.content)
+                val playIntent = Intent(Intent.ACTION_VIEW, url)
                 if (playIntent.resolveActivity(requireContext().packageManager) != null) {
                     startActivity(playIntent)
                 }

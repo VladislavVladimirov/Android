@@ -25,7 +25,7 @@ class EditPostFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val binding = FragmentEditPostBinding.inflate(inflater, container, false)
         arguments?.textArg?.let(binding.edit::setText)
 
@@ -40,5 +40,10 @@ class EditPostFragment : Fragment() {
             findNavController().navigateUp()
         }
         return binding.root
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.cancelEdit()
     }
 }
