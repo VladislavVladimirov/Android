@@ -39,9 +39,11 @@ interface PostDao {
         post.published = syncTime()
         post.authorAvatar = R.drawable.ic_launcher_foreground
         post.author = "Нетология. Университет интернет-профессий будущего"
-        if (post.id == 0L) insert(post) else
+        if (post.id == 0L) insert(post) else {
             updateTimeByid(post.id, post.published)
             updateContentById(post.id, post.content)
+        }
+
     }
 
     @Query(
