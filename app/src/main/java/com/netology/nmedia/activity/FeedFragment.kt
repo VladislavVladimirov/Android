@@ -15,6 +15,7 @@ import com.netology.nmedia.activity.EditPostFragment.Companion.textArg
 import com.netology.nmedia.adapter.OnInteractionListener
 import com.netology.nmedia.adapter.PostsAdapter
 import com.netology.nmedia.dto.Post
+import com.netology.nmedia.util.AndroidUtils
 import com.netology.nmedia.viewmodel.PostViewModel
 
 
@@ -61,10 +62,16 @@ class FeedFragment : Fragment() {
             }
 
             override fun onPlay(post: Post) {
-                val playIntent = Intent(Intent.ACTION_VIEW, Uri.parse(post.content))
-                if (playIntent.resolveActivity(requireContext().packageManager) != null) {
-                    startActivity(playIntent)
+                AndroidUtils.extractUrls(post.content).forEach{
+                    if (it.contains("youtu")) {
+                        val playIntent = Intent(Intent.ACTION_VIEW, Uri.parse(it))
+                        if (playIntent.resolveActivity(requireContext().packageManager) != null) {
+                            startActivity(playIntent)
+                        }
+                    }
                 }
+
+
             }
 
             override fun onPostClick(post: Post) {
