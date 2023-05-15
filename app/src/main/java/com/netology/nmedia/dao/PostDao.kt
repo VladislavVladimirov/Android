@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import com.netology.MyApp.R
+import com.netology.nmedia.R
 import com.netology.nmedia.entity.PostEntity
 import com.netology.nmedia.viewmodel.PostFormatter.syncTime
 

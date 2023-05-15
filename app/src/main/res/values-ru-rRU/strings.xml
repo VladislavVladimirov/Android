@@ -19,4 +19,11 @@
     <string name="add_post">Добавить пост</string>
     <string name="new_post">Новая запись</string>
     <string name="description_video_preview">Превью для видео</string>
+    <string name="google_play_unavailable">Google Api недоступен</string>
+    <string name="notification_user_liked">Пользователь %1$s поставил лайк посту пользователя %2$s</string>
+    <string name="channel_remote_name">Уведомления сервера</string>
+    <string name="channel_remote_description">Уведомления с удаленного сервера</string>
+    <string name="notification_new_post">Пользователь %1$s опубликовал новый пост:</string>
+    <string name="notification_unkown_action">Ошибка при отображении уведомления</string>
+    <string name="error">Ошибка</string>
 </resources>

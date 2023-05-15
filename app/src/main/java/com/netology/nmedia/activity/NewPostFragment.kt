@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.netology.MyApp.databinding.FragmentNewPostBinding
+import com.netology.nmedia.databinding.FragmentNewPostBinding
 import com.netology.nmedia.util.AndroidUtils
 import com.netology.nmedia.viewmodel.PostViewModel
 import com.netology.nmedia.util.StringArg

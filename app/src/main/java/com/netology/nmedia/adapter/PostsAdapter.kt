@@ -3,7 +3,7 @@ package com.netology.nmedia.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
-import com.netology.MyApp.databinding.CardPostBinding
+import com.netology.nmedia.databinding.CardPostBinding
 import com.netology.nmedia.dto.Post
 
 

@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.netology.MyApp.databinding.FragmentEditPostBinding
+import com.netology.nmedia.databinding.FragmentEditPostBinding
 import com.netology.nmedia.util.AndroidUtils
 import com.netology.nmedia.util.StringArg
 import com.netology.nmedia.viewmodel.PostViewModel

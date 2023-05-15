@@ -3,8 +3,8 @@ package com.netology.nmedia.adapter
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
-import com.netology.MyApp.R
-import com.netology.MyApp.databinding.CardPostBinding
+import com.netology.nmedia.R
+import com.netology.nmedia.databinding.CardPostBinding
 import com.netology.nmedia.dto.Post
 import com.netology.nmedia.viewmodel.PostFormatter
 
