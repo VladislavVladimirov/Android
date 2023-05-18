@@ -61,6 +61,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging-ktx:23.1.2'
     implementation 'com.google.android.gms:play-services-base:18.2.0'
     implementation 'com.squareup.okhttp3:okhttp:4.11.0'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01'
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'androidx.arch.core:core-testing:2.2.0'

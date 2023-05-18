@@ -16,7 +16,7 @@ class PostViewHolder(
     fun bind(post: Post) {
         binding.apply {
             author.text = "Нетология. Университет интернет-профессий"
-            published.text = PostFormatter.formatTime(post.published)
+            published.text = PostFormatter.formatTime(post.published.toString())
             content.text = post.content
             avatar.setImageResource(R.drawable.ic_launcher_foreground)
             like.text = PostFormatter.formatCount(post.likes)

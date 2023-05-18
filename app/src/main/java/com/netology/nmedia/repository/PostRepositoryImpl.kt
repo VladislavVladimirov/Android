@@ -62,7 +62,6 @@ class PostRepositoryImpl : PostRepository {
     }
 
     override fun save(post: Post) {
-
         val request: Request = Request.Builder()
             .post(gson.toJson(post).toRequestBody(jsonType))
             .url("${BASE_URL}/api/posts")

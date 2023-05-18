@@ -4,7 +4,7 @@ data class Post(
     val id: Long,
     val author: String,
     val content: String,
-    var published: String,
+    var published: Long,
     val likedByMe: Boolean,
     val likes: Int,
     val shares: Int,

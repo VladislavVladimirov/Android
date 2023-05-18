@@ -63,7 +63,7 @@ class FeedFragment : Fragment() {
             }
 
             override fun onPlay(post: Post) {
-                AndroidUtils.extractUrls(post.content).forEach{
+                AndroidUtils.extractUrls(post.content).forEach {
                     if (it.contains("youtu")) {
                         val playIntent = Intent(Intent.ACTION_VIEW, Uri.parse(it))
                         if (playIntent.resolveActivity(requireContext().packageManager) != null) {
@@ -80,7 +80,12 @@ class FeedFragment : Fragment() {
                         textArg = post.id.toString()
                     })
             }
+
+            override fun onRefresh() {
+                viewModel.loadPosts()
+            }
         })
+        val swipeRefresher =  binding.postsSwipeRefresh
 
         viewModel.loadPosts()
         binding.list.adapter = adapter
@@ -99,7 +104,12 @@ class FeedFragment : Fragment() {
         binding.retryButton.setOnClickListener {
             viewModel.loadPosts()
         }
-
+        swipeRefresher.setOnRefreshListener {
+            swipeRefresher.isRefreshing = true
+            viewModel.loadPosts()
+            swipeRefresher.isRefreshing = false
+        }
         return binding.root
     }
+
 }
