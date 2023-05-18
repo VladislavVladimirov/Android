@@ -6,8 +6,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
+
 import androidx.navigation.fragment.findNavController
 import com.netology.nmedia.R
 import com.netology.nmedia.databinding.FragmentFeedBinding
@@ -20,9 +22,7 @@ import com.netology.nmedia.viewmodel.PostViewModel
 
 
 class FeedFragment : Fragment() {
-    val viewModel: PostViewModel by viewModels(
-        ownerProducer = ::requireParentFragment
-    )
+    val viewModel: PostViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,9 +30,10 @@ class FeedFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val binding = FragmentFeedBinding.inflate(layoutInflater)
+
         val adapter = PostsAdapter(object : OnInteractionListener {
             override fun onLike(post: Post) {
-                viewModel.likeById(post.id)
+                viewModel.likeById(post)
             }
 
             override fun onShare(post: Post) {
@@ -70,8 +71,6 @@ class FeedFragment : Fragment() {
                         }
                     }
                 }
-
-
             }
 
             override fun onPostClick(post: Post) {
@@ -83,16 +82,24 @@ class FeedFragment : Fragment() {
             }
         })
 
+        viewModel.loadPosts()
         binding.list.adapter = adapter
-        viewModel.data.observe(viewLifecycleOwner) { posts ->
-            adapter.submitList(posts)
-            if (adapter.currentList.size < posts.size) {
+        viewModel.data.observe(viewLifecycleOwner) { state ->
+            adapter.submitList(state.posts)
+            if (adapter.currentList.size < state.posts.size) {
                 binding.list.smoothScrollToPosition(0)
             }
+            binding.progress.isVisible = state.loading
+            binding.errorGroup.isVisible = state.error
+            binding.emptyText.isVisible = state.empty
         }
         binding.add.setOnClickListener {
             findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
         }
+        binding.retryButton.setOnClickListener {
+            viewModel.loadPosts()
+        }
+
         return binding.root
     }
 }

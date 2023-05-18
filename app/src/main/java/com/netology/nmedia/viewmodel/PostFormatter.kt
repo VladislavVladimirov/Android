@@ -3,6 +3,7 @@ package com.netology.nmedia.viewmodel
 import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
 object PostFormatter {
@@ -30,8 +31,9 @@ object PostFormatter {
         }
         return null
     }
-    fun syncTime() : String {
+    fun formatTime(time: String): String {
+        val dateTime = LocalDateTime.ofEpochSecond(time.toLong(),0, ZoneOffset.of("+03:00"))
         val formatter = DateTimeFormatter.ofPattern("d MMMM yyyy в HH:mm")
-        return LocalDateTime.now().format(formatter).toString()
+        return dateTime.format(formatter).toString()
     }
 }

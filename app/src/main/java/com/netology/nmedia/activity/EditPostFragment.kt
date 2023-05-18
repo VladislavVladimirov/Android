@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.netology.nmedia.databinding.FragmentEditPostBinding
 import com.netology.nmedia.util.AndroidUtils
@@ -18,9 +18,7 @@ class EditPostFragment : Fragment() {
         var Bundle.textArg: String? by StringArg
     }
 
-    private val viewModel: PostViewModel by viewModels(
-        ownerProducer = ::requireParentFragment
-    )
+    private val viewModel: PostViewModel by activityViewModels()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -29,14 +27,19 @@ class EditPostFragment : Fragment() {
         val binding = FragmentEditPostBinding.inflate(inflater, container, false)
         arguments?.textArg?.let(binding.edit::setText)
 
+
         binding.ok.setOnClickListener {
             viewModel.changeContent(binding.edit.text.toString())
             viewModel.save()
             AndroidUtils.hideKeyboard(requireView())
-            findNavController().navigateUp()
         }
+
         binding.cancelButton.setOnClickListener{
             AndroidUtils.hideKeyboard(requireView())
+            findNavController().navigateUp()
+        }
+        viewModel.postCreated.observe(viewLifecycleOwner) {
+            viewModel.loadPosts()
             findNavController().navigateUp()
         }
         return binding.root

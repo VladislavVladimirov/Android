@@ -34,7 +34,7 @@ class PostFragment : Fragment() {
         val binding = FragmentPostBinding.inflate(inflater, container, false)
         val listener = object : OnInteractionListener {
             override fun onLike(post: Post) {
-                viewModel.likeById(post.id)
+                viewModel.likeById(post)
             }
 
             override fun onShare(post: Post) {
@@ -47,7 +47,6 @@ class PostFragment : Fragment() {
                 val shareIntent =
                     Intent.createChooser(intent, getString(R.string.chooser_share_post))
                 startActivity(shareIntent)
-
             }
 
             override fun onRemove(post: Post) {
@@ -73,14 +72,17 @@ class PostFragment : Fragment() {
                 }
             }
         }
+
+        viewModel.loadPosts()
         val id = requireNotNull(requireArguments().textArg).toLong()
         binding.postContent.apply {
             viewModel.data.observe(viewLifecycleOwner) { it ->
                 val viewHolder = PostViewHolder(binding.postContent, listener)
-                val post = it.find { it.id == id }
+                val post = it.posts.find { it.id == id }
                 post?.let { viewHolder.bind(post) }
             }
         }
+
 
         return binding.root
     }

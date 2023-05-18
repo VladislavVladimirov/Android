@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import com.netology.nmedia.R
 import com.netology.nmedia.entity.PostEntity
-import com.netology.nmedia.viewmodel.PostFormatter.syncTime
+
 
 
 
@@ -36,7 +36,6 @@ interface PostDao {
     fun updateTimeByid(id: Long, time: String)
 
     fun save(post: PostEntity) {
-        post.published = syncTime()
         post.authorAvatar = R.drawable.ic_launcher_foreground
         post.author = "Нетология. Университет интернет-профессий будущего"
         if (post.id == 0L) insert(post) else {
