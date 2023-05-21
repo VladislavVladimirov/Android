@@ -24,7 +24,7 @@ class PostRepositoryImpl : PostRepository {
 
     override fun getAll(): List<Post> {
         val request: Request = Request.Builder()
-            .url("${BASE_URL}/api/posts")
+            .url("${BASE_URL}/api/slow/posts")
             .build()
         return client.newCall(request)
             .execute()
@@ -45,7 +45,7 @@ class PostRepositoryImpl : PostRepository {
             Request.Builder()
                 .post(gson.toJson(post).toRequestBody(jsonType))
         }
-            .url("${BASE_URL}/api/posts/${id}/likes")
+            .url("${BASE_URL}/api/slow/posts/${id}/likes")
             .build()
         client.newCall(request)
             .execute()
@@ -64,7 +64,7 @@ class PostRepositoryImpl : PostRepository {
     override fun save(post: Post) {
         val request: Request = Request.Builder()
             .post(gson.toJson(post).toRequestBody(jsonType))
-            .url("${BASE_URL}/api/posts")
+            .url("${BASE_URL}/api/slow/posts")
             .build()
 
         client.newCall(request)
@@ -75,7 +75,7 @@ class PostRepositoryImpl : PostRepository {
     override fun removeById(id: Long) {
         val request: Request = Request.Builder()
             .delete()
-            .url("${BASE_URL}/api/posts/$id")
+            .url("${BASE_URL}/api/slow/posts/$id")
             .build()
 
         client.newCall(request)
