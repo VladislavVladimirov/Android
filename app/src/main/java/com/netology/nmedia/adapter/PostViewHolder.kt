@@ -8,16 +8,17 @@ import com.netology.nmedia.databinding.CardPostBinding
 import com.netology.nmedia.dto.Post
 import com.netology.nmedia.viewmodel.PostFormatter
 
+
 class PostViewHolder(
     private val binding: CardPostBinding,
     private val onInteractionListener: OnInteractionListener
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(post: Post) {
         binding.apply {
-            author.text = post.author
-            published.text = post.published
+            author.text = "Нетология. Университет интернет-профессий"
+            published.text = PostFormatter.formatTime(post.published.toString())
             content.text = post.content
-            avatar.setImageResource(post.authorAvatar)
+            avatar.setImageResource(R.drawable.ic_launcher_foreground)
             like.text = PostFormatter.formatCount(post.likes)
             share.text = PostFormatter.formatCount(post.shares)
             views.text = PostFormatter.formatCount(post.views)
