@@ -36,23 +36,26 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     private val _postCreated = SingleLiveEvent<Unit>()
     val postCreated: LiveData<Unit>
         get() = _postCreated
+
     init {
         loadPosts()
     }
+
     fun loadPosts() {
-        thread {
-            // Начинаем загрузку
-            _data.postValue(_data.value?.copy(loading = true)) // Здесь старые посты оставляем
-            try {
-                // Данные успешно получены
-                val posts = repository.getAll()
-                FeedModel(posts = posts, empty = posts.isEmpty())
-            } catch (e: IOException) {
-                // Получена ошибка
-                FeedModel(error = true)
-            }.also(_data::postValue)
-        }
+        // Начинаем загрузку
+        //data.postValue(_data.value?.copy(loading = true)) // Здесь старые посты оставляем
+        _data.value = FeedModel(loading = true)
+        repository.getAllAsync(object : PostRepository.PostsCallback<List<Post>> {
+            override fun onSuccess(posts: List<Post>) {
+                _data.postValue(FeedModel(posts = posts, empty = posts.isEmpty()))
+            }
+
+            override fun onError(e: Exception) {
+                _data.postValue(FeedModel(error = true))
+            }
+        })
     }
+
     fun save() {
         edited.value?.let {
             thread {
@@ -62,6 +65,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         }
         edited.value = empty
     }
+
     fun edit(post: Post) {
         edited.value = post
     }
@@ -73,6 +77,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         }
         edited.value = edited.value?.copy(content = text)
     }
+
     fun cancelEdit() {
         edited.value?.let {
             edited.value = empty
@@ -85,9 +90,11 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             loadPosts()
         }
     }
-    fun shareById(id: Long){
-        thread { repository.shareById(id) }
+
+    fun shareById(id: Long) {
+
     }
+
     fun removeById(id: Long) {
         thread {
             // Оптимистичная модель
@@ -104,15 +111,19 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
     }
-    fun viewPostById(id: Long){
-        thread {repository.viewPostById(id)}
+
+    fun viewPostById(id: Long) {
+
     }
+
     fun getDraft(): String {
         return draftRepository.getDraft()
     }
+
     fun saveDraft(text: String) {
         draftRepository.saveDraft(text)
     }
+
     fun clearDraft() {
         draftRepository.clearDraft()
     }
