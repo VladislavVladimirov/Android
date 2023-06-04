@@ -151,6 +151,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/content" />
 
+    <ImageView
+        android:id="@+id/image_attachment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/common_spacing"
+        android:contentDescription="@string/image_attachment_description"
+        app:layout_constraintBottom_toTopOf="@id/like"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/content"
+        />
+
+
     <androidx.constraintlayout.widget.Group
         android:id="@+id/previewGroup"
         android:layout_width="wrap_content"
