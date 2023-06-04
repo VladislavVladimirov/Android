@@ -124,32 +124,18 @@
         tools:text="@sample/posts.json/data/views" />
 
     <ImageView
-        android:id="@+id/youtube_player_preview_1"
+        android:id="@+id/youtube_player_preview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="@dimen/common_spacing"
+        android:layout_marginTop="@dimen/common_spacing"
         android:background="@color/white"
         android:contentDescription="@string/description_video_preview"
-        android:paddingEnd="176dp"
-        android:src="@drawable/youtube_svgrepo_com"
-        app:layout_constraintBottom_toTopOf="@id/like"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/image_attachment"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/content" />
 
-    <ImageView
-        android:id="@+id/youtube_player_preview_2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginVertical="@dimen/common_spacing"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/description_video_preview"
-        android:paddingEnd="-176dp"
-        android:src="@drawable/youtube_dark_icon"
-        app:layout_constraintBottom_toTopOf="@id/like"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/content" />
 
     <ImageView
         android:id="@+id/image_attachment"
@@ -157,19 +143,10 @@
         android:layout_height="wrap_content"
         android:layout_marginVertical="@dimen/common_spacing"
         android:contentDescription="@string/image_attachment_description"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/like"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/content"
-        />
-
-
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/previewGroup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:constraint_referenced_ids="youtube_player_preview_1,youtube_player_preview_2" />
-
+        app:layout_constraintTop_toBottomOf="@id/youtube_player_preview" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

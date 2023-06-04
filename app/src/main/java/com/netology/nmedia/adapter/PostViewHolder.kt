@@ -10,7 +10,9 @@ import com.netology.nmedia.R
 import com.netology.nmedia.activity.enums.AttachmentType
 import com.netology.nmedia.databinding.CardPostBinding
 import com.netology.nmedia.dto.Post
+import com.netology.nmedia.util.AndroidUtils
 import com.netology.nmedia.viewmodel.PostFormatter
+import java.lang.Exception
 
 
 class PostViewHolder(
@@ -28,28 +30,54 @@ class PostViewHolder(
             views.text = PostFormatter.formatCount(post.views)
             like.isChecked = post.likedByMe
 
-            Glide.with(binding.avatar)
+
+            Glide.with(avatar)
                 .load("http://192.168.0.4:9090/avatars/${post.authorAvatar}")
                 .placeholder(R.drawable.ic_loading_100dp)
                 .error(R.drawable.ic_error_100dp)
                 .apply(RequestOptions.bitmapTransform(CircleCrop()))
                 .timeout(10_000)
-                .into(binding.avatar)
+                .into(avatar)
 
-            if (
-                (post.content.contains("youtube.com")) ||
-                (post.content.contains("youtu.be"))
-            ) {
-                previewGroup.visibility = View.VISIBLE
-            } else {
-                previewGroup.visibility = View.GONE
+            AndroidUtils.extractUrls(post.content).forEach {
+                if (
+                    (it.contains("youtu"))
+                ) {
+                    lateinit var videoId: String
+                    youtubePlayerPreview.visibility = View.VISIBLE
+                     try {
+                         if (it.contains("youtu.be")) {
+                             videoId = it.split(".be/")[1]
+                             val videoPreviewUrl = "http://img.youtube.com/vi/$videoId/maxresdefault.jpg"
+                             Glide.with(youtubePlayerPreview)
+                                 .load(videoPreviewUrl)
+                                 .timeout(10_000)
+                                 .into(youtubePlayerPreview)
+                         }
+                         videoId = it.split("v=")[1]
+                         val videoPreviewUrl = "http://img.youtube.com/vi/$videoId/maxresdefault.jpg"
+                         Glide.with(youtubePlayerPreview)
+                             .load(videoPreviewUrl)
+                             .timeout(10_000)
+                             .into(youtubePlayerPreview)
+                     } catch (e: Exception) {
+                         println("Error!")
+                     }
+                } else {
+                    youtubePlayerPreview.visibility = View.GONE
+                }
             }
+
+
             if (post.attachment?.type == AttachmentType.IMAGE) {
-                binding.imageAttachment.contentDescription = post.attachment.description
-                Glide.with(binding.imageAttachment)
+                imageAttachment.visibility = View.VISIBLE
+                imageAttachment.contentDescription = post.attachment.description
+                Glide.with(imageAttachment)
                     .load("http://192.168.0.4:9090/images/${post.attachment.url}")
                     .timeout(10_000)
-                    .into(binding.imageAttachment)
+                    .into(imageAttachment)
+            }  else {
+                imageAttachment.visibility = View.GONE
             }
             like.setOnClickListener {
                 onInteractionListener.onLike(post)
@@ -82,10 +110,7 @@ class PostViewHolder(
                 onInteractionListener.onPostClick(post)
             }
 
-            youtubePlayerPreview1.setOnClickListener {
-                onInteractionListener.onPlay(post)
-            }
-            youtubePlayerPreview2.setOnClickListener {
+            youtubePlayerPreview.setOnClickListener {
                 onInteractionListener.onPlay(post)
             }
         }
