@@ -9,13 +9,12 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-
 import androidx.navigation.fragment.findNavController
 import com.netology.nmedia.R
-import com.netology.nmedia.databinding.FragmentFeedBinding
 import com.netology.nmedia.activity.EditPostFragment.Companion.textArg
 import com.netology.nmedia.adapter.OnInteractionListener
 import com.netology.nmedia.adapter.PostsAdapter
+import com.netology.nmedia.databinding.FragmentFeedBinding
 import com.netology.nmedia.dto.Post
 import com.netology.nmedia.util.AndroidUtils
 import com.netology.nmedia.viewmodel.PostViewModel

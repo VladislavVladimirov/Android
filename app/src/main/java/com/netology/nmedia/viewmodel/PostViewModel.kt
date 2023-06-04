@@ -22,7 +22,8 @@ private val empty = Post(
     likes = 0,
     shares = 0,
     views = 0,
-    authorAvatar = null
+    authorAvatar = null,
+    attachment = null
 )
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {
@@ -41,9 +42,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun loadPosts() {
-        // Начинаем загрузку
         _data.postValue(_data.value?.copy(loading = true)) // Здесь старые посты оставляем
-        //_data.value = FeedModel(loading = true)
         repository.getAllAsync(object : PostRepository.PostsCallback<List<Post>> {
             override fun onSuccess(input: List<Post>) {
                 _data.postValue(FeedModel(posts = input, empty = input.isEmpty()))
