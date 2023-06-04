@@ -17,7 +17,6 @@ class PostViewHolder(
     private val binding: CardPostBinding,
     private val onInteractionListener: OnInteractionListener
 ) : RecyclerView.ViewHolder(binding.root) {
-    private var url: String = ""
     fun bind(post: Post) {
 
         binding.apply {
@@ -29,18 +28,8 @@ class PostViewHolder(
             views.text = PostFormatter.formatCount(post.views)
             like.isChecked = post.likedByMe
 
-            if (post.authorAvatar == "netology.jpg") {
-                url = "http://192.168.0.4:9090/avatars/netology.jpg"
-            }
-            if (post.authorAvatar == "sber.jpg") {
-                url = "http://192.168.0.4:9090/avatars/sber.jpg"
-            }
-            if (post.authorAvatar == "tcs.jpg") {
-                url = "http://192.168.0.4:9090/avatars/tcs.jpg"
-            }
-
             Glide.with(binding.avatar)
-                .load(url)
+                .load("http://192.168.0.4:9090/avatars/${post.authorAvatar}")
                 .placeholder(R.drawable.ic_loading_100dp)
                 .error(R.drawable.ic_error_100dp)
                 .apply(RequestOptions.bitmapTransform(CircleCrop()))
