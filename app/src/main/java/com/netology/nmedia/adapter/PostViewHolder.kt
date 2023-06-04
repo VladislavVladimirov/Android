@@ -39,36 +39,6 @@ class PostViewHolder(
                 .timeout(10_000)
                 .into(avatar)
 
-            AndroidUtils.extractUrls(post.content).forEach {
-                if (
-                    (it.contains("youtu"))
-                ) {
-                    lateinit var videoId: String
-                    youtubePlayerPreview.visibility = View.VISIBLE
-                     try {
-                         if (it.contains("youtu.be")) {
-                             videoId = it.split(".be/")[1]
-                             val videoPreviewUrl = "http://img.youtube.com/vi/$videoId/maxresdefault.jpg"
-                             Glide.with(youtubePlayerPreview)
-                                 .load(videoPreviewUrl)
-                                 .timeout(10_000)
-                                 .into(youtubePlayerPreview)
-                         }
-                         videoId = it.split("v=")[1]
-                         val videoPreviewUrl = "http://img.youtube.com/vi/$videoId/maxresdefault.jpg"
-                         Glide.with(youtubePlayerPreview)
-                             .load(videoPreviewUrl)
-                             .timeout(10_000)
-                             .into(youtubePlayerPreview)
-                     } catch (e: Exception) {
-                         println("Error!")
-                     }
-                } else {
-                    youtubePlayerPreview.visibility = View.GONE
-                }
-            }
-
-
             if (post.attachment?.type == AttachmentType.IMAGE) {
                 imageAttachment.visibility = View.VISIBLE
                 imageAttachment.contentDescription = post.attachment.description
@@ -79,6 +49,41 @@ class PostViewHolder(
             }  else {
                 imageAttachment.visibility = View.GONE
             }
+
+            AndroidUtils.extractUrls(post.content)
+                // Ищем первую ссылку на ютуб
+                .find {
+                    it.contains("youtu")
+                }
+                // Если нашли
+                ?.also {
+                    lateinit var videoId: String
+                    youtubePlayerPreview.visibility = View.VISIBLE
+                    try {
+                        if (it.contains("youtu.be")) {
+                            videoId = it.split(".be/")[1]
+                            val videoPreviewUrl =
+                                "http://img.youtube.com/vi/$videoId/maxresdefault.jpg"
+                            Glide.with(youtubePlayerPreview)
+                                .load(videoPreviewUrl)
+                                .timeout(10_000)
+                                .into(youtubePlayerPreview)
+                        }
+                        videoId = it.split("v=")[1]
+                        val videoPreviewUrl = "http://img.youtube.com/vi/$videoId/maxresdefault.jpg"
+                        Glide.with(youtubePlayerPreview)
+                            .load(videoPreviewUrl)
+                            .timeout(10_000)
+                            .into(youtubePlayerPreview)
+                    } catch (e: Exception) {
+                        println("Error!")
+                    }
+                }
+            // Если не нашли
+                ?: run {
+                    youtubePlayerPreview.visibility = View.GONE
+                }
+
             like.setOnClickListener {
                 onInteractionListener.onLike(post)
             }
