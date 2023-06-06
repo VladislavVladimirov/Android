@@ -26,9 +26,11 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             manifestPlaceholders.usesCleartextTraffic = false
+            buildConfigField "String","BASE_URL",'"http://192.168.0.4:9090"'
         }
         debug {
             manifestPlaceholders.usesCleartextTraffic = true
+            buildConfigField "String","BASE_URL",'"http://192.168.0.4:9090"'
         }
     }
     compileOptions {
@@ -60,9 +62,12 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:32.0.0')
     implementation 'com.google.firebase:firebase-messaging-ktx:23.1.2'
     implementation 'com.google.android.gms:play-services-base:18.2.0'
-    implementation 'com.squareup.okhttp3:okhttp:4.11.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.11.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation "com.squareup.retrofit2:converter-gson:2.9.0"
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01'
     implementation 'com.github.bumptech.glide:glide:4.15.1'
+
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'androidx.arch.core:core-testing:2.2.0'
