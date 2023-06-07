@@ -13,6 +13,7 @@ import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
+import java.util.concurrent.TimeUnit
 
 private const val BASE_URL = "${BuildConfig.BASE_URL}/api/slow/"
 
@@ -39,6 +40,7 @@ private val logging = HttpLoggingInterceptor().apply {
     }
 }
 private val client = OkHttpClient.Builder()
+    .connectTimeout(30, TimeUnit.SECONDS)
     .addInterceptor(logging)
     .build()
 private val retrofit = Retrofit.Builder()

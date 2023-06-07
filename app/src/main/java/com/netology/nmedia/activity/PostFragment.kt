@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -32,6 +34,7 @@ class PostFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val binding = FragmentPostBinding.inflate(inflater, container, false)
+        val swipeRefresher =  binding.postSwipeRefresh
         val listener = object : OnInteractionListener {
             override fun onLike(post: Post) {
                 viewModel.likeById(post)
@@ -70,6 +73,9 @@ class PostFragment : Fragment() {
                     }
                 }
             }
+            override fun onRefresh() {
+                viewModel.loadPosts()
+            }
         }
 
         viewModel.loadPosts()
@@ -79,7 +85,18 @@ class PostFragment : Fragment() {
                 val viewHolder = PostViewHolder(binding.postContent, listener)
                 val post = it.posts.find { it.id == id }
                 post?.let { viewHolder.bind(post) }
+                binding.progress.isVisible = it.loading
+                binding.errorGroup.isVisible = it.error
+                binding.postToHide.isGone = it.error
             }
+        }
+        swipeRefresher.setOnRefreshListener {
+            swipeRefresher.isRefreshing = true
+            viewModel.loadPosts()
+            swipeRefresher.isRefreshing = false
+        }
+        binding.retryButton.setOnClickListener {
+            viewModel.loadPosts()
         }
 
 
