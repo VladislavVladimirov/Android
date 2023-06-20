@@ -24,10 +24,10 @@
     <string name="channel_remote_name">Уведомления сервера</string>
     <string name="channel_remote_description">Уведомления с удаленного сервера</string>
     <string name="notification_new_post">Пользователь %1$s опубликовал новый пост:</string>
-    <string name="notification_unkown_action">Ошибка при отображении уведомления</string>
+    <string name="notification_unknown_action">Ошибка при отображении уведомления</string>
     <string name="error">Ошибка</string>
     <string name="retry_loading">Повторить</string>
     <string name="empty_posts">Постов нет.\nЕсли создадите новый пост, то он появится здесь</string>
-    <string name="error_loading">Что-то пошло не так. Попробуйте позднее</string>
+    <string name="error_loading">Произошла ошибка при загрузке данных. Пожалуйста, проверьте соединение с интернетом или повторите попытку позже.</string>
     <string name="image_attachment_description">Изображение</string>
 </resources>

@@ -68,7 +68,7 @@ class FCMService : FirebaseMessagingService() {
                     R.string.error
                 )
             )
-            .setContentText(getString(R.string.notification_unkown_action))
+            .setContentText(getString(R.string.notification_unknown_action))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .build()
         notify(notification)
