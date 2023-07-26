@@ -84,8 +84,6 @@ class FeedFragment : Fragment() {
             }
         })
         val swipeRefresher =  binding.postsSwipeRefresh
-
-        viewModel.loadPosts()
         binding.list.adapter = adapter
         viewModel.data.observe(viewLifecycleOwner) { state ->
             adapter.submitList(state.posts)

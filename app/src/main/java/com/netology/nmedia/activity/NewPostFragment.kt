@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -12,6 +13,7 @@ import com.netology.nmedia.util.AndroidUtils
 import com.netology.nmedia.viewmodel.PostViewModel
 import com.netology.nmedia.util.StringArg
 import androidx.navigation.fragment.findNavController
+import com.netology.nmedia.R
 
 
 class NewPostFragment : Fragment() {
@@ -37,9 +39,18 @@ class NewPostFragment : Fragment() {
             findNavController().navigateUp()
         }
         binding.ok.setOnClickListener {
-            viewModel.changeContent(binding.edit.text.toString())
-            viewModel.save()
-            viewModel.clearDraft()
+            val text = binding.edit.text.toString()
+            if (text.isNotBlank()) {
+                viewModel.changeContent(binding.edit.text.toString())
+                viewModel.save()
+                viewModel.clearDraft()
+            } else {
+                Toast.makeText(
+                    this.context,
+                    R.string.error_empty_content,
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
             AndroidUtils.hideKeyboard(requireView())
         }
         viewModel.postCreated.observe(viewLifecycleOwner) {

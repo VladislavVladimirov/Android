@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.netology.nmedia.R
@@ -25,9 +25,7 @@ import com.netology.nmedia.viewmodel.PostViewModel
 
 class PostFragment : Fragment() {
 
-    private val viewModel: PostViewModel by viewModels(
-        ownerProducer = ::requireParentFragment
-    )
+    private val viewModel: PostViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -81,26 +79,22 @@ class PostFragment : Fragment() {
                 viewModel.loadPosts()
             }
         }
-
-        viewModel.loadPosts()
         val id = requireNotNull(requireArguments().textArg).toLong()
         binding.postContent.apply {
-
             viewModel.data.observe(viewLifecycleOwner) { it ->
                 val viewHolder = PostViewHolder(binding.postContent, listener)
                 val post = it.posts.find { it.id == id }
                 post?.let { viewHolder.bind(post) }
             }
-        }
-
-        viewModel.dataState.observe(viewLifecycleOwner) { it ->
-            binding.progress.isVisible = it.loading
-            binding.postToHide.isGone = it.error
-            swipeRefresher.isRefreshing = it.refreshing
-            if (it.error) {
-                Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_LONG)
-                    .setAction(R.string.retry_loading) { viewModel.loadPosts() }
-                    .show()
+            viewModel.dataState.observe(viewLifecycleOwner) {
+                binding.progress.isVisible = it.loading
+                binding.postToHide.isGone = it.error
+                swipeRefresher.isRefreshing = it.refreshing
+                if (it.error) {
+                    Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_LONG)
+                        .setAction(R.string.retry_loading) { viewModel.loadPosts() }
+                        .show()
+                }
             }
         }
         swipeRefresher.setOnRefreshListener {
