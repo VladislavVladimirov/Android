@@ -10,6 +10,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import com.netology.nmedia.R
 import com.netology.nmedia.activity.EditPostFragment.Companion.textArg
 import com.netology.nmedia.adapter.OnInteractionListener
@@ -83,28 +84,30 @@ class FeedFragment : Fragment() {
             }
         })
         val swipeRefresher =  binding.postsSwipeRefresh
-
-        viewModel.loadPosts()
         binding.list.adapter = adapter
         viewModel.data.observe(viewLifecycleOwner) { state ->
             adapter.submitList(state.posts)
             if (adapter.currentList.size < state.posts.size) {
                 binding.list.smoothScrollToPosition(0)
             }
-            binding.progress.isVisible = state.loading
-            binding.errorGroup.isVisible = state.error
             binding.emptyText.isVisible = state.empty
         }
+        viewModel.dataState.observe(viewLifecycleOwner) { state ->
+            binding.progress.isVisible = state.loading
+            swipeRefresher.isRefreshing = state.refreshing
+            if (state.error) {
+                Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_LONG)
+                    .setAction(R.string.retry_loading) { viewModel.loadPosts() }
+                    .show()
+            }
+        }
+
         binding.add.setOnClickListener {
             findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
         }
-        binding.retryButton.setOnClickListener {
-            viewModel.loadPosts()
-        }
+
         swipeRefresher.setOnRefreshListener {
-            swipeRefresher.isRefreshing = true
-            viewModel.loadPosts()
-            swipeRefresher.isRefreshing = false
+            viewModel.refreshPosts()
         }
         return binding.root
     }

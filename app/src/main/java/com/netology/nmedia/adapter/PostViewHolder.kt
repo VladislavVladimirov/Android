@@ -23,7 +23,7 @@ class PostViewHolder(
 
         binding.apply {
             author.text = post.author
-            published.text = PostFormatter.formatTime(post.published.toString())
+            published.text = PostFormatter.formatTime(post.published)
             content.text = post.content
             like.text = PostFormatter.formatCount(post.likes)
             share.text = PostFormatter.formatCount(post.shares)
@@ -32,7 +32,7 @@ class PostViewHolder(
 
 
             Glide.with(avatar)
-                .load("http://192.168.0.4:9090/avatars/${post.authorAvatar}")
+                .load("http://192.168.0.4:9999/avatars/${post.authorAvatar}")
                 .placeholder(R.drawable.ic_loading_100dp)
                 .error(R.drawable.ic_error_100dp)
                 .apply(RequestOptions.bitmapTransform(CircleCrop()))
@@ -43,7 +43,7 @@ class PostViewHolder(
                 imageAttachment.visibility = View.VISIBLE
                 imageAttachment.contentDescription = post.attachment.description
                 Glide.with(imageAttachment)
-                    .load("http://192.168.0.4:9090/images/${post.attachment.url}")
+                    .load("http://192.168.0.4:9999/images/${post.attachment.url}")
                     .timeout(10_000)
                     .into(imageAttachment)
             }  else {

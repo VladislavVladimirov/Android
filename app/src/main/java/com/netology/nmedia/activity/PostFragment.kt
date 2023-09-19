@@ -9,8 +9,9 @@ import android.view.ViewGroup
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import com.netology.nmedia.R
 import com.netology.nmedia.databinding.FragmentPostBinding
 import com.netology.nmedia.activity.EditPostFragment.Companion.textArg
@@ -24,9 +25,7 @@ import com.netology.nmedia.viewmodel.PostViewModel
 
 class PostFragment : Fragment() {
 
-    private val viewModel: PostViewModel by viewModels(
-        ownerProducer = ::requireParentFragment
-    )
+    private val viewModel: PostViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,7 +33,7 @@ class PostFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val binding = FragmentPostBinding.inflate(inflater, container, false)
-        val swipeRefresher =  binding.postSwipeRefresh
+        val swipeRefresher = binding.postSwipeRefresh
         val listener = object : OnInteractionListener {
             override fun onLike(post: Post) {
                 viewModel.likeById(post)
@@ -58,13 +57,15 @@ class PostFragment : Fragment() {
 
             override fun onEdit(post: Post) {
                 viewModel.edit(post)
-                findNavController().navigate(R.id.action_postFragment_to_editPostFragment, Bundle().apply {
-                    textArg = post.content
-                })
+                findNavController().navigate(
+                    R.id.action_postFragment_to_editPostFragment,
+                    Bundle().apply {
+                        textArg = post.content
+                    })
             }
 
             override fun onPlay(post: Post) {
-                AndroidUtils.extractUrls(post.content).forEach{
+                AndroidUtils.extractUrls(post.content).forEach {
                     if (it.contains("youtu")) {
                         val playIntent = Intent(Intent.ACTION_VIEW, Uri.parse(it))
                         if (playIntent.resolveActivity(requireContext().packageManager) != null) {
@@ -73,33 +74,33 @@ class PostFragment : Fragment() {
                     }
                 }
             }
+
             override fun onRefresh() {
                 viewModel.loadPosts()
             }
         }
-
-        viewModel.loadPosts()
         val id = requireNotNull(requireArguments().textArg).toLong()
         binding.postContent.apply {
             viewModel.data.observe(viewLifecycleOwner) { it ->
                 val viewHolder = PostViewHolder(binding.postContent, listener)
                 val post = it.posts.find { it.id == id }
                 post?.let { viewHolder.bind(post) }
+            }
+            viewModel.dataState.observe(viewLifecycleOwner) {
                 binding.progress.isVisible = it.loading
-                binding.errorGroup.isVisible = it.error
                 binding.postToHide.isGone = it.error
+                swipeRefresher.isRefreshing = it.refreshing
+                if (it.error) {
+                    Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_LONG)
+                        .setAction(R.string.retry_loading) { viewModel.loadPosts() }
+                        .show()
+                }
             }
         }
         swipeRefresher.setOnRefreshListener {
-            swipeRefresher.isRefreshing = true
-            viewModel.loadPosts()
-            swipeRefresher.isRefreshing = false
+            viewModel.refreshPosts()
         }
-        binding.retryButton.setOnClickListener {
-            viewModel.loadPosts()
-        }
-
-
         return binding.root
     }
+
 }

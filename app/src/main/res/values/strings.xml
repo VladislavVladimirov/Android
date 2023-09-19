@@ -28,7 +28,7 @@
     <string name="retry_loading">Retry</string>
     <string name="empty_posts">There are no posts.\nIf you create a new post, it will appear here</string>
     <string name="image_attachment_description">Image</string>
-    <string name="error_loading">An error occurred while loading data. Please check your internet connection or try again later.</string>
+    <string name="error_loading">An error occurred while loading data</string>
 
 
 </resources>
