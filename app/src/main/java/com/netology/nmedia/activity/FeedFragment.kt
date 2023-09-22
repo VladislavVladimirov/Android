@@ -101,6 +101,9 @@ class FeedFragment : Fragment() {
                     .show()
             }
         }
+        viewModel.newer.observe(viewLifecycleOwner) {
+            println("new posts: $it")
+        }
 
         binding.add.setOnClickListener {
             findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)

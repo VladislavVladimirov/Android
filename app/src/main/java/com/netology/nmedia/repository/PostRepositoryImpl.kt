@@ -1,7 +1,5 @@
 package com.netology.nmedia.repository
 
-
-import androidx.lifecycle.map
 import com.netology.nmedia.api.PostsApi
 import com.netology.nmedia.dao.PostDao
 import com.netology.nmedia.dto.Post
@@ -9,13 +7,20 @@ import com.netology.nmedia.entity.PostEntity
 import com.netology.nmedia.entity.toDto
 import com.netology.nmedia.entity.toEntity
 import com.netology.nmedia.error.ApiError
+import com.netology.nmedia.error.AppError
 import com.netology.nmedia.error.NetworkError
 import com.netology.nmedia.error.UnknownError
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import java.io.IOException
 
 
 class PostRepositoryImpl(private val postDao: PostDao) : PostRepository {
-    override val data = postDao.getAll().map(List<PostEntity>::toDto)
+    override val data = postDao.getAll().map(List<PostEntity>::toDto).flowOn(Dispatchers.Default)
 
     override suspend fun getAll() {
         try {
@@ -29,6 +34,21 @@ class PostRepositoryImpl(private val postDao: PostDao) : PostRepository {
             throw UnknownError
         }
     }
+
+    override fun getNewerCount(id: Long) = flow {
+        while (true) {
+            delay(10_000)
+            val response = PostsApi.retrofitService.getNewer(id)
+            if (!response.isSuccessful) {
+                throw ApiError(response.code(), response.message())
+            }
+            val body = response.body() ?: emptyList()
+            postDao.insert(body.toEntity())
+            emit(body.size)
+        }
+    }
+        .catch { e -> throw AppError.from(e) }
+        .flowOn(Dispatchers.Default)
 
     override suspend fun save(post: Post) {
         try {
@@ -44,6 +64,7 @@ class PostRepositoryImpl(private val postDao: PostDao) : PostRepository {
             throw UnknownError
         }
     }
+
 
     override suspend fun likeById(id: Long) {
         try {
