@@ -19,6 +19,7 @@ data class PostEntity(
     val likes: Int = 0,
     val shares: Int = 0,
     val views: Int = 0,
+    var visibility: Boolean,
     @Embedded
     var attachment: AttachmentEmbeddable?
 ) {
@@ -36,7 +37,7 @@ data class PostEntity(
     )
 
     companion object {
-        fun fromDto(dto: Post) =
+        fun fromDto(dto: Post, visibility: Boolean) =
             PostEntity(
                 dto.id,
                 dto.author,
@@ -47,6 +48,7 @@ data class PostEntity(
                 dto.likes,
                 dto.shares,
                 dto.views,
+                visibility = visibility,
                 AttachmentEmbeddable.fromDto(dto.attachment)
             )
 
@@ -67,4 +69,4 @@ data class AttachmentEmbeddable(
 }
 
 fun List<PostEntity>.toDto(): List<Post> = map(PostEntity::toDto)
-fun List<Post>.toEntity(): List<PostEntity> = map(PostEntity::fromDto)
+fun List<Post>.toEntity(visibility: Boolean): List<PostEntity> = map {PostEntity.fromDto(it, visibility)}

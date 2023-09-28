@@ -30,4 +30,5 @@
     <string name="empty_posts">Постов нет.\nЕсли создадите новый пост, то он появится здесь</string>
     <string name="image_attachment_description">Изображение</string>
     <string name="error_loading">Ошибка при загрузке данных</string>
+    <string name="new_posts">Свежие записи</string>
 </resources>

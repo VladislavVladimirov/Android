@@ -83,12 +83,15 @@ class FeedFragment : Fragment() {
                 viewModel.loadPosts()
             }
         })
+
         val swipeRefresher =  binding.postsSwipeRefresh
         binding.list.adapter = adapter
         viewModel.data.observe(viewLifecycleOwner) { state ->
-            adapter.submitList(state.posts)
-            if (adapter.currentList.size < state.posts.size) {
-                binding.list.smoothScrollToPosition(0)
+            val newPost = adapter.currentList.size < state.posts.size
+            adapter.submitList(state.posts){
+                if (newPost) {
+                    binding.list.smoothScrollToPosition(0)
+                }
             }
             binding.emptyText.isVisible = state.empty
         }
@@ -102,7 +105,9 @@ class FeedFragment : Fragment() {
             }
         }
         viewModel.newer.observe(viewLifecycleOwner) {
-            println("new posts: $it")
+            if (it != 0) {
+                binding.newPosts.visibility = View.VISIBLE
+            }
         }
 
         binding.add.setOnClickListener {
@@ -112,6 +117,12 @@ class FeedFragment : Fragment() {
         swipeRefresher.setOnRefreshListener {
             viewModel.refreshPosts()
         }
+        binding.newPosts.setOnClickListener{
+            viewModel.showHiddenPosts()
+            binding.list.smoothScrollToPosition(0)
+            it.visibility = View.GONE
+        }
+
         return binding.root
     }
 

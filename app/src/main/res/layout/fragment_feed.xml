@@ -69,4 +69,21 @@
 
         app:srcCompat="@drawable/ic_add_24"
         app:tint="@color/white" />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/new_posts"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|center"
+        android:layout_margin="@dimen/common_spacing"
+        android:contentDescription="@string/add_post"
+        android:focusable="true"
+        android:text="@string/new_posts"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        app:backgroundTint="@color/grey_800"
+        app:icon="@drawable/ic_arrow_up"
+        android:visibility="gone"
+        app:iconTint="@color/white" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

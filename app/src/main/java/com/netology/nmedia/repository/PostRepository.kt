@@ -11,5 +11,6 @@ interface PostRepository {
     suspend fun getAll()
     suspend fun save(post: Post)
     fun getNewerCount(id: Long): Flow<Int>
+    suspend fun showAll()
 }
 

@@ -27,7 +27,7 @@ class PostRepositoryImpl(private val postDao: PostDao) : PostRepository {
             val response = PostsApi.retrofitService.getAll()
             if (!response.isSuccessful) throw ApiError(response.code(), response.message())
             val body = response.body() ?: throw ApiError(response.code(), response.message())
-            postDao.insert(body.toEntity())
+            postDao.insert(body.toEntity(visibility = true))
         } catch (e: IOException) {
             throw NetworkError
         } catch (e: Exception) {
@@ -43,7 +43,7 @@ class PostRepositoryImpl(private val postDao: PostDao) : PostRepository {
                 throw ApiError(response.code(), response.message())
             }
             val body = response.body() ?: emptyList()
-            postDao.insert(body.toEntity())
+            postDao.insert(body.toEntity(visibility = false))
             emit(body.size)
         }
     }
@@ -57,7 +57,7 @@ class PostRepositoryImpl(private val postDao: PostDao) : PostRepository {
                 throw ApiError(response.code(), response.message())
             }
             val body = response.body() ?: throw ApiError(response.code(), response.message())
-            postDao.insert(PostEntity.fromDto(body))
+            postDao.insert(PostEntity.fromDto(body, visibility = true))
         } catch (e: IOException) {
             throw NetworkError
         } catch (e: Exception) {
@@ -106,5 +106,17 @@ class PostRepositoryImpl(private val postDao: PostDao) : PostRepository {
         } catch (e: Exception) {
             throw UnknownError
         }
+    }
+
+    override suspend fun showAll() {
+        try {
+            postDao.showAll()
+        } catch (e: ApiError) {
+            throw e
+            } catch (e: IOException) {
+                throw NetworkError
+            } catch (e: Exception) {
+                throw UnknownError
+            }
     }
 }
