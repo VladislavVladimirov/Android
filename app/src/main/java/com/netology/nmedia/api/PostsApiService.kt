@@ -1,7 +1,9 @@
 package com.netology.nmedia.api
 
 import com.netology.nmedia.BuildConfig
+import com.netology.nmedia.dto.Media
 import com.netology.nmedia.dto.Post
+import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Response
@@ -11,7 +13,9 @@ import retrofit2.create
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.Part
 import retrofit2.http.Path
 import java.util.concurrent.TimeUnit
 
@@ -35,6 +39,9 @@ interface PostsApiService {
 
     @GET("posts/{id}/newer")
     suspend fun getNewer(@Path("id") id: Long): Response<List<Post>>
+    @Multipart
+    @POST("media")
+    suspend fun upload(@Part part: MultipartBody.Part): Response<Media>
 }
 
 private val logging = HttpLoggingInterceptor().apply {

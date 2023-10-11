@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
+import com.netology.nmedia.BuildConfig
 import com.netology.nmedia.R
 import com.netology.nmedia.activity.enums.AttachmentType
 import com.netology.nmedia.databinding.CardPostBinding
@@ -32,7 +33,7 @@ class PostViewHolder(
 
 
             Glide.with(avatar)
-                .load("http://192.168.0.4:9999/avatars/${post.authorAvatar}")
+                .load("${BuildConfig.BASE_URL}/avatars/${post.authorAvatar}")
                 .placeholder(R.drawable.ic_loading_100dp)
                 .error(R.drawable.ic_error_100dp)
                 .apply(RequestOptions.bitmapTransform(CircleCrop()))
@@ -41,9 +42,8 @@ class PostViewHolder(
 
             if (post.attachment?.type == AttachmentType.IMAGE) {
                 imageAttachment.visibility = View.VISIBLE
-                imageAttachment.contentDescription = post.attachment.description
                 Glide.with(imageAttachment)
-                    .load("http://192.168.0.4:9999/images/${post.attachment.url}")
+                    .load("${BuildConfig.BASE_URL}/media/${post.attachment.url}")
                     .timeout(10_000)
                     .into(imageAttachment)
             }  else {
@@ -63,14 +63,14 @@ class PostViewHolder(
                         if (it.contains("youtu.be")) {
                             videoId = it.split(".be/")[1]
                             val videoPreviewUrl =
-                                "http://img.youtube.com/vi/$videoId/maxresdefault.jpg"
+                                "https://img.youtube.com/vi/$videoId/maxresdefault.jpg"
                             Glide.with(youtubePlayerPreview)
                                 .load(videoPreviewUrl)
                                 .timeout(10_000)
                                 .into(youtubePlayerPreview)
                         }
                         videoId = it.split("v=")[1]
-                        val videoPreviewUrl = "http://img.youtube.com/vi/$videoId/maxresdefault.jpg"
+                        val videoPreviewUrl = "https://img.youtube.com/vi/$videoId/maxresdefault.jpg"
                         Glide.with(youtubePlayerPreview)
                             .load(videoPreviewUrl)
                             .timeout(10_000)
@@ -111,8 +111,11 @@ class PostViewHolder(
                     }
                 }.show()
             }
-            root.setOnClickListener {
+            content.setOnClickListener {
                 onInteractionListener.onPostClick(post)
+            }
+            imageAttachment.setOnClickListener {
+                onInteractionListener.onImageClick(post)
             }
 
             youtubePlayerPreview.setOnClickListener {

@@ -9,5 +9,6 @@ interface OnInteractionListener {
     fun onEdit(post: Post) {}
     fun onPlay(post: Post) {}
     fun onPostClick(post: Post) {}
+    fun onImageClick(post:Post) {}
     fun onRefresh() {}
 }

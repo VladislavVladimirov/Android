@@ -11,5 +11,8 @@
     <color name="light_blue">#61b1e8</color>
     <color name="grey_800">#424242</color>
     <color name="grey_900">#212121</color>
+    <color name="ucrop_color_toolbar">@android:color/transparent</color>
+    <color name="ucrop_color_statusbar">@color/black</color>
+    <color name="ucrop_color_widget_active">@color/black</color>
 
 </resources>

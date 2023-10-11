@@ -2,6 +2,7 @@ package com.netology.nmedia.repository
 
 import com.netology.nmedia.dto.Post
 import kotlinx.coroutines.flow.Flow
+import java.io.File
 
 interface PostRepository {
     val data: Flow<List<Post>>
@@ -12,5 +13,6 @@ interface PostRepository {
     suspend fun save(post: Post)
     fun getNewerCount(id: Long): Flow<Int>
     suspend fun showAll()
+    suspend fun saveWithAttachment(file: File, post: Post)
 }
 

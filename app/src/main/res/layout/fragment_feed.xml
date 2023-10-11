@@ -82,7 +82,7 @@
         android:textAllCaps="false"
         android:textColor="@color/white"
         app:backgroundTint="@color/grey_800"
-        app:icon="@drawable/ic_arrow_up"
+        app:icon="@drawable/ic_arrow_up_24"
         android:visibility="gone"
         app:iconTint="@color/white" />
 

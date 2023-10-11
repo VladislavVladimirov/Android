@@ -11,6 +11,7 @@ import com.netology.nmedia.db.AppDb
 import com.netology.nmedia.dto.Post
 import com.netology.nmedia.model.FeedModel
 import com.netology.nmedia.model.FeedModelState
+import com.netology.nmedia.model.PhotoModel
 import com.netology.nmedia.repository.DraftRepository
 import com.netology.nmedia.repository.DraftRepositorySharedPrefsImpl
 import com.netology.nmedia.repository.PostRepository
@@ -45,13 +46,20 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     val postCreated: LiveData<Unit>
         get() = _postCreated
     val newer: LiveData<Int> = data.switchMap {
-        repository.getNewerCount(it.posts.firstOrNull()?.id ?: 0L)
+        repository.getNewerCount(it.posts.firstOrNull { post ->
+            post.author != "Student"
+        }?.id ?: 0L)
             .asLiveData(Dispatchers.Default)
     }
+    private val _photoState = MutableLiveData<PhotoModel?>()
+    val photoState: LiveData<PhotoModel?>
+        get() = _photoState
     init {
         loadPosts()
     }
-
+    fun changePhoto(photoModel: PhotoModel?) {
+        _photoState.value = photoModel
+    }
     fun loadPosts() = viewModelScope.launch {
         try {
             _dataState.value = FeedModelState(loading = true)
@@ -72,17 +80,20 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun save() {
-        edited.value?.let {
+        edited.value?.let { post ->
             _postCreated.value = Unit
             viewModelScope.launch {
                 try {
-                    repository.save(it)
+                   _photoState.value?.let { photoModel ->
+                       photoModel.file?.let { repository.saveWithAttachment(it, post) }
+                   } ?: repository.save(post)
                     _dataState.value = FeedModelState()
                 } catch (e: Exception) {
                     _dataState.value = FeedModelState(error = true)
                 }
             }
         }
+        _photoState.value = null
         edited.value = empty
     }
 

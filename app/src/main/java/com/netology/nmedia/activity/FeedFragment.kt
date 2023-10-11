@@ -82,17 +82,19 @@ class FeedFragment : Fragment() {
             override fun onRefresh() {
                 viewModel.loadPosts()
             }
+
+            override fun onImageClick(post: Post) {
+                findNavController().navigate(R.id.action_feedFragment_to_imageFragment,
+                    Bundle().apply {
+                        textArg = post.attachment?.url.toString()
+                    })
+            }
         })
 
-        val swipeRefresher =  binding.postsSwipeRefresh
+        val swipeRefresher = binding.postsSwipeRefresh
         binding.list.adapter = adapter
         viewModel.data.observe(viewLifecycleOwner) { state ->
-            val newPost = adapter.currentList.size < state.posts.size
-            adapter.submitList(state.posts){
-                if (newPost) {
-                    binding.list.smoothScrollToPosition(0)
-                }
-            }
+            adapter.submitList(state.posts)
             binding.emptyText.isVisible = state.empty
         }
         viewModel.dataState.observe(viewLifecycleOwner) { state ->
@@ -117,7 +119,7 @@ class FeedFragment : Fragment() {
         swipeRefresher.setOnRefreshListener {
             viewModel.refreshPosts()
         }
-        binding.newPosts.setOnClickListener{
+        binding.newPosts.setOnClickListener {
             viewModel.showHiddenPosts()
             binding.list.smoothScrollToPosition(0)
             it.visibility = View.GONE

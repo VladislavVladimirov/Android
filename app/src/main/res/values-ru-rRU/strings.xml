@@ -7,8 +7,8 @@
     <string name="description_like_button">Лайк</string>
     <string name="description_share_button">Репост</string>
     <string name="description_views">Просмотры</string>
-    <string name="menu_remove">Удалить</string>
-    <string name="menu_edit">Редактировать</string>
+    <string name="remove">Удалить</string>
+    <string name="edit">Редактировать</string>
     <string name="post_text">Введите текст</string>
     <string name="description_post_publish">Опубликовать пост</string>
     <string name="error_empty_content">Содержимое поста не может быть пустым</string>
@@ -31,4 +31,10 @@
     <string name="image_attachment_description">Изображение</string>
     <string name="error_loading">Ошибка при загрузке данных</string>
     <string name="new_posts">Свежие записи</string>
+    <string name="take_a_photo_description">Сделать фото</string>
+    <string name="pick_a_photo_from_gallery_description">Выбрать фото из галереи</string>
+    <string name="photo_preview_description">Превью фотографии</string>
+    <string name="save">Сохранить</string>
+    <string name="back">Назад</string>
+    <string name="image_view_description">Изображение</string>
 </resources>

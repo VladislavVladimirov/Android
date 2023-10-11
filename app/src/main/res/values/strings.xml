@@ -6,8 +6,8 @@
     <string name="description_like_button">Like </string>
     <string name="description_share_button">Repost</string>
     <string name="description_views">Views</string>
-    <string name="menu_remove">Remove</string>
-    <string name="menu_edit">Edit</string>
+    <string name="remove">Remove</string>
+    <string name="edit">Edit</string>
     <string name="post_text">Input text</string>
     <string name="description_post_publish">Publish post</string>
     <string name="error_empty_content">"Content can't be empty"</string>
@@ -30,6 +30,11 @@
     <string name="image_attachment_description">Image</string>
     <string name="error_loading">An error occurred while loading data</string>
     <string name="new_posts">New posts</string>
-
+    <string name="take_a_photo_description">Take a photo</string>
+    <string name="pick_a_photo_from_gallery_description">Pick a photo from gallery</string>
+    <string name="photo_preview_description">Photo preview</string>
+    <string name="save">Save</string>
+    <string name="back">Back</string>
+    <string name="image_view_description">Image</string>
 
 </resources>

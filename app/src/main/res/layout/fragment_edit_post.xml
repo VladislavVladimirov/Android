@@ -7,74 +7,101 @@
     android:background="@color/grey_900"
     tools:context="com.netology.nmedia.activity.EditPostFragment">
 
-    <TextView
-        android:id="@+id/header_background"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:background="@color/black"
-        android:textSize="@dimen/header_text_size"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/header_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/common_spacing"
+        android:padding="@dimen/icon_button_padding"
         android:text="@string/description_edit_post"
         android:textSize="@dimen/header_text_size"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.constraintlayout.widget.Barrier
-        android:id="@+id/barrierHeader"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:barrierDirection="bottom"
-        app:constraint_referenced_ids="header_title,header_background"
-        android:background="@color/white"
-        />
-
-    <EditText
-        android:id="@+id/edit"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:autoLink="web"
-        android:background="@android:color/transparent"
-        android:gravity="start|top"
-        android:hint="@string/post_text"
-        android:inputType="textMultiLine"
-        android:padding="@dimen/common_spacing"
-        android:layout_marginTop="@dimen/edit_text_margin_top"
-        android:textSize="@dimen/new_post_preview_text_size"
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/buttonPanel"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/header_background"
-         />
+        app:layout_constraintTop_toBottomOf="@id/header_title">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/ok"
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+
+            <EditText
+                android:id="@+id/edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autoLink="web"
+                android:autofillHints=""
+                android:background="@android:color/transparent"
+                android:hint="@string/post_text"
+                android:inputType="textMultiLine"
+                android:padding="@dimen/common_spacing"
+                android:textSize="@dimen/new_post_preview_text_size" />
+
+            <FrameLayout
+                android:id="@+id/photo_preview_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/photo_preview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:contentDescription="@string/photo_preview_description" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/remove_photo"
+                    style="@style/Widget.AppTheme.RemoveButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|center_horizontal"
+                    android:text="@string/remove"
+                     />
+
+            </FrameLayout>
+
+
+
+        </LinearLayout>
+    </ScrollView>
+
+
+    <LinearLayout
+        android:id="@+id/buttonPanel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/common_spacing"
-        android:contentDescription="@string/add_post"
-        app:backgroundTint="@color/grey_800"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_confirm_48"
-        app:tint="@color/white" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/cancel_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/common_spacing"
-        android:contentDescription="@string/description_cancel"
-        android:translationY="-58dp"
-        app:backgroundTint="@color/grey_800"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_cancel_48"
-        app:tint="@color/white" />
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:id="@+id/take_photo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/take_a_photo_description"
+            android:padding="@dimen/icon_button_padding"
+            android:src="@drawable/ic_add_photo_camera_24" />
+
+        <ImageView
+            android:id="@+id/pick_photo_from_gallery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/pick_a_photo_from_gallery_description"
+            android:padding="@dimen/icon_button_padding"
+            android:src="@drawable/ic_add_gallery_photo_24" />
+
+    </LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
