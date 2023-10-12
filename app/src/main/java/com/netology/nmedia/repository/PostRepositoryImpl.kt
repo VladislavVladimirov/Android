@@ -1,6 +1,6 @@
 package com.netology.nmedia.repository
 
-import com.netology.nmedia.activity.enums.AttachmentType
+import com.netology.nmedia.enums.AttachmentType
 import com.netology.nmedia.api.PostsApi
 import com.netology.nmedia.dao.PostDao
 import com.netology.nmedia.dto.Attachment

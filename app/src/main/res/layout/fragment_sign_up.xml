@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black">
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/logo"
+        android:src="@drawable/ic_launcher_foreground"
+        app:layout_constraintBottom_toTopOf="@id/buttonPanel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:visibility="visible"
+        />
+    <FrameLayout
+        android:id="@+id/photo_preview_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/buttonPanel"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_margin="@dimen/common_spacing"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/photo_preview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:contentDescription="@string/photo_preview_description" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/remove_photo"
+            style="@style/Widget.AppTheme.RemoveButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:text="@string/remove" />
+
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/backplate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/common_spacing"
+        android:background="@drawable/background_rounded_grey_900"
+        android:padding="88dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="VisualLintOverlap" />
+
+    <EditText
+        android:id="@+id/name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/common_spacing"
+        android:autofillHints=""
+        android:backgroundTint="@color/white"
+        android:hint="@string/input_name"
+        android:inputType="text"
+        android:minHeight="48dp"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="@id/backplate"
+        app:layout_constraintStart_toStartOf="@id/backplate"
+        app:layout_constraintTop_toTopOf="@id/backplate"
+        tools:ignore="VisualLintTextFieldSize" />
+
+    <EditText
+        android:id="@+id/login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/common_spacing"
+        android:autofillHints=""
+        android:backgroundTint="@color/white"
+        android:hint="@string/login"
+        android:inputType="text"
+        android:minHeight="48dp"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="@id/backplate"
+        app:layout_constraintStart_toStartOf="@id/backplate"
+        app:layout_constraintTop_toBottomOf="@id/name"
+        tools:ignore="VisualLintTextFieldSize" />
+
+    <EditText
+        android:id="@+id/password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/common_spacing"
+        android:autofillHints=""
+        android:backgroundTint="@color/white"
+        android:hint="@string/password"
+        android:inputType="textPassword"
+        android:minHeight="48dp"
+        android:paddingBottom="@dimen/common_spacing"
+        app:layout_constraintEnd_toEndOf="@id/backplate"
+        app:layout_constraintStart_toStartOf="@id/backplate"
+        app:layout_constraintTop_toBottomOf="@id/login"
+        tools:ignore="VisualLintTextFieldSize" />
+
+    <EditText
+        android:id="@+id/confirm_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/common_spacing"
+        android:autofillHints=""
+        android:backgroundTint="@color/white"
+        android:hint="@string/confirm_password"
+        android:inputType="textPassword"
+        android:minHeight="48dp"
+        android:paddingBottom="@dimen/common_spacing"
+        app:layout_constraintBottom_toBottomOf="@id/backplate"
+        app:layout_constraintEnd_toEndOf="@id/backplate"
+        app:layout_constraintStart_toStartOf="@id/backplate"
+        app:layout_constraintTop_toBottomOf="@id/password"
+        tools:ignore="VisualLintTextFieldSize" />
+
+    <LinearLayout
+        android:id="@+id/buttonPanel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/backplate"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:id="@+id/take_photo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/take_a_photo_description"
+            android:padding="@dimen/icon_button_padding"
+            android:src="@drawable/ic_add_photo_camera_24" />
+
+        <ImageView
+            android:id="@+id/pick_photo_from_gallery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/pick_a_photo_from_gallery_description"
+            android:padding="@dimen/icon_button_padding"
+            android:src="@drawable/ic_add_gallery_photo_24" />
+
+    </LinearLayout>
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/sign_up"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sign_up"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/backplate" />
+
+    <ProgressBar
+        android:id="@+id/loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:theme="@style/ProgressBarTheme"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/sign_up"
+        tools:visibility="visible" />
+</androidx.constraintlayout.widget.ConstraintLayout>

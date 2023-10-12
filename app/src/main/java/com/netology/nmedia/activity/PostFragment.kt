@@ -10,6 +10,7 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.netology.nmedia.R
@@ -19,6 +20,7 @@ import com.netology.nmedia.adapter.OnInteractionListener
 import com.netology.nmedia.adapter.PostViewHolder
 import com.netology.nmedia.dto.Post
 import com.netology.nmedia.util.AndroidUtils
+import com.netology.nmedia.viewmodel.AuthViewModel
 
 
 import com.netology.nmedia.viewmodel.PostViewModel
@@ -26,6 +28,7 @@ import com.netology.nmedia.viewmodel.PostViewModel
 class PostFragment : Fragment() {
 
     private val viewModel: PostViewModel by activityViewModels()
+    private val authViewModel: AuthViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,7 +39,14 @@ class PostFragment : Fragment() {
         val swipeRefresher = binding.postSwipeRefresh
         val listener = object : OnInteractionListener {
             override fun onLike(post: Post) {
-                viewModel.likeById(post)
+                if (authViewModel.isAuthorized) {
+                    viewModel.likeById(post)
+                } else {
+                    Snackbar.make(binding.root, R.string.sign_in_error, Snackbar.LENGTH_LONG)
+                        .setAction(R.string.sign_in) {
+                            findNavController().navigate(R.id.action_postFragment_to_signInFragment)
+                        }.show()
+                }
             }
 
             override fun onShare(post: Post) {
@@ -78,13 +88,22 @@ class PostFragment : Fragment() {
             override fun onRefresh() {
                 viewModel.loadPosts()
             }
+
         }
         val id = requireNotNull(requireArguments().textArg).toLong()
         binding.postContent.apply {
             viewModel.data.observe(viewLifecycleOwner) { it ->
                 val viewHolder = PostViewHolder(binding.postContent, listener)
                 val post = it.posts.find { it.id == id }
-                post?.let { viewHolder.bind(post) }
+                post?.let { viewHolder.bind(post)
+                    imageAttachment.setOnClickListener {
+                        findNavController().navigate(
+                            R.id.action_postFragment_to_imageFragment,
+                            Bundle().apply {
+                                textArg = post.attachment?.url.toString()
+                            })
+                    }
+                }
             }
             viewModel.dataState.observe(viewLifecycleOwner) {
                 binding.progress.isVisible = it.loading

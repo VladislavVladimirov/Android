@@ -36,5 +36,19 @@
     <string name="save">Save</string>
     <string name="back">Back</string>
     <string name="image_view_description">Image</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="sign_in">Sign In</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="login">Input login</string>
+    <string name="password">Input password</string>
+    <string name="authorization">Sign in</string>
+    <string name="logo">Logo</string>
+    <string name="error_empty_login_and_pass">Error! Enter login and password</string>
+    <string name="sign_in_error">Sign in to like posts</string>
+    <string name="accept_sign_out">Are you sure you want to sign out?</string>
+    <string name="input_name">Input name</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="error_empty_field">Error! Fill in all fields</string>
+    <string name="error_confirm_password">Passwords don\'t match. Please, try again</string>
 
 </resources>

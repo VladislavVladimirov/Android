@@ -37,4 +37,18 @@
     <string name="save">Сохранить</string>
     <string name="back">Назад</string>
     <string name="image_view_description">Изображение</string>
+    <string name="sign_out">Выйти</string>
+    <string name="sign_in">Войти</string>
+    <string name="sign_up">Зарегистрироваться</string>
+    <string name="login">Введите логин</string>
+    <string name="password">Введите пароль</string>
+    <string name="authorization">Войти</string>
+    <string name="logo">Логотип</string>
+    <string name="error_empty_login_and_pass">Ошибка! Поля логина и пароля не могут быть пустыми</string>
+    <string name="sign_in_error">Авторизуйтесь, чтобы лайкать посты</string>
+    <string name="accept_sign_out">Вы действительно хотите выйти?</string>
+    <string name="input_name">Введите имя</string>
+    <string name="confirm_password">Подтвердите пароль</string>
+    <string name="error_empty_field">Ошибка! Заполните все поля</string>
+    <string name="error_confirm_password">Пароли не совпадают. Пожалуйста, попробуйте еще раз</string>
 </resources>

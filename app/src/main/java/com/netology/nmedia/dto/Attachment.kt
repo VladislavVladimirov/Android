@@ -1,6 +1,6 @@
 package com.netology.nmedia.dto
 
-import com.netology.nmedia.activity.enums.AttachmentType
+import com.netology.nmedia.enums.AttachmentType
 
 data class Attachment(
     val url: String,

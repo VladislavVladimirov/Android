@@ -2,13 +2,14 @@ package com.netology.nmedia.adapter
 
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import com.netology.nmedia.BuildConfig
 import com.netology.nmedia.R
-import com.netology.nmedia.activity.enums.AttachmentType
+import com.netology.nmedia.enums.AttachmentType
 import com.netology.nmedia.databinding.CardPostBinding
 import com.netology.nmedia.dto.Post
 import com.netology.nmedia.util.AndroidUtils
@@ -30,6 +31,8 @@ class PostViewHolder(
             share.text = PostFormatter.formatCount(post.shares)
             views.text = PostFormatter.formatCount(post.views)
             like.isChecked = post.likedByMe
+            menu.isVisible = post.ownedByMe
+
 
 
             Glide.with(avatar)
