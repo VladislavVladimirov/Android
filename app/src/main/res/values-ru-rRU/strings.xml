@@ -51,4 +51,6 @@
     <string name="confirm_password">Подтвердите пароль</string>
     <string name="error_empty_field">Ошибка! Заполните все поля</string>
     <string name="error_confirm_password">Пароли не совпадают. Пожалуйста, попробуйте еще раз</string>
+    <string name="new_notification">Новое уведомление</string>
+    <string name="notification_not_updated">Обновите приложение, чтобы уведомления снова отображались</string>
 </resources>

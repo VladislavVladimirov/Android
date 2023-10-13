@@ -4,6 +4,7 @@ import com.netology.nmedia.BuildConfig
 import com.netology.nmedia.auth.AppAuth
 import com.netology.nmedia.dto.Media
 import com.netology.nmedia.dto.Post
+import com.netology.nmedia.dto.PushToken
 import com.netology.nmedia.model.AuthModel
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
@@ -26,7 +27,7 @@ import java.util.concurrent.TimeUnit
 
 private const val BASE_URL = "${BuildConfig.BASE_URL}/api/"
 
-interface PostsApiService {
+interface ApiService {
     @GET("posts")
     suspend fun getAll(): Response<List<Post>>
 
@@ -56,14 +57,6 @@ interface PostsApiService {
         @Field("pass") pass: String
     ): Response<AuthModel>
 
-    @FormUrlEncoded
-    @POST("users/registration")
-    suspend fun registerUser(
-        @Field("login") login: String,
-        @Field("pass") pass: String,
-        @Field("name") name: String
-    ): Response<AuthModel>
-
     @Multipart
     @POST("users/registration")
     suspend fun registerWithPhoto(
@@ -72,6 +65,9 @@ interface PostsApiService {
         @Part("name") name: RequestBody,
         @Part media: MultipartBody.Part,
     ): Response<AuthModel>
+
+    @POST("users/push-tokens")
+    suspend fun uploadPushToken(@Body pushToken: PushToken): Response<Unit>
 }
 
 private val logging = HttpLoggingInterceptor().apply {
@@ -98,8 +94,8 @@ private val retrofit = Retrofit.Builder()
     .baseUrl(BASE_URL)
     .build()
 
-object PostsApi {
-    val retrofitService: PostsApiService by lazy {
+object Api {
+    val retrofitService: ApiService by lazy {
         retrofit.create()
     }
 }

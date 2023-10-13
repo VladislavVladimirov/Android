@@ -50,5 +50,7 @@
     <string name="confirm_password">Confirm password</string>
     <string name="error_empty_field">Error! Fill in all fields</string>
     <string name="error_confirm_password">Passwords don\'t match. Please, try again</string>
+    <string name="new_notification">New notification</string>
+    <string name="notification_not_updated">Update the app, so notifications will be displayed again</string>
 
 </resources>

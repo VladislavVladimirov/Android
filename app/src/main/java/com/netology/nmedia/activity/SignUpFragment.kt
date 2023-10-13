@@ -67,32 +67,7 @@ class SignUpFragment : Fragment() {
                 findNavController().navigateUp()
             }
         }
-        binding.signUp.setOnClickListener {
-            AndroidUtils.hideKeyboard(requireView())
-            val login = binding.login.text.toString().trim()
-            val password = binding.password.text.toString().trim()
-            val confirmPassword = binding.confirmPassword.text.toString().trim()
-            val name = binding.name.text.toString()
-            if (login.isBlank() || password.isBlank() || name.isBlank() || confirmPassword.isBlank()) {
-                Snackbar.make(binding.root,
-                    getString(R.string.error_empty_field), Snackbar.LENGTH_LONG).show()
-            } else {
-                if (password == confirmPassword) {
-                    viewModel.signUp(login, password, name)
-                    if (viewModel.photoState.value != PhotoModel()) {
-                        viewModel.photoState.value?.file?.let { file ->
-                            viewModel.signUpWithAvatar(login, password, name,
-                                file
-                            )
-                            viewModel.changePhoto(null)
-                        }
-                    }
-                } else {
-                    Snackbar.make(binding.root,
-                        getString(R.string.error_confirm_password), Snackbar.LENGTH_LONG).show()
-                }
-            }
-        }
+
         binding.takePhoto.setOnClickListener {
             ImagePicker.with(this)
                 .crop()
@@ -121,6 +96,29 @@ class SignUpFragment : Fragment() {
                 binding.photoPreviewContainer.isVisible = false
                 binding.logo.isVisible = true
                 return@observe
+            }
+            binding.signUp.setOnClickListener {
+                AndroidUtils.hideKeyboard(requireView())
+                val login = binding.login.text.toString().trim()
+                val password = binding.password.text.toString().trim()
+                val confirmPassword = binding.confirmPassword.text.toString().trim()
+                val name = binding.name.text.toString()
+                if (login.isBlank() || password.isBlank() || name.isBlank() || confirmPassword.isBlank()) {
+                    Snackbar.make(binding.root,
+                        getString(R.string.error_empty_field), Snackbar.LENGTH_LONG).show()
+                } else {
+                    if (password == confirmPassword) {
+                        viewModel.photoState.value?.file?.let { file ->
+                            viewModel.signUpWithAvatar(login, password, name,
+                                file
+                            )
+                            viewModel.changePhoto(null)
+                        }
+                    } else {
+                        Snackbar.make(binding.root,
+                            getString(R.string.error_confirm_password), Snackbar.LENGTH_LONG).show()
+                    }
+                }
             }
             binding.photoPreviewContainer.isVisible = true
             binding.logo.isVisible = false

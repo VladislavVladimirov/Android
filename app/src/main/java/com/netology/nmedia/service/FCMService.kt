@@ -13,7 +13,8 @@ import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
 import android.Manifest
 import com.netology.nmedia.R
-import java.lang.IllegalArgumentException
+import com.netology.nmedia.auth.AppAuth
+import org.json.JSONObject
 import kotlin.random.Random
 
 class FCMService : FirebaseMessagingService() {
@@ -21,45 +22,59 @@ class FCMService : FirebaseMessagingService() {
     private val content = "content"
     private val channelId = "remote"
     private val gson = Gson()
-
+    private val pushStub by lazy {
+      getString(R.string.new_notification)
+    }
     override fun onCreate() {
         super.onCreate()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = getString(R.string.channel_remote_name)
-            val descriptionText = getString(R.string.channel_remote_description)
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel(channelId, name, importance).apply {
-                description = descriptionText
-            }
-            val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            manager.createNotificationChannel(channel)
+        val name = getString(R.string.channel_remote_name)
+        val descriptionText = getString(R.string.channel_remote_description)
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val channel = NotificationChannel(channelId, name, importance).apply {
+            description = descriptionText
         }
+        val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        manager.createNotificationChannel(channel)
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
-        message.data[action]?.let {
-            try {
-                when (Action.valueOf(it)) {
-                    Action.LIKE -> handleLike(
-                        gson.fromJson(
-                            message.data[content],
-                            Like::class.java
-                        )
-                    )
-
-                    Action.NEW_POST -> handleNewPost(
-                        gson.fromJson(
-                            message.data[content],
-                            NewPost::class.java
-                        )
-                    )
+        val authId = AppAuth.getInstance().authStateFlow.value.id
+        try {
+            if (message.data["action"] == null) {
+                val pushJson = message.data.values.firstOrNull()?.let { JSONObject(it) }
+                val recipientId: String? = pushJson?.optString("recipientId")
+                val content: String = pushJson?.optString("content") ?: pushStub
+                println("..........................................")
+                when(recipientId){
+                    "null", authId.toString() -> handlePush(content)
+                    "0" -> AppAuth.getInstance().uploadPushToken()
+                    else -> AppAuth.getInstance().uploadPushToken()
                 }
-            } catch (e: IllegalArgumentException) {
-                handleUnknownAction()
+            } else {
+                message.data["action"]?.let {
+                    when (Action.valueOf(it)) {
+                        Action.LIKE -> handleLike(
+                            gson.fromJson(message.data["content"], Like::class.java)
+                        )
+                        Action.NEW_POST -> handleNewPost(
+                            gson.fromJson(message.data["content"], NewPost::class.java)
+                        )
+                    }
+                }
             }
+        } catch (e: java.lang.IllegalArgumentException) {
+            handleNotUpdated()
         }
     }
+    private fun handlePush(content: String) {
+        val notification = NotificationCompat.Builder(this, channelId)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setContentTitle(content)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .build()
+        notify(notification)
 
+    }
     private fun handleUnknownAction() {
         val notification = NotificationCompat.Builder(this, channelId)
             .setSmallIcon(R.drawable.ic_notification)
@@ -109,7 +124,23 @@ class FCMService : FirebaseMessagingService() {
             .build()
         notify(notification)
     }
-
+    private fun handleNotUpdated() {
+        val notification = NotificationCompat.Builder(this, channelId)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setContentTitle(
+                getString(
+                    R.string.new_notification,
+                )
+            )
+            .setContentText(
+                getString(
+                    R.string.notification_not_updated,
+                )
+            )
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .build()
+        notify(notification)
+    }
 
     private fun notify(notification: Notification) {
         if (
@@ -124,7 +155,7 @@ class FCMService : FirebaseMessagingService() {
     }
 
     override fun onNewToken(token: String) {
-        println(token)
+       AppAuth.getInstance().uploadPushToken(token)
     }
 
 }

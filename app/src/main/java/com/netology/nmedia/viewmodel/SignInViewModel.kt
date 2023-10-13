@@ -5,7 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.netology.nmedia.api.PostsApi
+import com.netology.nmedia.api.Api
 import com.netology.nmedia.auth.AppAuth
 import com.netology.nmedia.error.ApiError
 import com.netology.nmedia.model.AuthModelState
@@ -20,7 +20,7 @@ class SignInViewModel(application: Application) : AndroidViewModel(application) 
     fun signIn(login: String, pass: String) = viewModelScope.launch {
         _dataState.value = AuthModelState(loading = true)
         try {
-            val response = PostsApi.retrofitService.updateUser(login, pass)
+            val response = Api.retrofitService.updateUser(login, pass)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }

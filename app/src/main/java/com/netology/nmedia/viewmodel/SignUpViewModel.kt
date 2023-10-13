@@ -5,7 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.netology.nmedia.api.PostsApi
+import com.netology.nmedia.api.Api
 import com.netology.nmedia.auth.AppAuth
 import com.netology.nmedia.error.ApiError
 import com.netology.nmedia.model.AuthModelState
@@ -25,20 +25,6 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
     val photoState: LiveData<PhotoModel?>
         get() = _photoState
 
-    fun signUp(login: String, pass: String, name: String) = viewModelScope.launch {
-        _dataState.value = AuthModelState(loading = true)
-        try {
-            val response = PostsApi.retrofitService.registerUser(login, pass, name)
-            if (!response.isSuccessful) {
-                throw ApiError(response.code(), response.message())
-            }
-            AppAuth.getInstance().setUser(requireNotNull(response.body()))
-            _dataState.value = AuthModelState(success = true)
-        } catch (e: Exception) {
-            _dataState.value = AuthModelState(error = true)
-        }
-    }
-
     fun signUpWithAvatar(login: String, pass: String, name: String, file: File) =
         viewModelScope.launch {
             val part = MultipartBody.Part.createFormData(
@@ -48,7 +34,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             )
             _dataState.value = AuthModelState(loading = true)
             try {
-                val response = PostsApi.retrofitService.registerWithPhoto(
+                val response = Api.retrofitService.registerWithPhoto(
                     login.toRequestBody("text/plain".toMediaType()),
                     pass.toRequestBody("text/plain".toMediaType()),
                     name.toRequestBody("text/plain".toMediaType()),
