@@ -14,12 +14,22 @@ import android.Manifest
 import com.netology.nmedia.R
 import com.netology.nmedia.activity.NewPostFragment.Companion.textArg
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class AppActivity : AppCompatActivity(R.layout.activity_app) {
+    @Inject
+    lateinit var googleApiAvailability: GoogleApiAvailability
+    @Inject
+    lateinit var firebaseMessaging: FirebaseMessaging
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
+
 
         requestNotificationsPermission()
 
@@ -62,7 +72,7 @@ class AppActivity : AppCompatActivity(R.layout.activity_app) {
         requestPermissions(arrayOf(permission), 1)
     }
     private fun checkGoogleApiAvailability() {
-        with (GoogleApiAvailability.getInstance()) {
+        with (googleApiAvailability) {
             val code = isGooglePlayServicesAvailable(this@AppActivity)
             if (code == ConnectionResult.SUCCESS) {
                 return@with
@@ -73,7 +83,7 @@ class AppActivity : AppCompatActivity(R.layout.activity_app) {
             }
             Toast.makeText(this@AppActivity, R.string.google_play_unavailable, Toast.LENGTH_LONG).show()
         }
-        FirebaseMessaging.getInstance().token.addOnSuccessListener {
+        firebaseMessaging.token.addOnSuccessListener {
             println(it)
         }
     }
