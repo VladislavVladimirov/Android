@@ -19,37 +19,22 @@ import com.netology.nmedia.R
 import com.netology.nmedia.activity.EditPostFragment.Companion.textArg
 import com.netology.nmedia.adapter.OnInteractionListener
 import com.netology.nmedia.adapter.PostsAdapter
+import com.netology.nmedia.auth.AppAuth
 import com.netology.nmedia.databinding.FragmentFeedBinding
-import com.netology.nmedia.di.DependencyContainer
 import com.netology.nmedia.dto.Post
 import com.netology.nmedia.util.AndroidUtils
 import com.netology.nmedia.viewmodel.AuthViewModel
 import com.netology.nmedia.viewmodel.PostViewModel
-import com.netology.nmedia.viewmodel.ViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class FeedFragment : Fragment() {
-    private val viewModel: PostViewModel by activityViewModels(
-        factoryProducer = {
-            ViewModelFactory(
-                dependencyContainer.repository,
-                dependencyContainer.draftRepository,
-                dependencyContainer.appAuth,
-                dependencyContainer.apiService
-            )
-        }
-    )
-    private val authViewModel: AuthViewModel by activityViewModels(
-        factoryProducer = {
-            ViewModelFactory(
-                dependencyContainer.repository,
-                dependencyContainer.draftRepository,
-                dependencyContainer.appAuth,
-                dependencyContainer.apiService
-            )
-        }
-    )
-    private val dependencyContainer = DependencyContainer.getInstance()
+    @Inject
+    lateinit var appAuth: AppAuth
+
+    private val viewModel: PostViewModel by activityViewModels()
+    private val authViewModel: AuthViewModel by activityViewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -155,7 +140,7 @@ class FeedFragment : Fragment() {
                                 Snackbar.LENGTH_LONG
                             )
                                 .setAction(R.string.sign_out) {
-                                    dependencyContainer.appAuth.removeUser()
+                                    appAuth.removeUser()
                                 }.show()
 
                             true

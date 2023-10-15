@@ -12,34 +12,16 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.netology.nmedia.R
 import com.netology.nmedia.databinding.FragmentSignInBinding
-import com.netology.nmedia.di.DependencyContainer
 import com.netology.nmedia.util.AndroidUtils
 import com.netology.nmedia.viewmodel.PostViewModel
 import com.netology.nmedia.viewmodel.SignInViewModel
-import com.netology.nmedia.viewmodel.ViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SignInFragment : Fragment() {
-    private val dependencyContainer = DependencyContainer.getInstance()
-    private val viewModel: SignInViewModel by activityViewModels(
-        factoryProducer = {
-            ViewModelFactory(
-                dependencyContainer.repository,
-                dependencyContainer.draftRepository,
-                dependencyContainer.appAuth,
-                dependencyContainer.apiService
-            )
-        }
-    )
-    private val postViewModel: PostViewModel by activityViewModels(
-        factoryProducer = {
-            ViewModelFactory(
-                dependencyContainer.repository,
-                dependencyContainer.draftRepository,
-                dependencyContainer.appAuth,
-                dependencyContainer.apiService
-            )
-        }
-    )
+
+    private val viewModel: SignInViewModel by activityViewModels()
+    private val postViewModel: PostViewModel by activityViewModels()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

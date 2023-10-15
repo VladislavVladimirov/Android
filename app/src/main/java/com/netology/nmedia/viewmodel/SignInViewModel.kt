@@ -8,10 +8,12 @@ import com.netology.nmedia.api.ApiService
 import com.netology.nmedia.auth.AppAuth
 import com.netology.nmedia.error.ApiError
 import com.netology.nmedia.model.AuthModelState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-
-class SignInViewModel(
+@HiltViewModel
+class SignInViewModel @Inject constructor(
     private val appAuth: AppAuth,
     private val apiService: ApiService
 ) : ViewModel() {

@@ -23,9 +23,10 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 import java.io.IOException
+import javax.inject.Inject
 
 
-class PostRepositoryImpl(
+class PostRepositoryImpl @Inject constructor(
     private val postDao: PostDao,
     private val apiService: ApiService,
 ) : PostRepository {

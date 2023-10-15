@@ -15,11 +15,13 @@ import com.netology.nmedia.model.PhotoModel
 import com.netology.nmedia.repository.DraftRepository
 import com.netology.nmedia.repository.PostRepository
 import com.netology.nmedia.util.SingleLiveEvent
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
 private val empty = Post(
@@ -34,8 +36,8 @@ private val empty = Post(
     views = 0,
     authorAvatar = "",
 )
-
-class PostViewModel(
+@HiltViewModel
+class PostViewModel @Inject constructor(
     private val repository: PostRepository,
     private val draftRepository: DraftRepository,
     appAuth: AppAuth

@@ -13,9 +13,10 @@ import com.google.firebase.messaging.FirebaseMessaging
 import android.Manifest
 import com.netology.nmedia.R
 import com.netology.nmedia.activity.NewPostFragment.Companion.textArg
+import dagger.hilt.android.AndroidEntryPoint
 
 
-
+@AndroidEntryPoint
 class AppActivity : AppCompatActivity(R.layout.activity_app) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

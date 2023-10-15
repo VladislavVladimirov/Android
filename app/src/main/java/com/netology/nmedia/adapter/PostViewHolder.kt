@@ -13,7 +13,7 @@ import com.netology.nmedia.enums.AttachmentType
 import com.netology.nmedia.databinding.CardPostBinding
 import com.netology.nmedia.dto.Post
 import com.netology.nmedia.util.AndroidUtils
-import com.netology.nmedia.viewmodel.PostFormatter
+import com.netology.nmedia.viewmodel.formatter.PostFormatter
 import java.lang.Exception
 
 

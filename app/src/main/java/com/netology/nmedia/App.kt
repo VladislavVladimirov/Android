@@ -1,11 +1,7 @@
 package com.netology.nmedia
 
 import android.app.Application
-import com.netology.nmedia.di.DependencyContainer
+import dagger.hilt.android.HiltAndroidApp
 
-class App: Application() {
-    override fun onCreate() {
-        super.onCreate()
-   DependencyContainer.initApp(this)
-    }
-}
+@HiltAndroidApp
+class App: Application()

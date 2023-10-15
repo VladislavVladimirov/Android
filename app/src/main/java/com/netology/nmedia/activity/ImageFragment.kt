@@ -11,6 +11,9 @@ import com.bumptech.glide.Glide
 import com.netology.nmedia.BuildConfig
 import com.netology.nmedia.activity.NewPostFragment.Companion.textArg
 import com.netology.nmedia.databinding.FragmentImageBinding
+import dagger.hilt.android.AndroidEntryPoint
+
+@AndroidEntryPoint
 class ImageFragment : Fragment() {
 
     override fun onCreateView(

@@ -19,33 +19,17 @@ import com.github.dhaval2404.imagepicker.constant.ImageProvider
 import com.google.android.material.snackbar.Snackbar
 import com.netology.nmedia.R
 import com.netology.nmedia.databinding.FragmentSignUpBinding
-import com.netology.nmedia.di.DependencyContainer
 import com.netology.nmedia.model.PhotoModel
 import com.netology.nmedia.util.AndroidUtils
 import com.netology.nmedia.viewmodel.PostViewModel
 import com.netology.nmedia.viewmodel.SignUpViewModel
-import com.netology.nmedia.viewmodel.ViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SignUpFragment : Fragment() {
-    private val dependencyContainer = DependencyContainer.getInstance()
-    private val viewModel: SignUpViewModel by activityViewModels(
-        factoryProducer = {
-            ViewModelFactory( dependencyContainer.repository,
-                dependencyContainer.draftRepository,
-                dependencyContainer.appAuth,
-                dependencyContainer.apiService)
-        }
-    )
-    private val postViewModel: PostViewModel by activityViewModels(
-        factoryProducer = {
-            ViewModelFactory(
-                dependencyContainer.repository,
-                dependencyContainer.draftRepository,
-                dependencyContainer.appAuth,
-                dependencyContainer.apiService
-            )
-        }
-    )
+
+    private val viewModel: SignUpViewModel by activityViewModels()
+    private val postViewModel: PostViewModel by activityViewModels()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

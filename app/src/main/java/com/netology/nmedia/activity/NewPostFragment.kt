@@ -22,30 +22,19 @@ import com.github.dhaval2404.imagepicker.constant.ImageProvider
 import com.google.android.material.snackbar.Snackbar
 import com.netology.nmedia.R
 import com.netology.nmedia.databinding.FragmentNewPostBinding
-import com.netology.nmedia.di.DependencyContainer
 import com.netology.nmedia.model.PhotoModel
 import com.netology.nmedia.util.AndroidUtils
 import com.netology.nmedia.util.StringArg
 import com.netology.nmedia.viewmodel.PostViewModel
-import com.netology.nmedia.viewmodel.ViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class NewPostFragment : Fragment() {
     companion object {
         var Bundle.textArg: String? by StringArg
     }
+    private val viewModel: PostViewModel by activityViewModels()
 
-    private val viewModel: PostViewModel by activityViewModels(
-        factoryProducer = {
-            ViewModelFactory(
-                dependencyContainer.repository,
-                dependencyContainer.draftRepository,
-                dependencyContainer.appAuth,
-                dependencyContainer.apiService
-            )
-        }
-    )
-    private val dependencyContainer = DependencyContainer.getInstance()
 
     override fun onCreateView(
         inflater: LayoutInflater,

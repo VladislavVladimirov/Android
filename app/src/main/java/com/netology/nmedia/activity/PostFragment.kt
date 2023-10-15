@@ -17,35 +17,16 @@ import com.netology.nmedia.activity.EditPostFragment.Companion.textArg
 import com.netology.nmedia.adapter.OnInteractionListener
 import com.netology.nmedia.adapter.PostViewHolder
 import com.netology.nmedia.databinding.FragmentPostBinding
-import com.netology.nmedia.di.DependencyContainer
 import com.netology.nmedia.dto.Post
 import com.netology.nmedia.util.AndroidUtils
 import com.netology.nmedia.viewmodel.AuthViewModel
 import com.netology.nmedia.viewmodel.PostViewModel
-import com.netology.nmedia.viewmodel.ViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class PostFragment : Fragment() {
-    private val dependencyContainer = DependencyContainer.getInstance()
-    private val viewModel: PostViewModel by activityViewModels(
-        factoryProducer = {
-            ViewModelFactory(
-                dependencyContainer.repository,
-                dependencyContainer.draftRepository,
-                dependencyContainer.appAuth,
-                dependencyContainer.apiService
-            )
-        }
-    )
-    private val authViewModel: AuthViewModel by activityViewModels(
-        factoryProducer = {
-            ViewModelFactory(
-                dependencyContainer.repository,
-                dependencyContainer.draftRepository,
-                dependencyContainer.appAuth,
-                dependencyContainer.apiService
-            )
-        }
-    )
+    private val viewModel: PostViewModel by activityViewModels()
+    private val authViewModel: AuthViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,

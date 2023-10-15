@@ -9,14 +9,16 @@ import com.netology.nmedia.auth.AppAuth
 import com.netology.nmedia.error.ApiError
 import com.netology.nmedia.model.AuthModelState
 import com.netology.nmedia.model.PhotoModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
-
-class SignUpViewModel(
+import javax.inject.Inject
+@HiltViewModel
+class SignUpViewModel @Inject constructor(
     private val appAuth: AppAuth,
     private val apiService: ApiService
 ) : ViewModel() {

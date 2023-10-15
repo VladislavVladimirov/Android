@@ -1,5 +1,6 @@
 package com.netology.nmedia.service
 
+import android.Manifest
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -11,20 +12,25 @@ import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
-import android.Manifest
 import com.netology.nmedia.R
-import com.netology.nmedia.di.DependencyContainer
+import com.netology.nmedia.auth.AppAuth
+import dagger.hilt.android.AndroidEntryPoint
 import org.json.JSONObject
+import javax.inject.Inject
 import kotlin.random.Random
 
+@AndroidEntryPoint
 class FCMService : FirebaseMessagingService() {
     private val action = "action"
     private val content = "content"
     private val channelId = "remote"
     private val gson = Gson()
     private val pushStub by lazy {
-      getString(R.string.new_notification)
+        getString(R.string.new_notification)
     }
+
+    @Inject
+    lateinit var appAuth: AppAuth
     override fun onCreate() {
         super.onCreate()
         val name = getString(R.string.channel_remote_name)
@@ -38,18 +44,18 @@ class FCMService : FirebaseMessagingService() {
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
-        val dependencyContainer = DependencyContainer.getInstance()
-        val authId = dependencyContainer.appAuth.authStateFlow.value.id
+
+        val authId = appAuth.authStateFlow.value.id
         try {
             if (message.data["action"] == null) {
                 val pushJson = message.data.values.firstOrNull()?.let { JSONObject(it) }
                 val recipientId: String? = pushJson?.optString("recipientId")
                 val content: String = pushJson?.optString("content") ?: pushStub
                 println("..........................................")
-                when(recipientId){
+                when (recipientId) {
                     "null", authId.toString() -> handlePush(content)
-                    "0" -> dependencyContainer.appAuth.uploadPushToken()
-                    else -> dependencyContainer.appAuth.uploadPushToken()
+                    "0" -> appAuth.uploadPushToken()
+                    else -> appAuth.uploadPushToken()
                 }
             } else {
                 message.data["action"]?.let {
@@ -57,6 +63,7 @@ class FCMService : FirebaseMessagingService() {
                         Action.LIKE -> handleLike(
                             gson.fromJson(message.data["content"], Like::class.java)
                         )
+
                         Action.NEW_POST -> handleNewPost(
                             gson.fromJson(message.data["content"], NewPost::class.java)
                         )
@@ -67,6 +74,7 @@ class FCMService : FirebaseMessagingService() {
             handleNotUpdated()
         }
     }
+
     private fun handlePush(content: String) {
         val notification = NotificationCompat.Builder(this, channelId)
             .setSmallIcon(R.drawable.ic_notification)
@@ -76,6 +84,7 @@ class FCMService : FirebaseMessagingService() {
         notify(notification)
 
     }
+
     private fun handleUnknownAction() {
         val notification = NotificationCompat.Builder(this, channelId)
             .setSmallIcon(R.drawable.ic_notification)
@@ -100,11 +109,15 @@ class FCMService : FirebaseMessagingService() {
                     content.postAuthor
                 )
             )
-            .setStyle(NotificationCompat.BigTextStyle().bigText( getString(
-                R.string.notification_user_liked,
-                content.userName,
-                content.postAuthor
-            )))
+            .setStyle(
+                NotificationCompat.BigTextStyle().bigText(
+                    getString(
+                        R.string.notification_user_liked,
+                        content.userName,
+                        content.postAuthor
+                    )
+                )
+            )
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .build()
         notify(notification)
@@ -125,6 +138,7 @@ class FCMService : FirebaseMessagingService() {
             .build()
         notify(notification)
     }
+
     private fun handleNotUpdated() {
         val notification = NotificationCompat.Builder(this, channelId)
             .setSmallIcon(R.drawable.ic_notification)
@@ -156,7 +170,7 @@ class FCMService : FirebaseMessagingService() {
     }
 
     override fun onNewToken(token: String) {
-        DependencyContainer.getInstance().appAuth.uploadPushToken(token)
+        appAuth.uploadPushToken(token)
     }
 
 }
