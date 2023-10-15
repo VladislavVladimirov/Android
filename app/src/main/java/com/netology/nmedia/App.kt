@@ -1,11 +1,11 @@
 package com.netology.nmedia
 
 import android.app.Application
-import com.netology.nmedia.auth.AppAuth
+import com.netology.nmedia.di.DependencyContainer
 
 class App: Application() {
     override fun onCreate() {
         super.onCreate()
-        AppAuth.initAppAuth(applicationContext)
+   DependencyContainer.initApp(this)
     }
 }

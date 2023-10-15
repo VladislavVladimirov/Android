@@ -1,24 +1,22 @@
 package com.netology.nmedia.viewmodel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import com.netology.nmedia.auth.AppAuth
-import com.netology.nmedia.db.AppDb
 import com.netology.nmedia.dto.Post
 import com.netology.nmedia.model.FeedModel
 import com.netology.nmedia.model.FeedModelState
 import com.netology.nmedia.model.PhotoModel
 import com.netology.nmedia.repository.DraftRepository
-import com.netology.nmedia.repository.DraftRepositorySharedPrefsImpl
 import com.netology.nmedia.repository.PostRepository
-import com.netology.nmedia.repository.PostRepositoryImpl
 import com.netology.nmedia.util.SingleLiveEvent
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -37,14 +35,17 @@ private val empty = Post(
     authorAvatar = "",
 )
 
-class PostViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository: PostRepository =
-        PostRepositoryImpl(AppDb.getInstance(context = application).postDao())
-    private val draftRepository: DraftRepository = DraftRepositorySharedPrefsImpl(application)
+class PostViewModel(
+    private val repository: PostRepository,
+    private val draftRepository: DraftRepository,
+    appAuth: AppAuth
+) : ViewModel() {
+
     private val _dataState = MutableLiveData<FeedModelState>()
     val dataState: LiveData<FeedModelState>
         get() = _dataState
-    val data: LiveData<FeedModel> = AppAuth.getInstance()
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val data: LiveData<FeedModel> = appAuth
         .authStateFlow
         .flatMapLatest { (myId, _) ->
             repository.data

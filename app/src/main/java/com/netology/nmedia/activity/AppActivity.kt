@@ -15,8 +15,8 @@ import com.netology.nmedia.R
 import com.netology.nmedia.activity.NewPostFragment.Companion.textArg
 
 
-class AppActivity : AppCompatActivity(R.layout.activity_app) {
 
+class AppActivity : AppCompatActivity(R.layout.activity_app) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

@@ -10,25 +10,42 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.netology.nmedia.R
-import com.netology.nmedia.databinding.FragmentPostBinding
 import com.netology.nmedia.activity.EditPostFragment.Companion.textArg
 import com.netology.nmedia.adapter.OnInteractionListener
 import com.netology.nmedia.adapter.PostViewHolder
+import com.netology.nmedia.databinding.FragmentPostBinding
+import com.netology.nmedia.di.DependencyContainer
 import com.netology.nmedia.dto.Post
 import com.netology.nmedia.util.AndroidUtils
 import com.netology.nmedia.viewmodel.AuthViewModel
-
-
 import com.netology.nmedia.viewmodel.PostViewModel
+import com.netology.nmedia.viewmodel.ViewModelFactory
 
 class PostFragment : Fragment() {
-
-    private val viewModel: PostViewModel by activityViewModels()
-    private val authViewModel: AuthViewModel by viewModels()
+    private val dependencyContainer = DependencyContainer.getInstance()
+    private val viewModel: PostViewModel by activityViewModels(
+        factoryProducer = {
+            ViewModelFactory(
+                dependencyContainer.repository,
+                dependencyContainer.draftRepository,
+                dependencyContainer.appAuth,
+                dependencyContainer.apiService
+            )
+        }
+    )
+    private val authViewModel: AuthViewModel by activityViewModels(
+        factoryProducer = {
+            ViewModelFactory(
+                dependencyContainer.repository,
+                dependencyContainer.draftRepository,
+                dependencyContainer.appAuth,
+                dependencyContainer.apiService
+            )
+        }
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,7 +59,11 @@ class PostFragment : Fragment() {
                 if (authViewModel.isAuthorized) {
                     viewModel.likeById(post)
                 } else {
-                    Snackbar.make(binding.root, R.string.sign_in_error, Snackbar.LENGTH_LONG)
+                    Snackbar.make(
+                        binding.root,
+                        R.string.sign_in_error,
+                        Snackbar.LENGTH_LONG
+                    )
                         .setAction(R.string.sign_in) {
                             findNavController().navigate(R.id.action_postFragment_to_signInFragment)
                         }.show()
@@ -95,7 +116,8 @@ class PostFragment : Fragment() {
             viewModel.data.observe(viewLifecycleOwner) { it ->
                 val viewHolder = PostViewHolder(binding.postContent, listener)
                 val post = it.posts.find { it.id == id }
-                post?.let { viewHolder.bind(post)
+                post?.let {
+                    viewHolder.bind(post)
                     imageAttachment.setOnClickListener {
                         findNavController().navigate(
                             R.id.action_postFragment_to_imageFragment,
@@ -110,7 +132,11 @@ class PostFragment : Fragment() {
                 binding.postToHide.isGone = it.error
                 swipeRefresher.isRefreshing = it.refreshing
                 if (it.error) {
-                    Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_LONG)
+                    Snackbar.make(
+                        binding.root,
+                        R.string.error_loading,
+                        Snackbar.LENGTH_LONG
+                    )
                         .setAction(R.string.retry_loading) { viewModel.loadPosts() }
                         .show()
                 }

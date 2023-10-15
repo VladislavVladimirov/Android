@@ -5,8 +5,10 @@ import androidx.lifecycle.asLiveData
 import com.netology.nmedia.auth.AppAuth
 import kotlinx.coroutines.Dispatchers
 
-class AuthViewModel: ViewModel() {
-    val authLiveData = AppAuth.getInstance().authStateFlow.asLiveData(Dispatchers.Default)
+class AuthViewModel(
+    private val appAuth: AppAuth
+) : ViewModel() {
+    val authLiveData = appAuth.authStateFlow.asLiveData(Dispatchers.Default)
     val isAuthorized: Boolean
-        get() = AppAuth.getInstance().authStateFlow.value.token != null
+        get() = appAuth.authStateFlow.value.token != null
 }

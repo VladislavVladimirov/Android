@@ -13,7 +13,7 @@ import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
 import android.Manifest
 import com.netology.nmedia.R
-import com.netology.nmedia.auth.AppAuth
+import com.netology.nmedia.di.DependencyContainer
 import org.json.JSONObject
 import kotlin.random.Random
 
@@ -38,7 +38,8 @@ class FCMService : FirebaseMessagingService() {
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
-        val authId = AppAuth.getInstance().authStateFlow.value.id
+        val dependencyContainer = DependencyContainer.getInstance()
+        val authId = dependencyContainer.appAuth.authStateFlow.value.id
         try {
             if (message.data["action"] == null) {
                 val pushJson = message.data.values.firstOrNull()?.let { JSONObject(it) }
@@ -47,8 +48,8 @@ class FCMService : FirebaseMessagingService() {
                 println("..........................................")
                 when(recipientId){
                     "null", authId.toString() -> handlePush(content)
-                    "0" -> AppAuth.getInstance().uploadPushToken()
-                    else -> AppAuth.getInstance().uploadPushToken()
+                    "0" -> dependencyContainer.appAuth.uploadPushToken()
+                    else -> dependencyContainer.appAuth.uploadPushToken()
                 }
             } else {
                 message.data["action"]?.let {
@@ -155,7 +156,7 @@ class FCMService : FirebaseMessagingService() {
     }
 
     override fun onNewToken(token: String) {
-       AppAuth.getInstance().uploadPushToken(token)
+        DependencyContainer.getInstance().appAuth.uploadPushToken(token)
     }
 
 }
