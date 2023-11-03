@@ -1,4 +1,4 @@
-package com.netology.nmedia.viewmodel
+package com.netology.nmedia.viewmodel.formatter
 
 import java.math.RoundingMode
 import java.text.DecimalFormat

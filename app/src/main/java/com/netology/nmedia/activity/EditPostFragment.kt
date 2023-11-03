@@ -25,15 +25,16 @@ import com.netology.nmedia.model.PhotoModel
 import com.netology.nmedia.util.AndroidUtils
 import com.netology.nmedia.util.StringArg
 import com.netology.nmedia.viewmodel.PostViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class EditPostFragment : Fragment() {
     companion object {
         var Bundle.textArg: String? by StringArg
 
     }
-
-    private val viewModel: PostViewModel by activityViewModels()
+    private val viewModel: PostViewModel by activityViewModels(
+    )
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

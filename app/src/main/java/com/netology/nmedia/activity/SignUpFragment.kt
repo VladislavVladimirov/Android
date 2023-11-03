@@ -1,6 +1,7 @@
 package com.netology.nmedia.activity
 
 import android.app.Activity
+
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,7 +12,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toFile
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.github.dhaval2404.imagepicker.constant.ImageProvider
@@ -22,10 +23,13 @@ import com.netology.nmedia.model.PhotoModel
 import com.netology.nmedia.util.AndroidUtils
 import com.netology.nmedia.viewmodel.PostViewModel
 import com.netology.nmedia.viewmodel.SignUpViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SignUpFragment : Fragment() {
-    private val viewModel: SignUpViewModel by viewModels( ownerProducer = ::requireParentFragment)
-    private val postViewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
+
+    private val viewModel: SignUpViewModel by activityViewModels()
+    private val postViewModel: PostViewModel by activityViewModels()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

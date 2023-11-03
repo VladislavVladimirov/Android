@@ -13,7 +13,6 @@ import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.netology.nmedia.R
@@ -26,12 +25,16 @@ import com.netology.nmedia.dto.Post
 import com.netology.nmedia.util.AndroidUtils
 import com.netology.nmedia.viewmodel.AuthViewModel
 import com.netology.nmedia.viewmodel.PostViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class FeedFragment : Fragment() {
-    private val viewModel: PostViewModel by activityViewModels()
-    private val authViewModel: AuthViewModel by viewModels()
+    @Inject
+    lateinit var appAuth: AppAuth
 
+    private val viewModel: PostViewModel by activityViewModels()
+    private val authViewModel: AuthViewModel by activityViewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -108,7 +111,7 @@ class FeedFragment : Fragment() {
         val swipeRefresher = binding.postsSwipeRefresh
 
         var currentMenuProvider: MenuProvider? = null
-        authViewModel.authLiveData.observe(viewLifecycleOwner) { authModel ->
+        authViewModel.authLiveData.observe(viewLifecycleOwner) {
             binding.add.isVisible = authViewModel.isAuthorized
             currentMenuProvider?.let(requireActivity()::removeMenuProvider)
             requireActivity().addMenuProvider(object : MenuProvider {
@@ -131,9 +134,13 @@ class FeedFragment : Fragment() {
                         }
 
                         R.id.signOut -> {
-                            Snackbar.make(binding.root, R.string.accept_sign_out, Snackbar.LENGTH_LONG)
+                            Snackbar.make(
+                                binding.root,
+                                R.string.accept_sign_out,
+                                Snackbar.LENGTH_LONG
+                            )
                                 .setAction(R.string.sign_out) {
-                                    AppAuth.getInstance().removeUser()
+                                    appAuth.removeUser()
                                 }.show()
 
                             true

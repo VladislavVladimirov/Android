@@ -1,23 +1,27 @@
 package com.netology.nmedia.viewmodel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.netology.nmedia.api.Api
+import com.netology.nmedia.api.ApiService
 import com.netology.nmedia.auth.AppAuth
 import com.netology.nmedia.error.ApiError
 import com.netology.nmedia.model.AuthModelState
 import com.netology.nmedia.model.PhotoModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
-
-class SignUpViewModel(application: Application) : AndroidViewModel(application) {
+import javax.inject.Inject
+@HiltViewModel
+class SignUpViewModel @Inject constructor(
+    private val appAuth: AppAuth,
+    private val apiService: ApiService
+) : ViewModel() {
     private val _dataState = MutableLiveData<AuthModelState>()
     val dataState: LiveData<AuthModelState>
         get() = _dataState
@@ -34,7 +38,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             )
             _dataState.value = AuthModelState(loading = true)
             try {
-                val response = Api.retrofitService.registerWithPhoto(
+                val response = apiService.registerWithPhoto(
                     login.toRequestBody("text/plain".toMediaType()),
                     pass.toRequestBody("text/plain".toMediaType()),
                     name.toRequestBody("text/plain".toMediaType()),
@@ -43,7 +47,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 if (!response.isSuccessful) {
                     throw ApiError(response.code(), response.message())
                 }
-                AppAuth.getInstance().setUser(requireNotNull(response.body()))
+              appAuth.setUser(requireNotNull(response.body()))
                 _dataState.value = AuthModelState(success = true)
             } catch (e: Exception) {
                 _dataState.value = AuthModelState(error = true)
