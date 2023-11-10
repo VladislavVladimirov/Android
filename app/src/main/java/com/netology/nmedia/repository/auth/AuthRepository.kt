@@ -1,4 +1,4 @@
-package com.netology.nmedia.repository
+package com.netology.nmedia.repository.auth
 
 import java.io.File
 

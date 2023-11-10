@@ -1,4 +1,4 @@
-package com.netology.nmedia.repository
+package com.netology.nmedia.repository.draft
 
 interface DraftRepository {
     fun saveDraft(content: String)

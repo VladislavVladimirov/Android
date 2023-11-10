@@ -1,4 +1,4 @@
-package com.netology.nmedia.repository
+package com.netology.nmedia.repository.draft
 
 import android.content.Context
 import androidx.lifecycle.MutableLiveData

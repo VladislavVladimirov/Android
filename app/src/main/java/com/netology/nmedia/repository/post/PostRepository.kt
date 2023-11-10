@@ -1,4 +1,4 @@
-package com.netology.nmedia.repository
+package com.netology.nmedia.repository.post
 
 import com.netology.nmedia.dto.Post
 import kotlinx.coroutines.flow.Flow

@@ -12,8 +12,8 @@ import com.netology.nmedia.dto.Post
 import com.netology.nmedia.model.FeedModel
 import com.netology.nmedia.model.FeedModelState
 import com.netology.nmedia.model.PhotoModel
-import com.netology.nmedia.repository.DraftRepository
-import com.netology.nmedia.repository.PostRepository
+import com.netology.nmedia.repository.draft.DraftRepository
+import com.netology.nmedia.repository.post.PostRepository
 import com.netology.nmedia.util.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers

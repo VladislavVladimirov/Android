@@ -1,11 +1,11 @@
-package com.netology.nmedia.repository.di
+package com.netology.nmedia.repository
 
-import com.netology.nmedia.repository.AuthRepository
-import com.netology.nmedia.repository.AuthRepositoryImpl
-import com.netology.nmedia.repository.DraftRepository
-import com.netology.nmedia.repository.DraftRepositorySharedPrefsImpl
-import com.netology.nmedia.repository.PostRepository
-import com.netology.nmedia.repository.PostRepositoryImpl
+import com.netology.nmedia.repository.auth.AuthRepository
+import com.netology.nmedia.repository.auth.AuthRepositoryImpl
+import com.netology.nmedia.repository.draft.DraftRepository
+import com.netology.nmedia.repository.draft.DraftRepositorySharedPrefsImpl
+import com.netology.nmedia.repository.post.PostRepository
+import com.netology.nmedia.repository.post.PostRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
