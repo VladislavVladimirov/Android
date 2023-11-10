@@ -8,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
-import com.netology.nmedia.BuildConfig
 import com.netology.nmedia.activity.NewPostFragment.Companion.textArg
 import com.netology.nmedia.databinding.FragmentImageBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -25,7 +24,7 @@ class ImageFragment : Fragment() {
 
         val url = requireNotNull(requireArguments().textArg)
         Glide.with(binding.photo)
-            .load("${BuildConfig.BASE_URL}/media/${url}")
+            .load(url)
             .timeout(10_000)
             .into(binding.photo)
 

@@ -1,6 +1,6 @@
 package com.netology.nmedia.model
 
 data class AuthModel(
-    val id: Long = 0L,
-    val token: String? = null
+    val id: Int = 0,
+    val token: String? = null,
 )

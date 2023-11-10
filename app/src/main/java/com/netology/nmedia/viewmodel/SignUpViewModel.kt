@@ -4,23 +4,19 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.netology.nmedia.api.ApiService
-import com.netology.nmedia.auth.AppAuth
-import com.netology.nmedia.error.ApiError
 import com.netology.nmedia.model.AuthModelState
 import com.netology.nmedia.model.PhotoModel
+import com.netology.nmedia.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 import javax.inject.Inject
+
+
+
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
-    private val appAuth: AppAuth,
-    private val apiService: ApiService
+    private val repository: AuthRepository
 ) : ViewModel() {
     private val _dataState = MutableLiveData<AuthModelState>()
     val dataState: LiveData<AuthModelState>
@@ -29,31 +25,28 @@ class SignUpViewModel @Inject constructor(
     val photoState: LiveData<PhotoModel?>
         get() = _photoState
 
-    fun signUpWithAvatar(login: String, pass: String, name: String, file: File) =
+    fun signUp(login: String, pass: String, name: String) = viewModelScope.launch {
+        _dataState.value = AuthModelState(loading = true)
+        try {
+            repository.signUp(login, pass, name)
+            _dataState.value = AuthModelState(success = true)
+        } catch (e: Exception) {
+            _dataState.value = AuthModelState(error = true)
+        }
+    }
+
+    fun signUpWithAvatar(login: String, pass: String, name: String, file: File?) =
         viewModelScope.launch {
-            val part = MultipartBody.Part.createFormData(
-                "file.png",
-                file.name,
-                file.asRequestBody()
-            )
             _dataState.value = AuthModelState(loading = true)
             try {
-                val response = apiService.registerWithPhoto(
-                    login.toRequestBody("text/plain".toMediaType()),
-                    pass.toRequestBody("text/plain".toMediaType()),
-                    name.toRequestBody("text/plain".toMediaType()),
-                    part
-                )
-                if (!response.isSuccessful) {
-                    throw ApiError(response.code(), response.message())
+                if (file != null) {
+                    repository.signUpWithAvatar(login, pass, name, file)
                 }
-              appAuth.setUser(requireNotNull(response.body()))
                 _dataState.value = AuthModelState(success = true)
             } catch (e: Exception) {
                 _dataState.value = AuthModelState(error = true)
             }
         }
-
 
     fun clean() {
         _dataState.value = AuthModelState(loading = false, error = false, success = false)

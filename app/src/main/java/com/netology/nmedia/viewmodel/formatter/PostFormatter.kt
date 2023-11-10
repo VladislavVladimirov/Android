@@ -2,12 +2,13 @@ package com.netology.nmedia.viewmodel.formatter
 
 import java.math.RoundingMode
 import java.text.DecimalFormat
-import java.time.LocalDateTime
-import java.time.ZoneOffset
+import java.text.SimpleDateFormat
+import java.time.Instant
 import java.time.format.DateTimeFormatter
+import java.util.Date
 
 object PostFormatter {
-    fun formatCount(count: Int):String? {
+    fun formatCount(count: Int): String? {
         when (count) {
             in 0..999 -> return count.toString()
             in 1000..9999 -> {
@@ -16,13 +17,15 @@ object PostFormatter {
                 val result = df.format(count / 1000.0)
                 return result.toString() + "K"
             }
+
             in 10000..999999 -> {
                 val df = DecimalFormat("#")
                 df.roundingMode = RoundingMode.DOWN
                 val result = df.format(count / 1000.0)
                 return result.toString() + "K"
             }
-            in 1000000 .. 999999999 -> {
+
+            in 1000000..999999999 -> {
                 val df = DecimalFormat("#.#")
                 df.roundingMode = RoundingMode.DOWN
                 val result = df.format(count / 1000000.0)
@@ -31,9 +34,10 @@ object PostFormatter {
         }
         return null
     }
-    fun formatTime(time: String): String {
-        val dateTime = LocalDateTime.ofEpochSecond(time.toLong(),0, ZoneOffset.of("+03:00"))
-        val formatter = DateTimeFormatter.ofPattern("d MMMM yyyy в HH:mm")
-        return dateTime.format(formatter).toString()
+
+    fun formatTime(input: String): String {
+        val date = Date.from(Instant.from(DateTimeFormatter.ISO_INSTANT.parse(input)))
+            return SimpleDateFormat ("dd MMMM yyyy в HH:mm").format(date)
+
     }
 }

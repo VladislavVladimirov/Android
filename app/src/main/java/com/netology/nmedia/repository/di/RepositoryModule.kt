@@ -1,5 +1,7 @@
 package com.netology.nmedia.repository.di
 
+import com.netology.nmedia.repository.AuthRepository
+import com.netology.nmedia.repository.AuthRepositoryImpl
 import com.netology.nmedia.repository.DraftRepository
 import com.netology.nmedia.repository.DraftRepositorySharedPrefsImpl
 import com.netology.nmedia.repository.PostRepository
@@ -19,4 +21,9 @@ interface RepositoryModule {
     @Singleton
     @Binds
     fun bindsDraftRepository(impl: DraftRepositorySharedPrefsImpl): DraftRepository
+
+    @Singleton
+    @Binds
+    fun bindsAuthRepository(impl: AuthRepositoryImpl): AuthRepository
+
 }

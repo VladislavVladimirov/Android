@@ -25,16 +25,13 @@ import javax.inject.Inject
 
 
 private val empty = Post(
-    id = 0L,
-    author = "",
+    id = 0,
     authorId = 0,
+    author = "",
     content = "",
     published = "",
     likedByMe = false,
-    likes = 0,
-    shares = 0,
-    views = 0,
-    authorAvatar = "",
+    users = emptyMap()
 )
 @HiltViewModel
 class PostViewModel @Inject constructor(
@@ -65,7 +62,7 @@ class PostViewModel @Inject constructor(
     val newer: LiveData<Int> = data.switchMap {
         repository.getNewerCount(it.posts.firstOrNull { post ->
             post.author != "Student"
-        }?.id ?: 0L)
+        }?.id ?: 0)
             .asLiveData(Dispatchers.Default)
     }
     private val _photoState = MutableLiveData<PhotoModel?>()
@@ -160,7 +157,7 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun removeById(id: Long) = viewModelScope.launch {
+    fun removeById(id: Int) = viewModelScope.launch {
         try {
             repository.removeById(id)
         } catch (e: Exception) {

@@ -7,13 +7,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
-import com.netology.nmedia.BuildConfig
 import com.netology.nmedia.R
 import com.netology.nmedia.enums.AttachmentType
 import com.netology.nmedia.databinding.CardPostBinding
 import com.netology.nmedia.dto.Post
 import com.netology.nmedia.util.AndroidUtils
-import com.netology.nmedia.viewmodel.formatter.PostFormatter
+import com.netology.nmedia.viewmodel.formatter.PostFormatter.formatTime
 import java.lang.Exception
 
 
@@ -25,20 +24,25 @@ class PostViewHolder(
 
         binding.apply {
             author.text = post.author
-            published.text = PostFormatter.formatTime(post.published)
+            published.text = formatTime(post.published)
             content.text = post.content
-            like.text = PostFormatter.formatCount(post.likes)
-            share.text = PostFormatter.formatCount(post.shares)
-            views.text = PostFormatter.formatCount(post.views)
             like.isChecked = post.likedByMe
             menu.isVisible = post.ownedByMe
+            like.text = post.likeOwnerIds.size.toString()
+            if (post.authorJob != null) {
+                authorJob.text = post.authorJob
+                authorJob.visibility = View.VISIBLE
+            } else {
+                authorJob.visibility = View.GONE
+            }
+
 
 
 
             Glide.with(avatar)
-                .load("${BuildConfig.BASE_URL}/avatars/${post.authorAvatar}")
+                .load(post.authorAvatar)
                 .placeholder(R.drawable.ic_loading_100dp)
-                .error(R.drawable.ic_error_100dp)
+                .error(R.drawable.ic_avatar_placeholder)
                 .apply(RequestOptions.bitmapTransform(CircleCrop()))
                 .timeout(10_000)
                 .into(avatar)
@@ -46,7 +50,7 @@ class PostViewHolder(
             if (post.attachment?.type == AttachmentType.IMAGE) {
                 imageAttachment.visibility = View.VISIBLE
                 Glide.with(imageAttachment)
-                    .load("${BuildConfig.BASE_URL}/media/${post.attachment.url}")
+                    .load(post.attachment.url)
                     .timeout(10_000)
                     .into(imageAttachment)
             }  else {

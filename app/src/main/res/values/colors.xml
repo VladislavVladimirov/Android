@@ -9,8 +9,12 @@
     <color name="white">#FFFFFFFF</color>
     <color name="red">#FF0000</color>
     <color name="light_blue">#61b1e8</color>
+    <color name="grey_300">#E0E0E0</color>
+    <color name="grey_400">#BDBDBD</color>
     <color name="grey_800">#424242</color>
     <color name="grey_900">#212121</color>
+    <color name="black_transparent">#72000000</color>
+
     <color name="ucrop_color_toolbar">@android:color/transparent</color>
     <color name="ucrop_color_statusbar">@color/black</color>
     <color name="ucrop_color_widget_active">@color/black</color>

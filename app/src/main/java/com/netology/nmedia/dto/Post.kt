@@ -1,16 +1,21 @@
 package com.netology.nmedia.dto
 
 data class Post(
-    val id: Long,
+    val id: Int,
+    val authorId: Int,
     val author: String,
-    val authorId : Long,
+    val authorAvatar: String? = null,
+    val authorJob: String? = null,
     val content: String,
     var published: String,
-    val likedByMe: Boolean,
-    val likes: Int = 0,
-    val shares: Int = 0,
-    val views: Int = 0,
-    val authorAvatar: String,
+    val coords: Coordinates? = null,
+    var link: String? = null,
+    var likeOwnerIds: List<Int> = emptyList(),
+    val mentionIds: List<Int> = emptyList(),
+    val mentionedMe: Boolean = false,
+    val likedByMe: Boolean = false,
     val attachment: Attachment? = null,
     val ownedByMe: Boolean = false,
-)
+    val users: Map<String, UserPreview> = emptyMap(),
+
+    )

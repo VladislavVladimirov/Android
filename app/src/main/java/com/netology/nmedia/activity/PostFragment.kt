@@ -92,7 +92,7 @@ class PostFragment : Fragment() {
             }
 
         }
-        val id = requireNotNull(requireArguments().textArg).toLong()
+        val id = requireNotNull(requireArguments().textArg).toInt()
         binding.postContent.apply {
             viewModel.data.observe(viewLifecycleOwner) { it ->
                 val viewHolder = PostViewHolder(binding.postContent, listener)

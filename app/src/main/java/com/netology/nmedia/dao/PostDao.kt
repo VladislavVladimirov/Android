@@ -16,7 +16,8 @@ interface PostDao {
 
     @Query("SELECT COUNT(*) == 0 FROM PostEntity")
     suspend fun isEmpty(): Boolean
-
+    @Query("SELECT COUNT(*) FROM PostEntity")
+    suspend fun count(): Int
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(post: PostEntity)
 
@@ -24,22 +25,7 @@ interface PostDao {
     suspend fun insert(posts: List<PostEntity>)
 
     @Query("DELETE FROM PostEntity WHERE id = :id")
-    suspend fun removeById(id: Long)
-    @Query("""
-        UPDATE PostEntity SET
-        likes = likes + 1,
-        likedByMe = 1
-        WHERE id = :id
-        """)
-    suspend fun likeById(id: Long)
-
-    @Query("""
-        UPDATE PostEntity SET
-        likes = likes - 1,
-        likedByMe = 0
-        WHERE id = :id
-        """)
-    suspend fun unlikeById(id: Long)
+    suspend fun removeById(id: Int)
     @Query("UPDATE PostEntity SET visibility = 1 WHERE visibility = 0")
     suspend fun showAll()
 

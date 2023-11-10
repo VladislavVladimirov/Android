@@ -3,60 +3,85 @@ package com.netology.nmedia.entity
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.netology.nmedia.enums.AttachmentType
+import androidx.room.TypeConverters
+import com.netology.nmedia.dao.Converters
 import com.netology.nmedia.dto.Attachment
+import com.netology.nmedia.dto.Coordinates
 import com.netology.nmedia.dto.Post
+import com.netology.nmedia.enums.AttachmentType
 
 @Entity
 data class PostEntity(
     @PrimaryKey(autoGenerate = true)
-    val id: Long,
+    val id: Int,
+    val authorId: Int,
     val author: String,
-    val authorAvatar: String,
-    val authorId: Long,
+    val authorAvatar: String?,
+    val authorJob: String?,
     val content: String,
     val published: String,
+    val coords: String,
+    val link: String?,
+    @TypeConverters(Converters::class)
+    val likeOwnerIds: List<Int>,
+    @TypeConverters(Converters::class)
+    val mentionIds: List<Int>,
+    val mentionedMe: Boolean,
     val likedByMe: Boolean,
-    val likes: Int = 0,
-    val shares: Int = 0,
-    val views: Int = 0,
-    var visibility: Boolean,
+    val ownedByMe: Boolean,
     @Embedded
     var attachment: AttachmentEmbeddable?,
-) {
+    var visibility: Boolean,
+
+    ) {
     fun toDto() = Post(
         id,
-        author,
         authorId,
+        author,
+        authorAvatar,
+        authorJob,
         content,
         published,
+        coords = if (coords.isBlank()) null else Coordinates(
+            coords.split("/").first(),
+            coords.split("/").last()
+        ),
+        link,
+        likeOwnerIds,
+        mentionIds,
+        mentionedMe,
         likedByMe,
-        likes,
-        shares,
-        views,
-        authorAvatar,
-        attachment?.toDto()
+        attachment?.toDto(),
+        ownedByMe,
     )
 
     companion object {
         fun fromDto(dto: Post, visibility: Boolean) =
             PostEntity(
-                id = dto.id,
-                author = dto.author,
-                authorAvatar = dto.authorAvatar,
-                authorId = dto.authorId,
-                content = dto.content,
-                published = dto.published,
-                likedByMe = dto.likedByMe,
-                likes = dto.likes,
-                shares = dto.shares,
-                views = dto.views,
+                dto.id,
+                dto.authorId,
+                dto.author,
+                dto.authorAvatar,
+                dto.authorJob,
+                dto.content,
+                dto.published,
+                coords = if (dto.coords != null)
+                    "${dto.coords.lat}/${dto.coords.long}"
+                else
+                    "",
+                dto.link,
+                dto.likeOwnerIds,
+                dto.mentionIds,
+                dto.mentionedMe,
+                dto.likedByMe,
+                dto.ownedByMe,
+                AttachmentEmbeddable.fromDto(dto.attachment),
                 visibility = visibility,
-                attachment = AttachmentEmbeddable.fromDto(dto.attachment)
             )
 
     }
 }
+
 data class AttachmentEmbeddable(
     var url: String,
     var type: AttachmentType,
@@ -71,4 +96,5 @@ data class AttachmentEmbeddable(
 }
 
 fun List<PostEntity>.toDto(): List<Post> = map(PostEntity::toDto)
-fun List<Post>.toEntity(visibility: Boolean): List<PostEntity> = map {PostEntity.fromDto(it, visibility)}
+fun List<Post>.toEntity(visibility: Boolean): List<PostEntity> =
+    map { PostEntity.fromDto(it, visibility) }
