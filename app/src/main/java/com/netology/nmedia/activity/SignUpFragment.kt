@@ -50,7 +50,6 @@ class SignUpFragment : Fragment() {
                     Activity.RESULT_OK -> {
                         val uri: Uri? = it.data?.data
                         val file = uri?.toFile()
-
                         viewModel.changePhoto(PhotoModel(uri, file))
                     }
                 }
@@ -59,17 +58,6 @@ class SignUpFragment : Fragment() {
             AndroidUtils.hideKeyboard(requireView())
             viewModel.clean()
             findNavController().navigateUp()
-        }
-        viewModel.dataState.observe(viewLifecycleOwner) { state ->
-            binding.loading.isVisible = state.loading
-            if (state.error) {
-                Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_LONG).show()
-            }
-            if (state.success){
-                postViewModel.refreshPosts()
-                viewModel.clean()
-                findNavController().navigateUp()
-            }
         }
 
         binding.takePhoto.setOnClickListener {
@@ -96,37 +84,50 @@ class SignUpFragment : Fragment() {
             viewModel.changePhoto(null)
         }
         viewModel.photoState.observe(viewLifecycleOwner) { photoState ->
+            val login = binding.login.text.toString().trim()
+            val password = binding.password.text.toString().trim()
+            val confirmPassword = binding.confirmPassword.text.toString().trim()
+            val name = binding.name.text.toString()
             if (photoState == null) {
                 binding.photoPreviewContainer.isVisible = false
                 binding.logo.isVisible = true
                 return@observe
             }
-            binding.signUp.setOnClickListener {
-                AndroidUtils.hideKeyboard(requireView())
-                val login = binding.login.text.toString().trim()
-                val password = binding.password.text.toString().trim()
-                val confirmPassword = binding.confirmPassword.text.toString().trim()
-                val name = binding.name.text.toString()
-                if (login.isBlank() || password.isBlank() || name.isBlank() || confirmPassword.isBlank()) {
-                    Snackbar.make(binding.root,
-                        getString(R.string.error_empty_field), Snackbar.LENGTH_LONG).show()
-                } else {
-                    if (password == confirmPassword) {
-                        viewModel.photoState.value?.file?.let { file ->
-                            viewModel.signUpWithAvatar(login, password, name,
-                                file
-                            )
-                            viewModel.changePhoto(null)
-                        }
-                    } else {
-                        Snackbar.make(binding.root,
-                            getString(R.string.error_confirm_password), Snackbar.LENGTH_LONG).show()
-                    }
-                }
-            }
             binding.photoPreviewContainer.isVisible = true
             binding.logo.isVisible = false
             binding.photoPreview.setImageURI(photoState.uri)
+
+            binding.signUp.setOnClickListener {
+                AndroidUtils.hideKeyboard(requireView())
+                if (login.isBlank() || password.isBlank() || name.isBlank() || confirmPassword.isBlank()) {
+                    Snackbar.make(
+                        binding.root,
+                        getString(R.string.error_empty_field), Snackbar.LENGTH_LONG
+                    ).show()
+                } else {
+                    if (password == confirmPassword) {
+                        viewModel.signUpWithAvatar(login, password, name, photoState.file)
+                        viewModel.changePhoto(null)
+                    } else {
+                        Snackbar.make(
+                            binding.root,
+                            getString(R.string.error_confirm_password), Snackbar.LENGTH_LONG
+                        ).show()
+                    }
+                }
+            }
+
+        }
+        viewModel.dataState.observe(viewLifecycleOwner) { state ->
+            binding.loading.isVisible = state.loading
+            if (state.error) {
+                Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_LONG).show()
+            }
+            if (state.success) {
+                postViewModel.refreshPosts()
+                viewModel.clean()
+                findNavController().navigateUp()
+            }
         }
         return binding.root
     }

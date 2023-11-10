@@ -1,5 +1,5 @@
 package com.netology.nmedia.enums
 
 enum class AttachmentType {
-    IMAGE,
+    IMAGE,VIDEO,AUDIO
 }

@@ -1,7 +1,6 @@
 package com.netology.nmedia.repository
 
-import com.netology.nmedia.enums.AttachmentType
-import com.netology.nmedia.api.ApiService
+import com.netology.nmedia.api.PostApiService
 import com.netology.nmedia.dao.PostDao
 import com.netology.nmedia.dto.Attachment
 import com.netology.nmedia.dto.Media
@@ -9,6 +8,7 @@ import com.netology.nmedia.dto.Post
 import com.netology.nmedia.entity.PostEntity
 import com.netology.nmedia.entity.toDto
 import com.netology.nmedia.entity.toEntity
+import com.netology.nmedia.enums.AttachmentType
 import com.netology.nmedia.error.ApiError
 import com.netology.nmedia.error.AppError
 import com.netology.nmedia.error.NetworkError
@@ -28,13 +28,13 @@ import javax.inject.Inject
 
 class PostRepositoryImpl @Inject constructor(
     private val postDao: PostDao,
-    private val apiService: ApiService,
+    private val apiService: PostApiService,
 ) : PostRepository {
     override val data = postDao.getAll().map(List<PostEntity>::toDto).flowOn(Dispatchers.Default)
 
     override suspend fun getAll() {
         try {
-            val response = apiService.getAll()
+            val response = apiService.getPosts()
             if (!response.isSuccessful) throw ApiError(response.code(), response.message())
             val body = response.body() ?: throw ApiError(response.code(), response.message())
             postDao.insert(body.toEntity(visibility = true))
@@ -45,7 +45,7 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getNewerCount(id: Long) = flow {
+    override fun getNewerCount(id: Int) = flow {
         while (true) {
             delay(10000)
             val response = apiService.getNewer(id)
@@ -76,10 +76,11 @@ class PostRepositoryImpl @Inject constructor(
     }
 
 
-    override suspend fun likeById(id: Long) {
+    override suspend fun likeById(id: Int) {
         try {
-            postDao.likeById(id)
             val response = apiService.likeById(id)
+            val body = response.body() ?: throw ApiError(response.code(), response.message())
+            postDao.insert(PostEntity.fromDto(body.copy(likedByMe = true), visibility = true))
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
@@ -90,10 +91,11 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun dislikeById(id: Long) {
+    override suspend fun dislikeById(id: Int) {
         try {
-            postDao.unlikeById(id)
             val response = apiService.dislikeById(id)
+            val body = response.body() ?: throw ApiError(response.code(), response.message())
+            postDao.insert(PostEntity.fromDto(body.copy(likedByMe = false), visibility = true))
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
@@ -104,7 +106,7 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun removeById(id: Long) {
+    override suspend fun removeById(id: Int) {
         try {
             postDao.removeById(id)
             val response = apiService.removeById(id)
@@ -133,7 +135,14 @@ class PostRepositoryImpl @Inject constructor(
     override suspend fun saveWithAttachment(file: File, post: Post) {
         try {
             val media = upload(file)
-            val response = apiService.save(post.copy(attachment = Attachment(url = media.id, type = AttachmentType.IMAGE)))
+            val response = apiService.save(
+                post.copy(
+                    attachment = Attachment(
+                        url = media.url,
+                        type = AttachmentType.IMAGE
+                    )
+                )
+            )
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
@@ -145,6 +154,7 @@ class PostRepositoryImpl @Inject constructor(
             throw UnknownError
         }
     }
+
 
     private suspend fun upload(file: File): Media {
         val part = MultipartBody.Part.createFormData(

@@ -2,22 +2,10 @@ package com.netology.nmedia.auth
 
 import android.content.Context
 import androidx.core.content.edit
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.messaging.ktx.messaging
-import com.netology.nmedia.api.ApiService
-import com.netology.nmedia.dto.PushToken
 import com.netology.nmedia.model.AuthModel
-import dagger.hilt.EntryPoint
-import dagger.hilt.InstallIn
-import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -33,36 +21,29 @@ class AppAuth @Inject constructor(
 
     init {
         val token = prefs.getString(tokenKey, null)
-        val id = prefs.getLong(idKey, 0)
+        val id = prefs.getInt(idKey, 0)
 
-        if (id == 0L || token == null) {
+        _authStateFlow = if (id == 0 || token == null) {
             prefs.edit {
                 clear()
             }
-            _authStateFlow = MutableStateFlow(AuthModel())
+            MutableStateFlow(AuthModel())
         } else {
-            _authStateFlow = MutableStateFlow(AuthModel(id, token))
+            MutableStateFlow(AuthModel(id, token))
         }
-        uploadPushToken()
-    }
-    @InstallIn(SingletonComponent::class)
-    @EntryPoint
-    interface AppAuthEntryPoint {
-        fun getApiService(): ApiService
+
     }
 
     val authStateFlow = _authStateFlow.asStateFlow()
 
-
-
     fun setUser(user: AuthModel) {
         _authStateFlow.value = user
        with (prefs.edit()) {
-            putLong(idKey, user.id)
+            putInt(idKey, user.id)
             putString(tokenKey, user.token)
             apply()
         }
-        uploadPushToken()
+
     }
 
     fun removeUser() {
@@ -71,19 +52,9 @@ class AppAuth @Inject constructor(
             clear()
             apply()
         }
-        uploadPushToken()
+
     }
-    fun uploadPushToken(token: String? = null) {
-        CoroutineScope(Dispatchers.Default).launch {
-            try {
-                val pushToken = PushToken(token ?: Firebase.messaging.token.await())
-                val entryPoint = EntryPointAccessors.fromApplication(context,AppAuthEntryPoint::class.java )
-                entryPoint.getApiService().uploadPushToken(pushToken)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
+
 }
 
 

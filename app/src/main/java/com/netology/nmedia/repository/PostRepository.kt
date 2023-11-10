@@ -6,13 +6,14 @@ import java.io.File
 
 interface PostRepository {
     val data: Flow<List<Post>>
-    suspend fun likeById(id: Long)
-    suspend fun dislikeById(id: Long)
-    suspend fun removeById(id: Long)
+    suspend fun likeById(id: Int)
+    suspend fun dislikeById(id: Int)
+    suspend fun removeById(id: Int)
     suspend fun getAll()
     suspend fun save(post: Post)
-    fun getNewerCount(id: Long): Flow<Int>
+    fun getNewerCount(id: Int): Flow<Int>
     suspend fun showAll()
     suspend fun saveWithAttachment(file: File, post: Post)
+
 }
 
