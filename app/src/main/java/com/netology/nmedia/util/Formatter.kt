@@ -1,4 +1,4 @@
-package com.netology.nmedia.viewmodel.formatter
+package com.netology.nmedia.util
 
 import java.math.RoundingMode
 import java.text.DecimalFormat
@@ -6,8 +6,9 @@ import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.format.DateTimeFormatter
 import java.util.Date
+import java.util.Locale
 
-object PostFormatter {
+object Formatter {
     fun formatCount(count: Int): String? {
         when (count) {
             in 0..999 -> return count.toString()
@@ -37,7 +38,7 @@ object PostFormatter {
 
     fun formatTime(input: String): String {
         val date = Date.from(Instant.from(DateTimeFormatter.ISO_INSTANT.parse(input)))
-            return SimpleDateFormat ("dd MMMM yyyy в HH:mm").format(date)
+            return SimpleDateFormat ("dd MMMM yyyy в HH:mm", Locale.getDefault()).format(date)
 
     }
 }

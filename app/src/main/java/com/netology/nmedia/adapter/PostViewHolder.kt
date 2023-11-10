@@ -8,12 +8,12 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import com.netology.nmedia.R
-import com.netology.nmedia.enums.AttachmentType
 import com.netology.nmedia.databinding.CardPostBinding
 import com.netology.nmedia.dto.Post
+import com.netology.nmedia.enums.AttachmentType
 import com.netology.nmedia.util.AndroidUtils
-import com.netology.nmedia.viewmodel.formatter.PostFormatter.formatTime
-import java.lang.Exception
+import com.netology.nmedia.util.Formatter.formatCount
+import com.netology.nmedia.util.Formatter.formatTime
 
 
 class PostViewHolder(
@@ -28,7 +28,7 @@ class PostViewHolder(
             content.text = post.content
             like.isChecked = post.likedByMe
             menu.isVisible = post.ownedByMe
-            like.text = post.likeOwnerIds.size.toString()
+            like.text = formatCount(post.likeOwnerIds.size)
             if (post.authorJob != null) {
                 authorJob.text = post.authorJob
                 authorJob.visibility = View.VISIBLE
@@ -53,7 +53,7 @@ class PostViewHolder(
                     .load(post.attachment.url)
                     .timeout(10_000)
                     .into(imageAttachment)
-            }  else {
+            } else {
                 imageAttachment.visibility = View.GONE
             }
 
@@ -77,7 +77,8 @@ class PostViewHolder(
                                 .into(youtubePlayerPreview)
                         }
                         videoId = it.split("v=")[1]
-                        val videoPreviewUrl = "https://img.youtube.com/vi/$videoId/maxresdefault.jpg"
+                        val videoPreviewUrl =
+                            "https://img.youtube.com/vi/$videoId/maxresdefault.jpg"
                         Glide.with(youtubePlayerPreview)
                             .load(videoPreviewUrl)
                             .timeout(10_000)
