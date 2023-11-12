@@ -4,7 +4,7 @@ import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
-import com.netology.nmedia.dao.Converters
+import com.netology.nmedia.util.Converters
 import com.netology.nmedia.dto.Attachment
 import com.netology.nmedia.dto.Coordinates
 import com.netology.nmedia.dto.Post

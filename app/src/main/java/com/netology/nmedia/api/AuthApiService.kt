@@ -32,6 +32,6 @@ interface AuthApiService {
         @Field("login") login: String,
         @Field("password") password: String,
         @Field("name") name: String,
-        @Part("file") file: MultipartBody.Part?,
+        @Part file: MultipartBody.Part,
     ): Response<AuthModel>
 }

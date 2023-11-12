@@ -1,4 +1,4 @@
-package com.netology.nmedia.dao
+package com.netology.nmedia.util
 
 import androidx.room.TypeConverter
 import com.netology.nmedia.enums.AttachmentType

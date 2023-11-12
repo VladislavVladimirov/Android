@@ -2,11 +2,8 @@ package com.netology.nmedia.util
 
 import java.math.RoundingMode
 import java.text.DecimalFormat
-import java.text.SimpleDateFormat
-import java.time.Instant
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.Date
-import java.util.Locale
 
 object Formatter {
     fun formatCount(count: Int): String? {
@@ -37,8 +34,36 @@ object Formatter {
     }
 
     fun formatTime(input: String): String {
-        val date = Date.from(Instant.from(DateTimeFormatter.ISO_INSTANT.parse(input)))
-            return SimpleDateFormat ("dd MMMM yyyy в HH:mm", Locale.getDefault()).format(date)
+        val fullDate = DateTimeFormatter.ofPattern("dd MMMM yyyy в HH:mm")
+            .format(LocalDateTime.parse(input, DateTimeFormatter.ISO_DATE_TIME))
+        val formattedDate = DateTimeFormatter.ofPattern("d MMMM  в HH:mm")
+            .format(LocalDateTime.parse(input, DateTimeFormatter.ISO_DATE_TIME))
+        val formatedMinutes = DateTimeFormatter.ofPattern("в HH:mm")
+            .format(LocalDateTime.parse(input, DateTimeFormatter.ISO_DATE_TIME))
+        val inputDate = LocalDateTime.parse(input, DateTimeFormatter.ISO_DATE_TIME)
+        val currentTime = LocalDateTime.now()
+        when (currentTime.year - inputDate.year) {
+            0 -> {
+                return when (currentTime.dayOfMonth - inputDate.dayOfMonth) {
+                    0 -> {
+                        "Сегодня $formatedMinutes"
+                    }
 
+                    1 -> {
+                        "Вчера $formatedMinutes"
+                    }
+
+                    else -> {
+                        formattedDate
+                    }
+                }
+            }
+
+            else -> {
+                return fullDate
+            }
+
+        }
     }
+
 }

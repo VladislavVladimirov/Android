@@ -9,7 +9,6 @@ import com.netology.nmedia.model.PhotoModel
 import com.netology.nmedia.repository.auth.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import java.io.File
 import javax.inject.Inject
 
 
@@ -25,28 +24,22 @@ class SignUpViewModel @Inject constructor(
     val photoState: LiveData<PhotoModel?>
         get() = _photoState
 
+
     fun signUp(login: String, pass: String, name: String) = viewModelScope.launch {
-        _dataState.value = AuthModelState(loading = true)
         try {
-            repository.signUp(login, pass, name)
+            _dataState.value = AuthModelState(loading = true)
+            if (_photoState.value == null) {
+                repository.signUp(login, pass, name)
+            } else {
+                _photoState.value?.file?.let { file ->
+                    repository.signUpWithAvatar(login, pass, name, file)
+                }
+            }
             _dataState.value = AuthModelState(success = true)
         } catch (e: Exception) {
             _dataState.value = AuthModelState(error = true)
         }
     }
-
-    fun signUpWithAvatar(login: String, pass: String, name: String, file: File?) =
-        viewModelScope.launch {
-            _dataState.value = AuthModelState(loading = true)
-            try {
-                if (file != null) {
-                    repository.signUpWithAvatar(login, pass, name, file)
-                }
-                _dataState.value = AuthModelState(success = true)
-            } catch (e: Exception) {
-                _dataState.value = AuthModelState(error = true)
-            }
-        }
 
     fun clean() {
         _dataState.value = AuthModelState(loading = false, error = false, success = false)

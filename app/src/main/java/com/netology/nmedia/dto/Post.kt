@@ -17,5 +17,4 @@ data class Post(
     val attachment: Attachment? = null,
     val ownedByMe: Boolean = false,
     val users: Map<String, UserPreview> = emptyMap(),
-
     )

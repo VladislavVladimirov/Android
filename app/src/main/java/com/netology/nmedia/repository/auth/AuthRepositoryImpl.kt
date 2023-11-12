@@ -48,8 +48,8 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun signUpWithAvatar(login: String, pass: String, name: String, file: File) {
         try {
             val part = MultipartBody.Part.createFormData(
-                "file.png",
-                file.name,
+                "file",
+                "file",
                 file.asRequestBody()
             )
             val response = apiService.registerWithPhoto(

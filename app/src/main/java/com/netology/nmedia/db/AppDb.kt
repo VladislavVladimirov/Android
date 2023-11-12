@@ -3,7 +3,7 @@ package com.netology.nmedia.db
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.netology.nmedia.dao.Converters
+import com.netology.nmedia.util.Converters
 import com.netology.nmedia.dao.PostDao
 import com.netology.nmedia.entity.PostEntity
 

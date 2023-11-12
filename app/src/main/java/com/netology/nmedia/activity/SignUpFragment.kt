@@ -1,7 +1,6 @@
 package com.netology.nmedia.activity
 
 import android.app.Activity
-
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -14,6 +13,9 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CircleCrop
+import com.bumptech.glide.request.RequestOptions
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.github.dhaval2404.imagepicker.constant.ImageProvider
 import com.google.android.material.snackbar.Snackbar
@@ -24,6 +26,7 @@ import com.netology.nmedia.util.AndroidUtils
 import com.netology.nmedia.viewmodel.PostViewModel
 import com.netology.nmedia.viewmodel.SignUpViewModel
 import dagger.hilt.android.AndroidEntryPoint
+
 
 @AndroidEntryPoint
 class SignUpFragment : Fragment() {
@@ -50,6 +53,7 @@ class SignUpFragment : Fragment() {
                     Activity.RESULT_OK -> {
                         val uri: Uri? = it.data?.data
                         val file = uri?.toFile()
+
                         viewModel.changePhoto(PhotoModel(uri, file))
                     }
                 }
@@ -59,7 +63,37 @@ class SignUpFragment : Fragment() {
             viewModel.clean()
             findNavController().navigateUp()
         }
+        viewModel.dataState.observe(viewLifecycleOwner) { state ->
+            binding.loading.isVisible = state.loading
+            if (state.error) {
+                Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_LONG).show()
+            }
+            if (state.success){
+                postViewModel.refreshPosts()
+                viewModel.clean()
+                findNavController().navigateUp()
+            }
+        }
+        binding.signUp.setOnClickListener {
+            AndroidUtils.hideKeyboard(requireView())
+            val login = binding.login.text.toString().trim()
+            val password = binding.password.text.toString().trim()
+            val confirmPassword = binding.confirmPassword.text.toString().trim()
+            val name = binding.name.text.toString()
+            if (login.isBlank() || password.isBlank() || name.isBlank() || confirmPassword.isBlank()) {
+                Snackbar.make(binding.root,
+                    getString(R.string.error_empty_field), Snackbar.LENGTH_LONG).show()
+            } else {
+                if (password == confirmPassword) {
+                    viewModel.signUp(login, password, name)
+                    viewModel.changePhoto(null)
 
+                } else {
+                    Snackbar.make(binding.root,
+                        getString(R.string.error_confirm_password), Snackbar.LENGTH_LONG).show()
+                }
+            }
+        }
         binding.takePhoto.setOnClickListener {
             ImagePicker.with(this)
                 .crop()
@@ -84,10 +118,6 @@ class SignUpFragment : Fragment() {
             viewModel.changePhoto(null)
         }
         viewModel.photoState.observe(viewLifecycleOwner) { photoState ->
-            val login = binding.login.text.toString().trim()
-            val password = binding.password.text.toString().trim()
-            val confirmPassword = binding.confirmPassword.text.toString().trim()
-            val name = binding.name.text.toString()
             if (photoState == null) {
                 binding.photoPreviewContainer.isVisible = false
                 binding.logo.isVisible = true
@@ -95,39 +125,13 @@ class SignUpFragment : Fragment() {
             }
             binding.photoPreviewContainer.isVisible = true
             binding.logo.isVisible = false
-            binding.photoPreview.setImageURI(photoState.uri)
-
-            binding.signUp.setOnClickListener {
-                AndroidUtils.hideKeyboard(requireView())
-                if (login.isBlank() || password.isBlank() || name.isBlank() || confirmPassword.isBlank()) {
-                    Snackbar.make(
-                        binding.root,
-                        getString(R.string.error_empty_field), Snackbar.LENGTH_LONG
-                    ).show()
-                } else {
-                    if (password == confirmPassword) {
-                        viewModel.signUpWithAvatar(login, password, name, photoState.file)
-                        viewModel.changePhoto(null)
-                    } else {
-                        Snackbar.make(
-                            binding.root,
-                            getString(R.string.error_confirm_password), Snackbar.LENGTH_LONG
-                        ).show()
-                    }
-                }
-            }
-
-        }
-        viewModel.dataState.observe(viewLifecycleOwner) { state ->
-            binding.loading.isVisible = state.loading
-            if (state.error) {
-                Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_LONG).show()
-            }
-            if (state.success) {
-                postViewModel.refreshPosts()
-                viewModel.clean()
-                findNavController().navigateUp()
-            }
+            Glide.with(binding.photoPreview)
+                .load(photoState.uri)
+                .placeholder(R.drawable.ic_loading_100dp)
+                .error(R.drawable.ic_avatar_placeholder)
+                .apply(RequestOptions.bitmapTransform(CircleCrop()))
+                .timeout(10_000)
+                .into(binding.photoPreview)
         }
         return binding.root
     }
