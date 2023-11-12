@@ -68,7 +68,7 @@ class PostViewHolder(
                     youtubePlayerPreview.visibility = View.VISIBLE
                     try {
                         if (it.contains("youtu.be")) {
-                            videoId = it.split(".be/")[1]
+                            videoId = it.split(".be/", "?")[1]
                             val videoPreviewUrl =
                                 "https://img.youtube.com/vi/$videoId/maxresdefault.jpg"
                             Glide.with(youtubePlayerPreview)

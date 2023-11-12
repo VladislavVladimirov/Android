@@ -129,10 +129,9 @@
 
     <ImageView
         android:id="@+id/youtube_player_preview"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/common_spacing"
-        android:background="@color/white"
         android:contentDescription="@string/description_video_preview"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/image_attachment"
