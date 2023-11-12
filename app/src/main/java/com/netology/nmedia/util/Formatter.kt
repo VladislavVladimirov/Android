@@ -3,6 +3,8 @@ package com.netology.nmedia.util
 import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 object Formatter {
@@ -34,23 +36,23 @@ object Formatter {
     }
 
     fun formatTime(input: String): String {
+        val postTime = ZonedDateTime.parse(input, DateTimeFormatter.ISO_OFFSET_DATE_TIME).withZoneSameInstant(ZoneId.systemDefault())
         val fullDate = DateTimeFormatter.ofPattern("dd MMMM yyyy в HH:mm")
-            .format(LocalDateTime.parse(input, DateTimeFormatter.ISO_DATE_TIME))
-        val formattedDate = DateTimeFormatter.ofPattern("d MMMM  в HH:mm")
-            .format(LocalDateTime.parse(input, DateTimeFormatter.ISO_DATE_TIME))
-        val formatedMinutes = DateTimeFormatter.ofPattern("в HH:mm")
-            .format(LocalDateTime.parse(input, DateTimeFormatter.ISO_DATE_TIME))
-        val inputDate = LocalDateTime.parse(input, DateTimeFormatter.ISO_DATE_TIME)
+            .format(postTime)
+        val formattedDate = DateTimeFormatter.ofPattern("d MMMM в HH:mm")
+            .format(postTime)
+        val formattedMinutes = DateTimeFormatter.ofPattern("в HH:mm")
+            .format(postTime)
         val currentTime = LocalDateTime.now()
-        when (currentTime.year - inputDate.year) {
+        when (currentTime.year - postTime.year) {
             0 -> {
-                return when (currentTime.dayOfMonth - inputDate.dayOfMonth) {
+                return when (currentTime.dayOfMonth - postTime.dayOfMonth) {
                     0 -> {
-                        "Сегодня $formatedMinutes"
+                        "Сегодня $formattedMinutes"
                     }
 
                     1 -> {
-                        "Вчера $formatedMinutes"
+                        "Вчера $formattedMinutes"
                     }
 
                     else -> {
@@ -65,5 +67,4 @@ object Formatter {
 
         }
     }
-
 }

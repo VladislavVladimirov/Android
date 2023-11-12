@@ -13,4 +13,9 @@ class AuthViewModel @Inject constructor(
     val authLiveData = appAuth.authStateFlow.asLiveData(Dispatchers.Default)
     val isAuthorized: Boolean
         get() = appAuth.authStateFlow.value.token != null
+    fun removeUser() {
+        appAuth.removeUser()
+    }
+
+
 }

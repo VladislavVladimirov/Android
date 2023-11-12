@@ -2,6 +2,7 @@ package com.netology.nmedia.api
 
 import com.netology.nmedia.model.AuthModel
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
@@ -25,13 +26,13 @@ interface AuthApiService {
         @Field("name") name: String
     ): Response<AuthModel>
 
-    @FormUrlEncoded
+ 
     @Multipart
     @POST("users/registration")
     suspend fun registerWithPhoto(
-        @Field("login") login: String,
-        @Field("password") password: String,
-        @Field("name") name: String,
-        @Part file: MultipartBody.Part,
+        @Part("login") login: RequestBody,
+        @Part("password") password: RequestBody,
+        @Part("name") name: RequestBody,
+        @Part file: MultipartBody.Part?,
     ): Response<AuthModel>
 }

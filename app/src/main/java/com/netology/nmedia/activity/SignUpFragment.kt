@@ -53,7 +53,6 @@ class SignUpFragment : Fragment() {
                     Activity.RESULT_OK -> {
                         val uri: Uri? = it.data?.data
                         val file = uri?.toFile()
-
                         viewModel.changePhoto(PhotoModel(uri, file))
                     }
                 }
@@ -68,9 +67,13 @@ class SignUpFragment : Fragment() {
             if (state.error) {
                 Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_LONG).show()
             }
-            if (state.success){
+            if (state.success) {
                 postViewModel.refreshPosts()
                 viewModel.clean()
+                Snackbar.make(
+                    binding.root,
+                    getString(R.string.sign_up_successful), Snackbar.LENGTH_LONG
+                ).show()
                 findNavController().navigateUp()
             }
         }
@@ -81,16 +84,18 @@ class SignUpFragment : Fragment() {
             val confirmPassword = binding.confirmPassword.text.toString().trim()
             val name = binding.name.text.toString()
             if (login.isBlank() || password.isBlank() || name.isBlank() || confirmPassword.isBlank()) {
-                Snackbar.make(binding.root,
-                    getString(R.string.error_empty_field), Snackbar.LENGTH_LONG).show()
+                Snackbar.make(
+                    binding.root,
+                    getString(R.string.error_empty_field), Snackbar.LENGTH_LONG
+                ).show()
             } else {
                 if (password == confirmPassword) {
-                    viewModel.signUp(login, password, name)
-                    viewModel.changePhoto(null)
-
+                        viewModel.signUp(login, password, name)
                 } else {
-                    Snackbar.make(binding.root,
-                        getString(R.string.error_confirm_password), Snackbar.LENGTH_LONG).show()
+                    Snackbar.make(
+                        binding.root,
+                        getString(R.string.error_confirm_password), Snackbar.LENGTH_LONG
+                    ).show()
                 }
             }
         }
@@ -115,10 +120,10 @@ class SignUpFragment : Fragment() {
                 .createIntent(pickPhotoLauncher::launch)
         }
         binding.removePhoto.setOnClickListener {
-            viewModel.changePhoto(null)
+            viewModel.changePhoto(viewModel.noAvatar)
         }
         viewModel.photoState.observe(viewLifecycleOwner) { photoState ->
-            if (photoState == null) {
+            if (photoState == viewModel.noAvatar) {
                 binding.photoPreviewContainer.isVisible = false
                 binding.logo.isVisible = true
                 return@observe
@@ -128,7 +133,6 @@ class SignUpFragment : Fragment() {
             Glide.with(binding.photoPreview)
                 .load(photoState.uri)
                 .placeholder(R.drawable.ic_loading_100dp)
-                .error(R.drawable.ic_avatar_placeholder)
                 .apply(RequestOptions.bitmapTransform(CircleCrop()))
                 .timeout(10_000)
                 .into(binding.photoPreview)
@@ -138,6 +142,6 @@ class SignUpFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        viewModel.changePhoto(null)
+        viewModel.changePhoto(viewModel.noAvatar)
     }
 }

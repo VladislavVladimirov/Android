@@ -53,4 +53,6 @@
     <string name="error_confirm_password">Пароли не совпадают. Пожалуйста, попробуйте еще раз</string>
     <string name="new_notification">Новое уведомление</string>
     <string name="notification_not_updated">Обновите приложение, чтобы уведомления снова отображались</string>
+    <string name="sign_up_successful">Пользователь успешно зарегистрирован</string>
+    <string name="yesterday">Вчера</string>
 </resources>

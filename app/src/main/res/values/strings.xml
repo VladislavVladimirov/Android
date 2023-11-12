@@ -52,5 +52,7 @@
     <string name="error_confirm_password">Passwords don\'t match. Please, try again</string>
     <string name="new_notification">New notification</string>
     <string name="notification_not_updated">Update the app, so notifications will be displayed again</string>
+    <string name="sign_up_successful">Sign Up is successful</string>
+    <string name="yesterday">Yesterday</string>
 
 </resources>
