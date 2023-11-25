@@ -11,7 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toFile
-import androidx.core.net.toUri
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -45,13 +44,15 @@ class EditPostFragment : Fragment() {
 
         binding.edit.setText(editedPost?.content)
         binding.linkText.setText(editedPost?.link)
+
         val attachment = editedPost?.attachment
         if (attachment != null) {
-            viewModel.changePhoto(PhotoModel(uri = attachment.url.toUri(), file = null))
+            viewModel.changePhoto(PhotoModel(Uri.parse(attachment.url), file = null))
         }
         if (attachment?.url != null) {
             binding.photoPreviewContainer.visibility = View.VISIBLE
-            AndroidUtils.loadImage(url = attachment.url, imageView = binding.photoPreview)
+            binding.photoPreview.setImageURI(Uri.parse(attachment.url))
+//            AndroidUtils.loadImage(url = attachment.url, imageView = binding.photoPreview)
         } else {
             binding.photoPreviewContainer.visibility = View.GONE
         }

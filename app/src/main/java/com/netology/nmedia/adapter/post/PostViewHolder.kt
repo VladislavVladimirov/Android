@@ -33,12 +33,14 @@ class PostViewHolder(
             like.isChecked = post.likedByMe
             menu.isVisible = post.ownedByMe
             like.text = formatCount(post.likeOwnerIds.size)
+
             if (post.authorJob != null) {
                 authorJob.text = post.authorJob
                 authorJob.visibility = View.VISIBLE
             } else {
                 authorJob.visibility = View.GONE
             }
+
             if (post.authorAvatar == null) {
                 avatar.setImageResource(R.drawable.ic_avatar_placeholder)
             } else {

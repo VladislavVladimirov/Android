@@ -99,6 +99,7 @@
         android:layout_marginTop="@dimen/common_spacing"
         android:textSize="16sp"
         android:autoLink="web"
+        android:textColorLink="@color/white"
         android:background="@android:color/transparent"
         app:layout_constraintTop_toBottomOf="@id/barrierContent"
         tools:text="@sample/posts.json/data/content" />
@@ -121,6 +122,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
         android:autoLink="web"
+        android:textColorLink="@color/white"
         android:background="@android:color/transparent"
         android:ellipsize="end"
         android:maxLines="1"

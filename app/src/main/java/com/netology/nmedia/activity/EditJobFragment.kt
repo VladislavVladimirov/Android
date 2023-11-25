@@ -14,35 +14,31 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.netology.nmedia.R
-import com.netology.nmedia.databinding.FragmentNewJobBinding
+import com.netology.nmedia.databinding.FragmentEditJobBinding
 import com.netology.nmedia.util.AndroidUtils
 import com.netology.nmedia.util.Formatter
 import com.netology.nmedia.viewmodel.WallViewModel
 
 
-class NewJobFragment : Fragment() {
+class EditJobFragment : Fragment() {
     private val wallViewModel: WallViewModel by activityViewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding = FragmentNewJobBinding.inflate(inflater, container, false)
-        val draftName = wallViewModel.getDraftName()
-        val draftPosition = wallViewModel.getDraftPosition()
-        val draftStart = wallViewModel.getDraftStart()
-        val draftFinish = wallViewModel.getDraftFinish()
-        val draftLink = wallViewModel.getDraftLink()
+        val binding = FragmentEditJobBinding.inflate(inflater, container, false)
 
-        activity?.title = getString(R.string.add_job_title)
+        val editedJob = wallViewModel.getEditedJob()
+
+        activity?.title = getString(R.string.edit_job)
 
         binding.apply {
-            companyName.setText(draftName)
-            position.setText(
-                draftPosition
-            )
-            startWork.text = draftStart
-            finishWork.setText(draftFinish)
-            link.setText(draftLink)
+            companyName.setText(editedJob?.name)
+            position.setText(editedJob?.position)
+            startWork.text = editedJob?.start?.let { Formatter.formatJobDateForEdit(it) }
+            finishWork.text = editedJob?.finish?.let { Formatter.formatJobDateForEdit(it) }
+            link.setText(editedJob?.link)
+
             if (link.text.isNotBlank()) {
                 link.visibility = View.VISIBLE
                 deleteLink.visibility = View.VISIBLE
@@ -64,7 +60,7 @@ class NewJobFragment : Fragment() {
             }
             activity?.addMenuProvider(object : MenuProvider {
                 override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                    menuInflater.inflate(R.menu.new_job_menu, menu)
+                    menuInflater.inflate(R.menu.edit_job_menu, menu)
                 }
 
                 override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
@@ -79,7 +75,6 @@ class NewJobFragment : Fragment() {
                                     link.text.toString()
                                 )
                                 wallViewModel.saveJob()
-                                wallViewModel.clearDrafts()
                                 AndroidUtils.hideKeyboard(requireView())
                                 true
                             } else {
@@ -92,6 +87,11 @@ class NewJobFragment : Fragment() {
                             }
                         }
 
+                        R.id.cancel -> {
+                            AndroidUtils.hideKeyboard(requireView())
+                            findNavController().navigateUp()
+                        }
+
                         else -> {
                             wallViewModel.clear()
                             false
@@ -100,11 +100,6 @@ class NewJobFragment : Fragment() {
                 }
             }, viewLifecycleOwner)
             requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-                wallViewModel.saveDraftName(binding.companyName.text.toString())
-                wallViewModel.saveDraftPosition(binding.position.text.toString())
-                wallViewModel.saveDraftStart(binding.startWork.text.toString())
-                wallViewModel.saveDraftFinish(binding.finishWork.text.toString())
-                wallViewModel.saveDraftLink(binding.link.text.toString())
                 AndroidUtils.hideKeyboard(requireView())
                 findNavController().navigateUp()
             }

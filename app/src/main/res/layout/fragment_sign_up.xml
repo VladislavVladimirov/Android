@@ -12,21 +12,21 @@
         android:layout_height="wrap_content"
         android:contentDescription="@string/logo"
         android:src="@drawable/ic_launcher_foreground"
+        android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@id/buttonPanel"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:visibility="visible"
-        />
+        app:layout_constraintStart_toStartOf="parent" />
+
     <FrameLayout
         android:id="@+id/photo_preview_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/buttonPanel"
-        app:layout_constraintTop_toTopOf="parent"
         android:layout_margin="@dimen/common_spacing"
-        android:visibility="gone">
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/buttonPanel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/photo_preview"
@@ -45,83 +45,71 @@
 
     </FrameLayout>
 
-    <TextView
+    <LinearLayout
         android:id="@+id/backplate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/common_spacing"
-        android:background="@drawable/background_rounded_grey_900"
-        android:padding="88dp"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="VisualLintOverlap" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <EditText
-        android:id="@+id/name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/common_spacing"
-        android:autofillHints=""
-        android:backgroundTint="@color/white"
-        android:hint="@string/input_name"
-        android:inputType="text"
-        android:minHeight="48dp"
-        android:textColor="@color/white"
-        app:layout_constraintEnd_toEndOf="@id/backplate"
-        app:layout_constraintStart_toStartOf="@id/backplate"
-        app:layout_constraintTop_toTopOf="@id/backplate"
-        tools:ignore="VisualLintTextFieldSize" />
+        <EditText
+            android:id="@+id/name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/common_spacing"
+            android:autofillHints=""
+            android:hint="@string/input_name"
+            android:inputType="text"
+            android:padding="@dimen/common_spacing"
+            android:background="@drawable/background_rounded_grey_900"
+            android:layout_marginVertical="@dimen/common_spacing"
+            android:textColor="@color/white"
+            tools:ignore="VisualLintTextFieldSize" />
 
-    <EditText
-        android:id="@+id/login"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/common_spacing"
-        android:autofillHints=""
-        android:backgroundTint="@color/white"
-        android:hint="@string/login"
-        android:inputType="text"
-        android:minHeight="48dp"
-        android:textColor="@color/white"
-        app:layout_constraintEnd_toEndOf="@id/backplate"
-        app:layout_constraintStart_toStartOf="@id/backplate"
-        app:layout_constraintTop_toBottomOf="@id/name"
-        tools:ignore="VisualLintTextFieldSize" />
+        <EditText
+            android:id="@+id/login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/common_spacing"
+            android:autofillHints=""
+            android:hint="@string/login"
+            android:background="@drawable/background_rounded_grey_900"
+            android:layout_marginVertical="@dimen/common_spacing"
+            android:inputType="text"
+            android:padding="@dimen/common_spacing"
+            android:textColor="@color/white" />
 
-    <EditText
-        android:id="@+id/password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/common_spacing"
-        android:autofillHints=""
-        android:backgroundTint="@color/white"
-        android:hint="@string/password"
-        android:inputType="textPassword"
-        android:minHeight="48dp"
-        android:paddingBottom="@dimen/common_spacing"
-        app:layout_constraintEnd_toEndOf="@id/backplate"
-        app:layout_constraintStart_toStartOf="@id/backplate"
-        app:layout_constraintTop_toBottomOf="@id/login"
-        tools:ignore="VisualLintTextFieldSize" />
+        <EditText
+            android:id="@+id/password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_rounded_grey_900"
+            android:layout_marginVertical="@dimen/common_spacing"
+            android:layout_marginHorizontal="@dimen/common_spacing"
+            android:autofillHints=""
+            android:hint="@string/password"
+            android:inputType="textPassword"   android:padding="@dimen/common_spacing"
+            android:minHeight="48dp"
+            android:paddingBottom="@dimen/common_spacing" />
 
-    <EditText
-        android:id="@+id/confirm_password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/common_spacing"
-        android:autofillHints=""
-        android:backgroundTint="@color/white"
-        android:hint="@string/confirm_password"
-        android:inputType="textPassword"
-        android:minHeight="48dp"
-        android:paddingBottom="@dimen/common_spacing"
-        app:layout_constraintBottom_toBottomOf="@id/backplate"
-        app:layout_constraintEnd_toEndOf="@id/backplate"
-        app:layout_constraintStart_toStartOf="@id/backplate"
-        app:layout_constraintTop_toBottomOf="@id/password"
-        tools:ignore="VisualLintTextFieldSize" />
+        <EditText
+            android:id="@+id/confirm_password"
+            android:layout_width="match_parent"
+            android:background="@drawable/background_rounded_grey_900"
+            android:layout_marginVertical="@dimen/common_spacing"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/common_spacing"
+            android:autofillHints=""
+            android:padding="@dimen/common_spacing"
+            android:hint="@string/confirm_password"
+            android:inputType="textPassword"
+            android:minHeight="48dp"
+            android:paddingBottom="@dimen/common_spacing" />
+    </LinearLayout>
+
 
     <LinearLayout
         android:id="@+id/buttonPanel"
@@ -129,8 +117,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/backplate"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
         <ImageView
@@ -150,6 +138,7 @@
             android:src="@drawable/ic_add_gallery_photo_24" />
 
     </LinearLayout>
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/sign_up"
         android:layout_width="wrap_content"

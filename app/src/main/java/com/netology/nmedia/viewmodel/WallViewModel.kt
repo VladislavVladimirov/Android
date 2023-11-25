@@ -94,6 +94,9 @@ class WallViewModel @Inject constructor(
     fun edit(job: Job) {
         edited.value = job
     }
+    fun getEditedJob(): Job? {
+        return edited.value
+    }
     fun changeContent(
         name: String,
         position: String,

@@ -15,6 +15,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadState
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.netology.nmedia.R
 import com.netology.nmedia.activity.ImageFragment.Companion.pictureArg
@@ -112,7 +114,7 @@ class WallFragment : Fragment() {
             override fun onJobEdit(job: Job) {
                 wallViewModel.edit(job)
                 findNavController()
-                    .navigate(R.id.action_wallFragment_to_newJobFragment)
+                    .navigate(R.id.action_wallFragment_to_editJobFragment)
             }
 
             override fun onJobRemove(job: Job) {
@@ -130,6 +132,9 @@ class WallFragment : Fragment() {
                 profile.avatar.setImageResource(R.drawable.ic_avatar_placeholder)
             }
             profile.userName.text = name
+            binding.appBar.addOnOffsetChangedListener { _, verticalOffset ->
+                binding.swipeRefresh.isEnabled = verticalOffset == 0
+            }
 
             if (myId == authorId) {
                 profile.addJob.visibility = View.VISIBLE
@@ -140,6 +145,12 @@ class WallFragment : Fragment() {
                 profile.addJob.visibility = View.GONE
             }
             profile.listJob.adapter = jobAdapter
+            val itemAnimator: DefaultItemAnimator = object : DefaultItemAnimator() {
+                override fun canReuseUpdatedViewHolder(viewHolder: RecyclerView.ViewHolder): Boolean {
+                    return true
+                }
+            }
+            list.itemAnimator = itemAnimator
             list.adapter = postAdapter.withLoadStateFooter(
                 footer = LoadingStateAdapter { postAdapter.retry() }
             )

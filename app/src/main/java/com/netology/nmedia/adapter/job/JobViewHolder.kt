@@ -8,7 +8,7 @@ import com.netology.nmedia.R
 import com.netology.nmedia.adapter.OnInteractionListener
 import com.netology.nmedia.databinding.CardJobBinding
 import com.netology.nmedia.dto.Job
-import com.netology.nmedia.util.Formatter
+import com.netology.nmedia.util.Formatter.formatJobDate
 
 class JobViewHolder(
     private val binding: CardJobBinding,
@@ -19,8 +19,8 @@ class JobViewHolder(
         binding.apply {
             workName.text = job.name
             userPosition.text = job.position
-            startWork.text = Formatter.formatJobDate(job.start)
-            finishWork.text =  Formatter.formatJobDate(job.finish)
+            startWork.text = formatJobDate(job.start)
+            finishWork.text =  formatJobDate(job.finish)
 
             if (job.link != null) {
                 link.visibility = View.VISIBLE

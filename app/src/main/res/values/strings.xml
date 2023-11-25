@@ -70,5 +70,9 @@
     <string name="wall_fragment_title">User profile</string>
     <string name="sign_in_title">Sign In</string>
     <string name="sign_up_title">Register</string>
+    <string name="to">to</string>
+    <string name="since">since</string>
+    <string name="edit_job">Edit job information</string>
+
 
 </resources>

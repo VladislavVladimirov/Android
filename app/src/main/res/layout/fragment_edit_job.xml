@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    tools:context="com.netology.nmedia.activity.NewPostFragment">
+    tools:context="com.netology.nmedia.activity.EditPostFragment">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_gravity="center"
         android:layout_width="match_parent"

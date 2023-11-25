@@ -18,6 +18,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.netology.nmedia.R
 import com.netology.nmedia.activity.ImageFragment.Companion.pictureArg
@@ -143,7 +145,6 @@ class FeedFragment : Fragment() {
 
                             true
                         }
-
                         else -> false
 
                     }
@@ -151,12 +152,16 @@ class FeedFragment : Fragment() {
             }.also { currentMenuProvider = it }, viewLifecycleOwner)
         }
 
-
-        binding.list.adapter = adapter.withLoadStateFooter(
+        binding.list.adapter = adapter.withLoadStateHeaderAndFooter(
+            header = LoadingStateAdapter { adapter.retry() },
             footer = LoadingStateAdapter { adapter.retry() }
         )
-
-
+        val itemAnimator: DefaultItemAnimator = object : DefaultItemAnimator() {
+            override fun canReuseUpdatedViewHolder(viewHolder: RecyclerView.ViewHolder): Boolean {
+                return true
+            }
+        }
+        binding.list.itemAnimator = itemAnimator
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {

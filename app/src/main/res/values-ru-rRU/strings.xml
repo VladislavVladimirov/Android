@@ -71,4 +71,7 @@
     <string name="wall_fragment_title">Профиль пользователя</string>
     <string name="sign_in_title">Авторизация</string>
     <string name="sign_up_title">Регистрация</string>
+    <string name="to">по</string>
+    <string name="since">c</string>
+    <string name="edit_job">Изменить данные</string>
 </resources>

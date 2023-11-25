@@ -16,50 +16,47 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <TextView
+
+    <LinearLayout
         android:id="@+id/backplate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/common_spacing"
-        android:background="@drawable/background_rounded_grey_900"
-        android:padding="36dp"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="VisualLintOverlap" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <EditText
-        android:id="@+id/login"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/common_spacing"
-        android:autofillHints=""
-        android:backgroundTint="@color/white"
-        android:hint="@string/login"
-        android:inputType="text"
-        android:minHeight="48dp"
-        android:textColor="@color/white"
-        app:layout_constraintEnd_toEndOf="@id/backplate"
-        app:layout_constraintStart_toStartOf="@id/backplate"
-        app:layout_constraintTop_toTopOf="@id/backplate"
-        tools:ignore="VisualLintTextFieldSize" />
 
-    <EditText
-        android:id="@+id/password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/common_spacing"
-        android:autofillHints=""
-        android:backgroundTint="@color/white"
-        android:hint="@string/password"
-        android:inputType="textPassword"
-        android:minHeight="48dp"
-        android:paddingBottom="@dimen/common_spacing"
-        app:layout_constraintBottom_toBottomOf="@id/backplate"
-        app:layout_constraintEnd_toEndOf="@id/backplate"
-        app:layout_constraintStart_toStartOf="@id/backplate"
-        tools:ignore="VisualLintTextFieldSize" />
+        <EditText
+            android:id="@+id/login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/common_spacing"
+            android:layout_marginVertical="@dimen/common_spacing"
+            android:autofillHints=""
+            android:background="@drawable/background_rounded_grey_900"
+            android:hint="@string/login"
+            android:inputType="text"
+            android:padding="@dimen/common_spacing"
+            android:textColor="@color/white" />
+
+        <EditText
+            android:id="@+id/password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/common_spacing"
+            android:layout_marginVertical="@dimen/common_spacing"
+            android:autofillHints=""
+            android:background="@drawable/background_rounded_grey_900"
+            android:hint="@string/password"
+            android:inputType="textPassword"
+            android:minHeight="48dp"
+            android:padding="@dimen/common_spacing"
+            android:paddingBottom="@dimen/common_spacing" />
+
+
+    </LinearLayout>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/ok"
@@ -69,6 +66,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/backplate" />
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/signUp"
         android:layout_width="wrap_content"
@@ -83,10 +81,10 @@
         android:id="@+id/loading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:theme="@style/ProgressBarTheme"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/signUp"
-        android:theme="@style/ProgressBarTheme"
-        android:visibility="gone"
         tools:visibility="visible" />
 </androidx.constraintlayout.widget.ConstraintLayout>

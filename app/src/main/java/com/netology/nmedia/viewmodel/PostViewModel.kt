@@ -74,7 +74,6 @@ class PostViewModel @Inject constructor(
     fun changePhoto(photoModel: PhotoModel?) {
         _photoState.value = photoModel
     }
-
     fun save() {
         edited.value?.let { post ->
             _postCreated.value = Unit
@@ -109,6 +108,7 @@ class PostViewModel @Inject constructor(
             edited.value = edited.value?.copy(content = text, link = linkText)
         }
     }
+
     fun changeAttachmentPhoto(url: String) {
         if (edited.value?.attachment?.url == url) {
             return
@@ -116,7 +116,7 @@ class PostViewModel @Inject constructor(
         if (url.isBlank()) {
             edited.value = edited.value?.copy(attachment = null)
         }
-         edited.value = edited.value?.copy(attachment = Attachment(url, type = AttachmentType.IMAGE))
+        edited.value = edited.value?.copy(attachment = Attachment(url, type = AttachmentType.IMAGE))
     }
 
     fun clear() {
@@ -144,6 +144,7 @@ class PostViewModel @Inject constructor(
             _dataState.value = FeedModelState(error = true)
         }
     }
+
     fun getEditedPost(): Post? {
         return edited.value
     }

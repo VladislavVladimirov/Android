@@ -111,6 +111,13 @@
             app:popEnterAnim="@android:anim/fade_in"
             app:popExitAnim="@android:anim/fade_out" />
         <action
+            android:id="@+id/action_wallFragment_to_editJobFragment"
+            app:destination="@id/editJobFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
+        <action
             android:id="@+id/action_wallFragment_to_editPostFragment"
             app:destination="@id/editPostFragment"
             app:enterAnim="@android:anim/fade_in"
@@ -139,6 +146,14 @@
         android:name="com.netology.nmedia.activity.NewJobFragment"
         android:label="fragment_new_job"
         tools:layout="@layout/fragment_new_job">
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/editJobFragment"
+        android:name="com.netology.nmedia.activity.EditJobFragment"
+        android:label="fragment_edit_job"
+        tools:layout="@layout/fragment_edit_job">
 
     </fragment>
 

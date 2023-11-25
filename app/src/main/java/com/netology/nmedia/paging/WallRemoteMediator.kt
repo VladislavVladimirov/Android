@@ -31,18 +31,14 @@ class WallRemoteMediator(
         try {
             val response = when (loadType) {
                 LoadType.REFRESH -> {
-                    val id = wallPostKeyDao.max()
-                    if (id == null) {
-                        apiService.getLatestWallPosts(authorId, state.config.initialLoadSize)
-                    } else {
-                        apiService.getWallPostsAfter(id, authorId, state.config.pageSize)
-                    }
+                    apiService.getLatestWallPosts(authorId, state.config.initialLoadSize)
                 }
 
                 LoadType.PREPEND -> {
-                    return MediatorResult.Success(
+                    val id = wallPostKeyDao.max() ?: return MediatorResult.Success(
                         endOfPaginationReached = false
                     )
+                    apiService.getWallPostsAfter(id, authorId, state.config.pageSize)
                 }
 
                 LoadType.APPEND -> {
@@ -61,28 +57,28 @@ class WallRemoteMediator(
             appDb.withTransaction {
                 when (loadType) {
                     LoadType.REFRESH -> {
-                        if (wallPostDao.isEmpty()) {
-                            wallPostKeyDao.insert(
-                                listOf(
-                                    WallPostKeyEntity(
-                                        type = WallPostKeyEntity.KeyType.AFTER,
-                                        id = body.first().id,
-                                    ),
-                                    WallPostKeyEntity(
-                                        type = WallPostKeyEntity.KeyType.BEFORE,
-                                        id = body.last().id,
-                                    ),
-                                )
-                            )
-                        } else {
-                            wallPostKeyDao.insert(
+                        wallPostKeyDao.removeAll()
+                        wallPostKeyDao.insert(
+                            listOf(
                                 WallPostKeyEntity(
                                     type = WallPostKeyEntity.KeyType.AFTER,
                                     id = body.first().id,
-                                )
+                                ),
+                                WallPostKeyEntity(
+                                    type = WallPostKeyEntity.KeyType.BEFORE,
+                                    id = body.last().id,
+                                ),
                             )
-                        }
+                        )
+                        wallPostDao.removeAll()
                     }
+
+                    LoadType.PREPEND -> wallPostKeyDao.insert(
+                        WallPostKeyEntity(
+                            type = WallPostKeyEntity.KeyType.AFTER,
+                            id = body.first().id,
+                        )
+                    )
 
                     LoadType.APPEND -> wallPostKeyDao.insert(
                         WallPostKeyEntity(

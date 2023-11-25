@@ -44,7 +44,13 @@ object Formatter {
     fun formatJobDate(input: String): String {
         val jobDate = ZonedDateTime.parse(input, DateTimeFormatter.ISO_OFFSET_DATE_TIME)
             .withZoneSameInstant(ZoneId.systemDefault())
-        return DateTimeFormatter.ofPattern("dd MMMM yyyy")
+        return DateTimeFormatter.ofPattern("dd.MM.yyyy")
+            .format(jobDate)
+    }
+    fun formatJobDateForEdit(input: String): String {
+        val jobDate = ZonedDateTime.parse(input, DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+            .withZoneSameInstant(ZoneId.systemDefault())
+        return DateTimeFormatter.ofPattern("yyyy-MM-dd")
             .format(jobDate)
     }
 
@@ -88,7 +94,7 @@ object Formatter {
             context,
             { _, year, monthOfYear, dayOfMonth ->
                 calendar.set(year, monthOfYear, dayOfMonth)
-                val formattedDate = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
+                val formattedDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                     .format(calendar.time)
                 button.text = formattedDate
             },
@@ -98,6 +104,7 @@ object Formatter {
         )
         datePickerDialog.show()
     }
+
 
 }
 

@@ -18,5 +18,5 @@ interface WallPostKeyDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(keys: List<WallPostKeyEntity>)
     @Query("DELETE FROM WallPostKeyEntity")
-    suspend fun clear()
+    suspend fun removeAll()
 }
