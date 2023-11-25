@@ -27,7 +27,6 @@
     <string name="notification_unknown_action">Ошибка при отображении уведомления</string>
     <string name="error">Ошибка</string>
     <string name="retry_loading">Повторить</string>
-    <string name="empty_posts">Постов нет.\nЕсли создадите новый пост, то он появится здесь</string>
     <string name="image_attachment_description">Изображение</string>
     <string name="error_loading">Ошибка при загрузке данных</string>
     <string name="new_posts">Свежие записи</string>
@@ -55,4 +54,21 @@
     <string name="notification_not_updated">Обновите приложение, чтобы уведомления снова отображались</string>
     <string name="sign_up_successful">Пользователь успешно зарегистрирован</string>
     <string name="yesterday">Вчера</string>
+    <string name="link_icon_description">Ссылка</string>
+    <string name="add_link">Прикрепить ссылку</string>
+    <string name="add_a_link">Добавьте ссылку</string>
+    <string name="user_avatar">Аватар пользователя</string>
+    <string name="line">-</string>
+    <string name="description_job_menu">Меню работы</string>
+    <string name="add_a_job">Добавить место работы</string>
+    <string name="add_job_button_description">Кнопка добавления работы</string>
+    <string name="add_job_title">Добавить место работы</string>
+    <string name="company_name_hint">Название компании</string>
+    <string name="job_position_hint">Должность</string>
+    <string name="start_work_date_hint">Дата начала работы</string>
+    <string name="end_work_date_hint">Дата окончания работы</string>
+    <string name="feed_fragment_title">Лента постов</string>
+    <string name="wall_fragment_title">Профиль пользователя</string>
+    <string name="sign_in_title">Авторизация</string>
+    <string name="sign_up_title">Регистрация</string>
 </resources>

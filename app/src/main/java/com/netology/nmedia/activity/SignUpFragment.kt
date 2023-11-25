@@ -13,32 +13,27 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.CircleCrop
-import com.bumptech.glide.request.RequestOptions
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.github.dhaval2404.imagepicker.constant.ImageProvider
 import com.google.android.material.snackbar.Snackbar
 import com.netology.nmedia.R
 import com.netology.nmedia.databinding.FragmentSignUpBinding
-import com.netology.nmedia.model.PhotoModel
+import com.netology.nmedia.model.media.PhotoModel
 import com.netology.nmedia.util.AndroidUtils
-import com.netology.nmedia.viewmodel.PostViewModel
 import com.netology.nmedia.viewmodel.SignUpViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
 class SignUpFragment : Fragment() {
-
     private val viewModel: SignUpViewModel by activityViewModels()
-    private val postViewModel: PostViewModel by activityViewModels()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         val binding = FragmentSignUpBinding.inflate(inflater, container, false)
+        activity?.title = getString(R.string.sign_up_title)
         val pickPhotoLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                 when (it.resultCode) {
@@ -68,7 +63,6 @@ class SignUpFragment : Fragment() {
                 Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_LONG).show()
             }
             if (state.success) {
-                postViewModel.refreshPosts()
                 viewModel.clean()
                 Snackbar.make(
                     binding.root,
@@ -130,12 +124,7 @@ class SignUpFragment : Fragment() {
             }
             binding.photoPreviewContainer.isVisible = true
             binding.logo.isVisible = false
-            Glide.with(binding.photoPreview)
-                .load(photoState.uri)
-                .placeholder(R.drawable.ic_loading_100dp)
-                .apply(RequestOptions.bitmapTransform(CircleCrop()))
-                .timeout(10_000)
-                .into(binding.photoPreview)
+            AndroidUtils.loadAvatar(photoState.uri.toString(), binding.photoPreview)
         }
         return binding.root
     }

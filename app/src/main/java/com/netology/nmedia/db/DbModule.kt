@@ -2,7 +2,12 @@ package com.netology.nmedia.db
 
 import android.content.Context
 import androidx.room.Room
+import com.netology.nmedia.dao.JobDao
 import com.netology.nmedia.dao.PostDao
+import com.netology.nmedia.dao.PostKeyDao
+import com.netology.nmedia.dao.UserDao
+import com.netology.nmedia.dao.WallPostDao
+import com.netology.nmedia.dao.WallPostKeyDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,6 +31,26 @@ class DbModule {
     fun providePostDao(
         appDb: AppDb
     ): PostDao = appDb.postDao()
+    @Provides
+    fun provideJobDao(
+        appDb: AppDb
+    ): JobDao = appDb.jobDao()
+    @Provides
+    fun provideUserDao(
+        appDb: AppDb
+    ): UserDao = appDb.userDao()
+    @Provides
+    fun provideWallPostDao(
+        appDb: AppDb
+    ): WallPostDao = appDb.wallPostDao()
+    @Provides
+    fun providePostKeyDao(
+        appDb: AppDb
+    ): PostKeyDao = appDb.postKeyDao()
+    @Provides
+    fun provideWallPostKeyDao(
+        appDb: AppDb
+    ): WallPostKeyDao = appDb.wallPostKeyDao()
 }
 
 

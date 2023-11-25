@@ -8,21 +8,25 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
-import com.netology.nmedia.activity.NewPostFragment.Companion.textArg
 import com.netology.nmedia.databinding.FragmentImageBinding
+import com.netology.nmedia.util.StringArg
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ImageFragment : Fragment() {
+    companion object {
+        var Bundle.pictureArg: String? by StringArg
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding = FragmentImageBinding.inflate(inflater, container, false)
 
-        val url = requireNotNull(requireArguments().textArg)
+
+        val binding = FragmentImageBinding.inflate(inflater, container, false)
+        val url = requireNotNull(requireArguments().pictureArg)
         Glide.with(binding.photo)
             .load(url)
             .timeout(10_000)

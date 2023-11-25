@@ -8,24 +8,15 @@
     tools:context="com.netology.nmedia.activity.EditPostFragment">
 
 
-    <TextView
-        android:id="@+id/header_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/icon_button_padding"
-        android:text="@string/description_edit_post"
-        android:textSize="@dimen/header_text_size"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/buttonPanel"
+        app:layout_constraintBottom_toTopOf="@id/linkText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/header_title">
+        app:layout_constraintTop_toTopOf="parent">
 
 
         <LinearLayout
@@ -53,22 +44,50 @@
 
                 <ImageView
                     android:id="@+id/photo_preview"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    tools:src="@drawable/youtube_preview"
+                    android:contentDescription="@string/photo_preview_description" />
+
+                <ImageView
+                    android:id="@+id/remove_photo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:contentDescription="@string/photo_preview_description" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/remove_photo"
-                    style="@style/Widget.AppTheme.RemoveButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|center_horizontal"
-                    android:text="@string/remove" />
+                    android:src="@drawable/ic_cancel_24"
+                    android:contentDescription="@string/remove" />
 
             </FrameLayout>
         </LinearLayout>
     </ScrollView>
+
+    <EditText
+        android:id="@+id/linkText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:autoLink="web"
+        android:autofillHints=""
+        android:background="@android:color/transparent"
+        android:hint="@string/add_a_link"
+        android:inputType="textUri"
+        android:padding="@dimen/common_spacing"
+        android:textSize="@dimen/new_post_preview_text_size"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/buttonPanel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/delete_link"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        android:contentDescription="@string/pick_a_photo_from_gallery_description"
+        android:src="@drawable/ic_cancel_24"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/linkText"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 
     <LinearLayout
@@ -95,6 +114,14 @@
             android:contentDescription="@string/pick_a_photo_from_gallery_description"
             android:padding="@dimen/icon_button_padding"
             android:src="@drawable/ic_add_gallery_photo_24" />
+
+        <ImageView
+            android:id="@+id/add_link"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/add_link"
+            android:padding="@dimen/icon_button_padding"
+            android:src="@drawable/ic_add_link_24" />
 
     </LinearLayout>
 

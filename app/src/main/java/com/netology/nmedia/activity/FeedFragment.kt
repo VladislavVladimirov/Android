@@ -13,31 +13,42 @@ import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import com.google.android.material.snackbar.Snackbar
 import com.netology.nmedia.R
-import com.netology.nmedia.activity.EditPostFragment.Companion.textArg
+import com.netology.nmedia.activity.ImageFragment.Companion.pictureArg
 import com.netology.nmedia.adapter.OnInteractionListener
-import com.netology.nmedia.adapter.PostsAdapter
+import com.netology.nmedia.adapter.loading.LoadingStateAdapter
+import com.netology.nmedia.adapter.post.PostsAdapter
 import com.netology.nmedia.databinding.FragmentFeedBinding
 import com.netology.nmedia.dto.Post
 import com.netology.nmedia.util.AndroidUtils
 import com.netology.nmedia.viewmodel.AuthViewModel
 import com.netology.nmedia.viewmodel.PostViewModel
+import com.netology.nmedia.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
-
+@ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class FeedFragment : Fragment() {
     private val viewModel: PostViewModel by activityViewModels()
     private val authViewModel: AuthViewModel by activityViewModels()
+    private val userViewModel: UserViewModel by activityViewModels()
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         val binding = FragmentFeedBinding.inflate(layoutInflater)
-
         val adapter = PostsAdapter(object : OnInteractionListener {
-            override fun onLike(post: Post) {
+            override fun onPostLike(post: Post) {
                 if (authViewModel.isAuthorized) {
                     viewModel.likeById(post)
                 } else {
@@ -48,7 +59,7 @@ class FeedFragment : Fragment() {
                 }
             }
 
-            override fun onShare(post: Post) {
+            override fun onPostShare(post: Post) {
                 val intent = Intent().apply {
                     action = Intent.ACTION_SEND
                     putExtra(Intent.EXTRA_TEXT, post.content)
@@ -60,16 +71,13 @@ class FeedFragment : Fragment() {
 
             }
 
-            override fun onRemove(post: Post) {
+            override fun onPostRemove(post: Post) {
                 viewModel.removeById(post.id)
             }
 
-            override fun onEdit(post: Post) {
+            override fun onPostEdit(post: Post) {
                 viewModel.edit(post)
-                findNavController().navigate(R.id.action_feedFragment_to_editPostFragment,
-                    Bundle().apply {
-                        textArg = post.content
-                    })
+                findNavController().navigate(R.id.action_feedFragment_to_editPostFragment)
             }
 
             override fun onPlay(post: Post) {
@@ -83,29 +91,23 @@ class FeedFragment : Fragment() {
                 }
             }
 
-            override fun onPostClick(post: Post) {
-                findNavController().navigate(
-                    R.id.action_feedFragment_to_postFragment,
-                    Bundle().apply {
-                        textArg = post.id.toString()
-                    })
-            }
-
-            override fun onRefresh() {
-                viewModel.loadPosts()
-            }
-
             override fun onImageClick(post: Post) {
                 findNavController().navigate(
                     R.id.action_feedFragment_to_imageFragment,
                     Bundle().apply {
-                        textArg = post.attachment?.url.toString()
+                        pictureArg = post.attachment?.url.toString()
                     })
             }
+
+            override fun onAuthorClick(post: Post) {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    userViewModel.getUserById(post.authorId).join()
+                    findNavController().navigate(R.id.action_feedFragment_to_wallFragment)
+                }
+
+            }
         })
-
-        val swipeRefresher = binding.postsSwipeRefresh
-
+        activity?.title = getString(R.string.feed_fragment_title)
         var currentMenuProvider: MenuProvider? = null
         authViewModel.authLiveData.observe(viewLifecycleOwner) {
             binding.add.isVisible = authViewModel.isAuthorized
@@ -136,7 +138,7 @@ class FeedFragment : Fragment() {
                                 Snackbar.LENGTH_LONG
                             )
                                 .setAction(R.string.sign_out) {
-                                   authViewModel.removeUser()
+                                    authViewModel.removeUser()
                                 }.show()
 
                             true
@@ -148,39 +150,36 @@ class FeedFragment : Fragment() {
                 }
             }.also { currentMenuProvider = it }, viewLifecycleOwner)
         }
-        binding.list.adapter = adapter
-        viewModel.data.observe(viewLifecycleOwner) { state ->
-            adapter.submitList(state.posts)
-            binding.emptyText.isVisible = state.empty
-        }
-        viewModel.dataState.observe(viewLifecycleOwner) { state ->
-            binding.progress.isVisible = state.loading
-            swipeRefresher.isRefreshing = state.refreshing
-            if (state.error) {
-                Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_LONG)
-                    .setAction(R.string.retry_loading) { viewModel.loadPosts() }.show()
-            }
-        }
-        viewModel.newer.observe(viewLifecycleOwner) {
-            if (it != 0) {
-                binding.newPosts.visibility = View.VISIBLE
-            }
-        }
 
+
+        binding.list.adapter = adapter.withLoadStateFooter(
+            footer = LoadingStateAdapter { adapter.retry() }
+        )
+
+
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.data.collectLatest(adapter::submitData)
+            }
+        }
+        binding.postsSwipeRefresh.setOnRefreshListener { adapter.refresh() }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                adapter.loadStateFlow.collectLatest { state ->
+                    binding.postsSwipeRefresh.isRefreshing =
+                        state.refresh is LoadState.Loading
+                }
+
+            }
+        }
         binding.add.setOnClickListener {
             findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
         }
 
-        swipeRefresher.setOnRefreshListener {
-            viewModel.refreshPosts()
-        }
-        binding.newPosts.setOnClickListener {
-            viewModel.showHiddenPosts()
-            binding.list.smoothScrollToPosition(0)
-            it.visibility = View.GONE
-        }
-
         return binding.root
     }
+
 
 }

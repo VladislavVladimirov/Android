@@ -6,7 +6,7 @@ import com.netology.nmedia.api.AuthApiService
 import com.netology.nmedia.error.ApiError
 import com.netology.nmedia.error.NetworkError
 import com.netology.nmedia.error.UnknownError
-import com.netology.nmedia.model.AuthModel
+import com.netology.nmedia.model.auth.AuthModel
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors

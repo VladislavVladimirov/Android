@@ -57,11 +57,17 @@ class ApiModule {
         .client(okHttpClient)
         .baseUrl(BASE_URL)
         .build()
+
     @Provides
     @Singleton
     fun providePostApiService(retrofit: Retrofit): PostApiService = retrofit.create()
+
     @Provides
     @Singleton
     fun provideAuthApiService(retrofit: Retrofit): AuthApiService = retrofit.create()
+
+    @Provides
+    @Singleton
+    fun provideJobApiService(retrofit: Retrofit): JobApiService = retrofit.create()
 }
 

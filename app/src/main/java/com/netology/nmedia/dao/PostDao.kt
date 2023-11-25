@@ -1,23 +1,20 @@
 package com.netology.nmedia.dao
 
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.netology.nmedia.entity.PostEntity
-import kotlinx.coroutines.flow.Flow
 
 
 @Dao
 interface PostDao {
-    @Query("SELECT * FROM PostEntity WHERE visibility = 1 ORDER BY id DESC")
-    fun getAll(): Flow<List<PostEntity>>
 
-    @Query("SELECT COUNT(*) == 0 FROM PostEntity")
-    suspend fun isEmpty(): Boolean
-    @Query("SELECT COUNT(*) FROM PostEntity")
-    suspend fun count(): Int
+    @Query("SELECT * FROM PostEntity ORDER BY id DESC")
+    fun getPagingSource(): PagingSource<Int, PostEntity>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(post: PostEntity)
 
@@ -26,10 +23,10 @@ interface PostDao {
 
     @Query("DELETE FROM PostEntity WHERE id = :id")
     suspend fun removeById(id: Int)
-    @Query("UPDATE PostEntity SET visibility = 1 WHERE visibility = 0")
-    suspend fun showAll()
+    @Query("DELETE FROM PostEntity")
+    suspend fun removeAll()
+    @Query("SELECT COUNT(*) == 0 FROM PostEntity")
+    suspend fun isEmpty(): Boolean
 
-    @Query("SELECT COUNT(*) FROM PostEntity")
-    suspend fun countPosts(): Int
 
 }

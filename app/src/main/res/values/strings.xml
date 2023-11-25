@@ -3,6 +3,7 @@
     <string name="nmedia">NMedia!</string>
     <string name="description_post_author_avatar">Post author avatar</string>
     <string name="description_post_menu">Post menu</string>
+    <string name="description_job_menu">Job menu</string>
     <string name="description_like_button">Like </string>
     <string name="description_share_button">Repost</string>
     <string name="description_views">Views</string>
@@ -26,7 +27,6 @@
     <string name="notification_unknown_action">Notification display error</string>
     <string name="error">Error</string>
     <string name="retry_loading">Retry</string>
-    <string name="empty_posts">There are no posts.\nIf you create a new post, it will appear here</string>
     <string name="image_attachment_description">Image</string>
     <string name="error_loading">An error occurred while loading data</string>
     <string name="new_posts">New posts</string>
@@ -54,5 +54,21 @@
     <string name="notification_not_updated">Update the app, so notifications will be displayed again</string>
     <string name="sign_up_successful">Sign Up is successful</string>
     <string name="yesterday">Yesterday</string>
+    <string name="link_icon_description">Link</string>
+    <string name="add_link">Add link</string>
+    <string name="add_a_link">Add a link</string>
+    <string name="user_avatar">User avatar</string>
+    <string name="line">-</string>
+    <string name="add_a_job">Add a job</string>
+    <string name="add_job_button_description">Add a job button</string>
+    <string name="add_job_title">Add a job</string>
+    <string name="company_name_hint">Company name</string>
+    <string name="job_position_hint">Position</string>
+    <string name="start_work_date_hint">Start of work</string>
+    <string name="end_work_date_hint">End of work</string>
+    <string name="feed_fragment_title">Feed</string>
+    <string name="wall_fragment_title">User profile</string>
+    <string name="sign_in_title">Sign In</string>
+    <string name="sign_up_title">Register</string>
 
 </resources>

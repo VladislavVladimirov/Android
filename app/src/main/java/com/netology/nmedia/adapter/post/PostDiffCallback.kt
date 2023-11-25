@@ -1,4 +1,4 @@
-package com.netology.nmedia.adapter
+package com.netology.nmedia.adapter.post
 
 import androidx.recyclerview.widget.DiffUtil
 import com.netology.nmedia.dto.Post

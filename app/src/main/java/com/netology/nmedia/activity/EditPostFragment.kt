@@ -11,8 +11,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toFile
+import androidx.core.net.toUri
 import androidx.core.view.MenuProvider
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -21,27 +21,55 @@ import com.github.dhaval2404.imagepicker.constant.ImageProvider
 import com.google.android.material.snackbar.Snackbar
 import com.netology.nmedia.R
 import com.netology.nmedia.databinding.FragmentEditPostBinding
-import com.netology.nmedia.model.PhotoModel
+import com.netology.nmedia.model.media.PhotoModel
 import com.netology.nmedia.util.AndroidUtils
-import com.netology.nmedia.util.StringArg
 import com.netology.nmedia.viewmodel.PostViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+@ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class EditPostFragment : Fragment() {
-    companion object {
-        var Bundle.textArg: String? by StringArg
-
-    }
     private val viewModel: PostViewModel by activityViewModels(
     )
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         val binding = FragmentEditPostBinding.inflate(inflater, container, false)
+        val editedPost = viewModel.getEditedPost()
 
+        activity?.title = getString(R.string.description_edit_post)
+
+        binding.edit.setText(editedPost?.content)
+        binding.linkText.setText(editedPost?.link)
+        val attachment = editedPost?.attachment
+        if (attachment != null) {
+            viewModel.changePhoto(PhotoModel(uri = attachment.url.toUri(), file = null))
+        }
+        if (attachment?.url != null) {
+            binding.photoPreviewContainer.visibility = View.VISIBLE
+            AndroidUtils.loadImage(url = attachment.url, imageView = binding.photoPreview)
+        } else {
+            binding.photoPreviewContainer.visibility = View.GONE
+        }
+        if (binding.linkText.text.isNotBlank()) {
+            binding.linkText.visibility = View.VISIBLE
+            binding.deleteLink.visibility = View.VISIBLE
+        }
+
+        binding.addLink.setOnClickListener {
+            binding.linkText.visibility = View.VISIBLE
+            binding.deleteLink.visibility = View.VISIBLE
+        }
+        binding.deleteLink.setOnClickListener {
+            binding.linkText.text.clear()
+            binding.linkText.visibility = View.GONE
+            binding.deleteLink.visibility = View.GONE
+
+        }
         val pickPhotoLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                 when (it.resultCode) {
@@ -60,11 +88,6 @@ class EditPostFragment : Fragment() {
                     }
                 }
             }
-
-        arguments?.textArg?.let(binding.edit::setText)
-
-
-
         activity?.addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.edit_post_menu, menu)
@@ -73,11 +96,21 @@ class EditPostFragment : Fragment() {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
                     R.id.save -> {
-                        viewModel.changeContent(binding.edit.text.toString())
-                        viewModel.save()
-                        viewModel.clearDraft()
-                        AndroidUtils.hideKeyboard(requireView())
-                        true
+                        if (binding.edit.text.isNotBlank()) {
+                            viewModel.changeContent(
+                                binding.edit.text.toString(),
+                                binding.linkText.text.toString()
+                            )
+                            viewModel.save()
+                            AndroidUtils.hideKeyboard(requireView())
+                            true
+                        } else {
+                            Snackbar.make(
+                                binding.root,
+                                getString(R.string.error_empty_content), Snackbar.LENGTH_LONG
+                            ).show()
+                            false
+                        }
                     }
 
                     R.id.cancel -> {
@@ -117,19 +150,21 @@ class EditPostFragment : Fragment() {
         }
         binding.removePhoto.setOnClickListener {
             viewModel.changePhoto(null)
+            viewModel.changeAttachmentPhoto("")
+            binding.photoPreviewContainer.visibility = View.GONE
 
         }
         viewModel.photoState.observe(viewLifecycleOwner) { photoState ->
             if (photoState == null) {
-                binding.photoPreviewContainer.isVisible = false
+                binding.photoPreviewContainer.visibility = View.GONE
                 binding.photoPreview.setImageURI(null)
                 return@observe
             }
-            binding.photoPreviewContainer.isVisible = true
+            binding.photoPreviewContainer.visibility = View.VISIBLE
             binding.photoPreview.setImageURI(photoState.uri)
         }
         viewModel.postCreated.observe(viewLifecycleOwner) {
-            viewModel.loadPosts()
+
             binding.photoPreview.setImageURI(null)
             findNavController().navigateUp()
         }
@@ -138,6 +173,7 @@ class EditPostFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        viewModel.cancelEdit()
+        viewModel.clear()
+        viewModel.changePhoto(null)
     }
 }

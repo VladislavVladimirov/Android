@@ -1,4 +1,4 @@
-package com.netology.nmedia.model
+package com.netology.nmedia.model.auth
 
 data class AuthModelState(
     val loading: Boolean = false,

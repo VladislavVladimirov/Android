@@ -1,4 +1,4 @@
-package com.netology.nmedia.model
+package com.netology.nmedia.model.auth
 
 data class AuthModel(
     val id: Int = 0,

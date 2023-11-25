@@ -5,8 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.netology.nmedia.auth.AppAuth
-import com.netology.nmedia.model.AuthModelState
-import com.netology.nmedia.model.PhotoModel
+import com.netology.nmedia.model.auth.AuthModelState
+import com.netology.nmedia.model.media.PhotoModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject

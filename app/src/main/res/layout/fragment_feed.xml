@@ -12,19 +12,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/emptyText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:elevation="50dp"
-            android:text="@string/empty_posts"
-            android:textColor="@color/white"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/posts_swipe_refresh"
@@ -38,22 +25,10 @@
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0"
                 tools:layout_editor_absoluteX="@dimen/common_spacing"
                 tools:listitem="@layout/card_post" />
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-        <ProgressBar
-            android:id="@+id/progress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:theme="@style/ProgressBarTheme"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -1,9 +1,15 @@
 package com.netology.nmedia.repository
 
-import com.netology.nmedia.repository.draft.DraftRepository
-import com.netology.nmedia.repository.draft.DraftRepositorySharedPrefsImpl
+import com.netology.nmedia.repository.draft.post.DraftNewPostRepository
+import com.netology.nmedia.repository.draft.post.DraftNewPostRepositoryImpl
+import com.netology.nmedia.repository.draft.post.job.DraftNewJobRepository
+import com.netology.nmedia.repository.draft.post.job.DraftNewJobRepositoryImpl
 import com.netology.nmedia.repository.post.PostRepository
 import com.netology.nmedia.repository.post.PostRepositoryImpl
+import com.netology.nmedia.repository.user.UserRepository
+import com.netology.nmedia.repository.user.UserRepositoryImpl
+import com.netology.nmedia.repository.wall.WallRepository
+import com.netology.nmedia.repository.wall.WallRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -18,6 +24,14 @@ interface RepositoryModule {
     fun bindsPostRepository(impl: PostRepositoryImpl): PostRepository
     @Singleton
     @Binds
-    fun bindsDraftRepository(impl: DraftRepositorySharedPrefsImpl): DraftRepository
-
+    fun bindsDraftNewPostRepository(impl: DraftNewPostRepositoryImpl): DraftNewPostRepository
+    @Singleton
+    @Binds
+    fun bindsDraftNewJobRepository(impl: DraftNewJobRepositoryImpl): DraftNewJobRepository
+    @Singleton
+    @Binds
+    fun bindsWallRepository(impl: WallRepositoryImpl): WallRepository
+    @Singleton
+    @Binds
+    fun bindsUserRepository(impl: UserRepositoryImpl): UserRepository
 }

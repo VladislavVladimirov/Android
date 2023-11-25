@@ -4,11 +4,9 @@ import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
-import com.netology.nmedia.util.Converters
-import com.netology.nmedia.dto.Attachment
 import com.netology.nmedia.dto.Coordinates
 import com.netology.nmedia.dto.Post
-import com.netology.nmedia.enums.AttachmentType
+import com.netology.nmedia.util.Converters
 
 @Entity
 data class PostEntity(
@@ -31,7 +29,6 @@ data class PostEntity(
     val ownedByMe: Boolean,
     @Embedded
     var attachment: AttachmentEmbeddable?,
-    var visibility: Boolean,
 
     ) {
     fun toDto() = Post(
@@ -56,7 +53,7 @@ data class PostEntity(
     )
 
     companion object {
-        fun fromDto(dto: Post, visibility: Boolean) =
+        fun fromDto(dto: Post) =
             PostEntity(
                 dto.id,
                 dto.authorId,
@@ -76,25 +73,15 @@ data class PostEntity(
                 dto.likedByMe,
                 dto.ownedByMe,
                 AttachmentEmbeddable.fromDto(dto.attachment),
-                visibility = visibility,
-            )
+
+                )
 
     }
 }
 
-data class AttachmentEmbeddable(
-    var url: String,
-    var type: AttachmentType,
-) {
-    fun toDto() = Attachment(url, type)
-
-    companion object {
-        fun fromDto(dto: Attachment?) = dto?.let {
-            AttachmentEmbeddable(it.url, it.type)
-        }
-    }
-}
 
 fun List<PostEntity>.toDto(): List<Post> = map(PostEntity::toDto)
-fun List<Post>.toEntity(visibility: Boolean): List<PostEntity> =
-    map { PostEntity.fromDto(it, visibility) }
+fun List<Post>.toPostEntity(): List<PostEntity> =
+    map {
+        PostEntity.fromDto(it)
+    }

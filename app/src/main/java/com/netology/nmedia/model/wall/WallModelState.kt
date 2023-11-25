@@ -1,6 +1,6 @@
-package com.netology.nmedia.model
+package com.netology.nmedia.model.wall
 
-data class FeedModelState(
+data class WallModelState(
     val loading: Boolean = false,
     val error: Boolean = false,
     val refreshing: Boolean = false,

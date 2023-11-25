@@ -1,23 +1,24 @@
 package com.netology.nmedia.repository.post
 
+import androidx.paging.ExperimentalPagingApi
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.map
 import com.netology.nmedia.api.PostApiService
 import com.netology.nmedia.dao.PostDao
+import com.netology.nmedia.dao.PostKeyDao
+import com.netology.nmedia.db.AppDb
 import com.netology.nmedia.dto.Attachment
 import com.netology.nmedia.dto.Media
 import com.netology.nmedia.dto.Post
 import com.netology.nmedia.entity.PostEntity
-import com.netology.nmedia.entity.toDto
-import com.netology.nmedia.entity.toEntity
 import com.netology.nmedia.enums.AttachmentType
 import com.netology.nmedia.error.ApiError
-import com.netology.nmedia.error.AppError
 import com.netology.nmedia.error.NetworkError
 import com.netology.nmedia.error.UnknownError
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
+import com.netology.nmedia.paging.PostRemoteMediator
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -29,36 +30,19 @@ import javax.inject.Inject
 class PostRepositoryImpl @Inject constructor(
     private val postDao: PostDao,
     private val apiService: PostApiService,
+    postKeyDao: PostKeyDao,
+    appDb: AppDb
 ) : PostRepository {
-    override val data = postDao.getAll().map(List<PostEntity>::toDto).flowOn(Dispatchers.Default)
 
-    override suspend fun getAll() {
-        try {
-            val response = apiService.getPosts()
-            if (!response.isSuccessful) throw ApiError(response.code(), response.message())
-            val body = response.body() ?: throw ApiError(response.code(), response.message())
-            postDao.insert(body.toEntity(visibility = true))
-        } catch (e: IOException) {
-            throw NetworkError
-        } catch (e: Exception) {
-            throw UnknownError
-        }
-    }
+    @OptIn(ExperimentalPagingApi::class)
+    override val data: Flow<PagingData<Post>> = Pager(
+        config = PagingConfig(pageSize = 10),
+        pagingSourceFactory = { postDao.getPagingSource() },
+        remoteMediator = PostRemoteMediator(apiService, postDao, postKeyDao, appDb)
+    ).flow
+        .map { it.map(PostEntity::toDto) }
 
-    override fun getNewerCount(id: Int) = flow {
-        while (true) {
-            delay(10000)
-            val response = apiService.getNewer(id)
-            if (!response.isSuccessful) {
-                throw ApiError(response.code(), response.message())
-            }
-            val body = response.body() ?: emptyList()
-            postDao.insert(body.toEntity(visibility = false))
-            emit(body.size)
-        }
-    }
-        .catch { e -> throw AppError.from(e) }
-        .flowOn(Dispatchers.Default)
+
 
     override suspend fun save(post: Post) {
         try {
@@ -67,7 +51,7 @@ class PostRepositoryImpl @Inject constructor(
                 throw ApiError(response.code(), response.message())
             }
             val body = response.body() ?: throw ApiError(response.code(), response.message())
-            postDao.insert(PostEntity.fromDto(body, visibility = true))
+            postDao.insert(PostEntity.fromDto(body))
         } catch (e: IOException) {
             throw NetworkError
         } catch (e: Exception) {
@@ -80,7 +64,7 @@ class PostRepositoryImpl @Inject constructor(
         try {
             val response = apiService.likeById(id)
             val body = response.body() ?: throw ApiError(response.code(), response.message())
-            postDao.insert(PostEntity.fromDto(body.copy(likedByMe = true), visibility = true))
+            postDao.insert(PostEntity.fromDto(body.copy(likedByMe = true)))
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
@@ -95,7 +79,7 @@ class PostRepositoryImpl @Inject constructor(
         try {
             val response = apiService.dislikeById(id)
             val body = response.body() ?: throw ApiError(response.code(), response.message())
-            postDao.insert(PostEntity.fromDto(body.copy(likedByMe = false), visibility = true))
+            postDao.insert(PostEntity.fromDto(body.copy(likedByMe = false)))
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
@@ -120,18 +104,6 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun showAll() {
-        try {
-            postDao.showAll()
-        } catch (e: ApiError) {
-            throw e
-        } catch (e: IOException) {
-            throw NetworkError
-        } catch (e: Exception) {
-            throw UnknownError
-        }
-    }
-
     override suspend fun saveWithAttachment(file: File, post: Post) {
         try {
             val media = upload(file)
@@ -147,14 +119,13 @@ class PostRepositoryImpl @Inject constructor(
                 throw ApiError(response.code(), response.message())
             }
             val body = response.body() ?: throw ApiError(response.code(), response.message())
-            postDao.insert(PostEntity.fromDto(body, visibility = true))
+            postDao.insert(PostEntity.fromDto(body))
         } catch (e: IOException) {
             throw NetworkError
         } catch (e: Exception) {
             throw UnknownError
         }
     }
-
 
     private suspend fun upload(file: File): Media {
         val part = MultipartBody.Part.createFormData(

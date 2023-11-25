@@ -13,7 +13,6 @@ import com.google.android.material.snackbar.Snackbar
 import com.netology.nmedia.R
 import com.netology.nmedia.databinding.FragmentSignInBinding
 import com.netology.nmedia.util.AndroidUtils
-import com.netology.nmedia.viewmodel.PostViewModel
 import com.netology.nmedia.viewmodel.SignInViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -21,14 +20,14 @@ import dagger.hilt.android.AndroidEntryPoint
 class SignInFragment : Fragment() {
 
     private val viewModel: SignInViewModel by activityViewModels()
-    private val postViewModel: PostViewModel by activityViewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         val binding = FragmentSignInBinding.inflate(inflater, container, false)
-
+        activity?.title = getString(R.string.sign_in_title)
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             AndroidUtils.hideKeyboard(requireView())
             viewModel.clean()
@@ -40,7 +39,6 @@ class SignInFragment : Fragment() {
                 Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_LONG).show()
             }
             if (state.success) {
-                postViewModel.refreshPosts()
                 viewModel.clean()
                 findNavController().navigateUp()
             }

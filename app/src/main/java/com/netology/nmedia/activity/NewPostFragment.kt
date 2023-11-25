@@ -22,27 +22,24 @@ import com.github.dhaval2404.imagepicker.constant.ImageProvider
 import com.google.android.material.snackbar.Snackbar
 import com.netology.nmedia.R
 import com.netology.nmedia.databinding.FragmentNewPostBinding
-import com.netology.nmedia.model.PhotoModel
+import com.netology.nmedia.model.media.PhotoModel
 import com.netology.nmedia.util.AndroidUtils
-import com.netology.nmedia.util.StringArg
 import com.netology.nmedia.viewmodel.PostViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+@ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class NewPostFragment : Fragment() {
-    companion object {
-        var Bundle.textArg: String? by StringArg
-    }
     private val viewModel: PostViewModel by activityViewModels()
-
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         val binding = FragmentNewPostBinding.inflate(inflater, container, false)
-        val localDraft = viewModel.getDraft()
+        val draftContent = viewModel.getDraftContent()
+        val draftLink = viewModel.getDraftLink()
 
         val pickPhotoLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -63,7 +60,24 @@ class NewPostFragment : Fragment() {
                     }
                 }
             }
-        binding.edit.setText(localDraft)
+        activity?.title = getString(R.string.new_post)
+        binding.edit.setText(draftContent)
+        binding.linkText.setText(draftLink)
+        if (binding.linkText.text.isNotBlank()) {
+            binding.linkText.visibility = View.VISIBLE
+            binding.deleteLink.visibility = View.VISIBLE
+        }
+
+        binding.addLink.setOnClickListener {
+            binding.linkText.visibility = View.VISIBLE
+            binding.deleteLink.visibility = View.VISIBLE
+        }
+        binding.deleteLink.setOnClickListener {
+            binding.linkText.text.clear()
+            binding.linkText.visibility = View.GONE
+            binding.deleteLink.visibility = View.GONE
+
+        }
 
 
         activity?.addMenuProvider(object : MenuProvider {
@@ -74,11 +88,19 @@ class NewPostFragment : Fragment() {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
                     R.id.save -> {
-                        viewModel.changeContent(binding.edit.text.toString())
-                        viewModel.save()
-                        viewModel.clearDraft()
-                        AndroidUtils.hideKeyboard(requireView())
-                        true
+                        if (binding.edit.text.isNotBlank()) {
+                            viewModel.changeContent(binding.edit.text.toString(), binding.linkText.text.toString())
+                            viewModel.save()
+                            viewModel.clearDrafts()
+                            AndroidUtils.hideKeyboard(requireView())
+                            true
+                        } else {
+                            Snackbar.make(
+                                binding.root,
+                                getString(R.string.error_empty_content), Snackbar.LENGTH_LONG
+                            ).show()
+                            false
+                        }
                     }
 
                     else -> false
@@ -86,8 +108,6 @@ class NewPostFragment : Fragment() {
             }
 
         }, viewLifecycleOwner)
-
-        arguments?.textArg?.let(binding.edit::setText)
 
         binding.takePhoto.setOnClickListener {
             ImagePicker.with(this)
@@ -111,7 +131,8 @@ class NewPostFragment : Fragment() {
         }
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            viewModel.saveDraft(binding.edit.text.toString())
+            viewModel.saveDraftContent(binding.edit.text.toString())
+            viewModel.saveDraftLink(binding.linkText.text.toString())
             AndroidUtils.hideKeyboard(requireView())
             findNavController().navigateUp()
         }
@@ -129,10 +150,15 @@ class NewPostFragment : Fragment() {
 
             binding.photoPreview.setImageURI(photoState.uri)
         }
+
         viewModel.postCreated.observe(viewLifecycleOwner) {
-            viewModel.loadPosts()
             findNavController().navigateUp()
         }
         return binding.root
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.changePhoto(null)
     }
 }
