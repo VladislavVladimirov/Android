@@ -9,9 +9,11 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toFile
 import androidx.core.view.MenuProvider
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -19,43 +21,67 @@ import com.github.dhaval2404.imagepicker.ImagePicker
 import com.github.dhaval2404.imagepicker.constant.ImageProvider
 import com.google.android.material.snackbar.Snackbar
 import com.netology.nmedia.R
-import com.netology.nmedia.databinding.FragmentEditPostBinding
+import com.netology.nmedia.databinding.FragmentNewEventBinding
 import com.netology.nmedia.model.media.PhotoModel
 import com.netology.nmedia.util.AndroidUtils
-import com.netology.nmedia.viewmodel.PostViewModel
+import com.netology.nmedia.util.Formatter
+import com.netology.nmedia.viewmodel.EventViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
-class EditPostFragment : Fragment() {
-    private val viewModel: PostViewModel by activityViewModels(
-    )
-
+class NewEventFragment : Fragment() {
+    private val viewModel: EventViewModel by activityViewModels()
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
+        inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding = FragmentEditPostBinding.inflate(inflater, container, false)
+        val binding = FragmentNewEventBinding.inflate(inflater, container, false)
+        val draftContent = viewModel.getDraftContent()
+        val draftLink = viewModel.getDraftLink()
+        val draftDate = viewModel.getDraftDate()
+        val draftTime = viewModel.getDraftTime()
+        val draftFormat = viewModel.getDraftFormat()
+        val pickPhotoLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                when (it.resultCode) {
+                    ImagePicker.RESULT_ERROR -> {
+                        Snackbar.make(
+                            binding.root,
+                            ImagePicker.getError(it.data),
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                    }
 
-        val editedPost = viewModel.getEditedPost()
+                    Activity.RESULT_OK -> {
+                        val uri: Uri? = it.data?.data
+                        val file = uri?.toFile()
 
-        activity?.title = getString(R.string.description_edit_post)
+                        viewModel.changePhoto(PhotoModel(uri, file))
+                    }
+                }
+            }
+        activity?.title = getString(R.string.new_event)
+        binding.edit.setText(draftContent)
+        binding.date.text = draftDate
+        binding.time.text = draftTime
 
-        binding.edit.setText(editedPost?.content)
-        binding.linkText.setText(editedPost?.link)
+        binding.onlineOrOffline.text = draftFormat
+        binding.onlineOrOffline.isChecked = binding.onlineOrOffline.text == getString(R.string.Online)
 
-        val attachment = editedPost?.attachment
-        if (attachment != null) {
-            viewModel.changePhoto(PhotoModel(Uri.parse(attachment.url), file = null))
+        binding.onlineOrOffline.setOnCheckedChangeListener { button, _ ->
+            if (button.isChecked) {
+                binding.onlineOrOffline.text =  getString(R.string.Online)
+            } else {
+                binding.onlineOrOffline.text =  getString(R.string.Offline)
+            }
         }
-        if (attachment?.url != null) {
-            AndroidUtils.loadImage(url = attachment.url, imageView = binding.photoPreview)
-            binding.photoPreviewContainer.visibility = View.VISIBLE
-        } else {
-            binding.photoPreviewContainer.visibility = View.GONE
-        }
+
+
+        binding.linkText.setText(draftLink)
+
+
         if (binding.linkText.text.isNotBlank()) {
             binding.linkText.visibility = View.VISIBLE
             binding.deleteLink.visibility = View.VISIBLE
@@ -71,38 +97,25 @@ class EditPostFragment : Fragment() {
             binding.deleteLink.visibility = View.GONE
 
         }
-        val pickPhotoLauncher =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-                when (it.resultCode) {
-                    ImagePicker.RESULT_ERROR -> {
-                        Snackbar.make(
-                            binding.root,
-                            ImagePicker.getError(it.data),
-                            Snackbar.LENGTH_LONG
-                        ).show()
-                    }
-
-                    Activity.RESULT_OK -> {
-                        val uri: Uri? = it.data?.data
-                        val file = uri?.toFile()
-                        viewModel.changePhoto(PhotoModel(uri, file))
-                    }
-                }
-            }
+        binding.date.setOnClickListener {
+            context?.let { Formatter.showDatePicker(binding.date, it) }
+        }
+        binding.time.setOnClickListener {
+            context?.let { Formatter.showTimePicker(binding.time, it) }
+        }
         activity?.addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.edit_post_menu, menu)
+                menuInflater.inflate(R.menu.new_event_menu, menu)
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
                     R.id.save -> {
+                        val date = "${binding.date.text} " + "${binding.time.text}"
                         if (binding.edit.text.isNotBlank()) {
-                            viewModel.changeContent(
-                                binding.edit.text.toString(),
-                                binding.linkText.text.toString()
-                            )
+                            viewModel.changeContent(binding.edit.text.toString(), binding.linkText.text.toString(), date, binding.onlineOrOffline.isChecked)
                             viewModel.save()
+                            viewModel.clearDrafts()
                             AndroidUtils.hideKeyboard(requireView())
                             true
                         } else {
@@ -114,21 +127,11 @@ class EditPostFragment : Fragment() {
                         }
                     }
 
-                    R.id.cancel -> {
-                        AndroidUtils.hideKeyboard(requireView())
-                        findNavController().navigateUp()
-                        true
-                    }
-
                     else -> false
                 }
             }
 
         }, viewLifecycleOwner)
-
-
-
-
         binding.takePhoto.setOnClickListener {
             ImagePicker.with(this)
                 .crop()
@@ -149,31 +152,36 @@ class EditPostFragment : Fragment() {
                 )
                 .createIntent(pickPhotoLauncher::launch)
         }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            viewModel.saveDraftContent(binding.edit.text.toString())
+            viewModel.saveDraftDate(binding.date.text.toString())
+            viewModel.saveDraftTime(binding.time.text.toString())
+            val format = if (binding.onlineOrOffline.isChecked) {
+                getString(R.string.Online)
+            } else {
+                getString(R.string.Offline)
+            }
+            viewModel.saveDraftFormat(format)
+            viewModel.saveDraftLink(binding.linkText.text.toString())
+            AndroidUtils.hideKeyboard(requireView())
+            findNavController().navigateUp()
+        }
         binding.removePhoto.setOnClickListener {
             viewModel.changePhoto(null)
-            viewModel.changeAttachmentPhoto("")
-            binding.photoPreviewContainer.visibility = View.GONE
-
         }
         viewModel.photoState.observe(viewLifecycleOwner) { photoState ->
             if (photoState == null) {
-                binding.photoPreviewContainer.visibility = View.GONE
-                binding.photoPreview.setImageURI(null)
+                binding.photoPreviewContainer.isVisible = false
+
                 return@observe
             }
-            binding.photoPreviewContainer.visibility = View.VISIBLE
+            binding.photoPreviewContainer.isVisible = true
+
             binding.photoPreview.setImageURI(photoState.uri)
         }
-        viewModel.postCreated.observe(viewLifecycleOwner) {
-            binding.photoPreview.setImageURI(null)
+        viewModel.eventCreated.observe(viewLifecycleOwner) {
             findNavController().navigateUp()
         }
         return binding.root
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        viewModel.clear()
-        viewModel.changePhoto(null)
     }
 }

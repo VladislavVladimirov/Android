@@ -2,6 +2,8 @@ package com.netology.nmedia.db
 
 import android.content.Context
 import androidx.room.Room
+import com.netology.nmedia.dao.EventDao
+import com.netology.nmedia.dao.EventKeyDao
 import com.netology.nmedia.dao.JobDao
 import com.netology.nmedia.dao.PostDao
 import com.netology.nmedia.dao.PostKeyDao
@@ -51,6 +53,10 @@ class DbModule {
     fun provideWallPostKeyDao(
         appDb: AppDb
     ): WallPostKeyDao = appDb.wallPostKeyDao()
+    @Provides
+    fun provideEventDao(appDb: AppDb): EventDao = appDb.eventDao()
+    @Provides
+    fun provideEventKeyDao(appDb: AppDb): EventKeyDao = appDb.eventKeyDao()
 }
 
 

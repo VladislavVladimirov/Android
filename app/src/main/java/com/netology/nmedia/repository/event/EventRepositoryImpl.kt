@@ -1,23 +1,23 @@
-package com.netology.nmedia.repository.post
+package com.netology.nmedia.repository.event
 
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
-import com.netology.nmedia.api.PostApiService
-import com.netology.nmedia.dao.PostDao
-import com.netology.nmedia.dao.PostKeyDao
+import com.netology.nmedia.api.EventApiService
+import com.netology.nmedia.dao.EventDao
+import com.netology.nmedia.dao.EventKeyDao
 import com.netology.nmedia.db.AppDb
 import com.netology.nmedia.dto.Attachment
+import com.netology.nmedia.dto.Event
 import com.netology.nmedia.dto.Media
-import com.netology.nmedia.dto.Post
-import com.netology.nmedia.entity.PostEntity
+import com.netology.nmedia.entity.EventEntity
 import com.netology.nmedia.enums.AttachmentType
 import com.netology.nmedia.error.ApiError
 import com.netology.nmedia.error.NetworkError
 import com.netology.nmedia.error.UnknownError
-import com.netology.nmedia.paging.PostRemoteMediator
+import com.netology.nmedia.paging.EventRemoteMediator
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import okhttp3.MultipartBody
@@ -26,42 +26,38 @@ import java.io.File
 import java.io.IOException
 import javax.inject.Inject
 
-
-class PostRepositoryImpl @Inject constructor(
-    private val postDao: PostDao,
-    private val apiService: PostApiService,
-    postKeyDao: PostKeyDao,
+class EventRepositoryImpl @Inject constructor(
+    private val eventDao: EventDao,
+    private val apiService: EventApiService,
+    private val eventKeyDao: EventKeyDao,
     appDb: AppDb
-) : PostRepository {
-
+): EventRepository {
     @OptIn(ExperimentalPagingApi::class)
-    override val data: Flow<PagingData<Post>> = Pager(
+    override val data: Flow<PagingData<Event>> = Pager(
         config = PagingConfig(pageSize = 10),
-        pagingSourceFactory = { postDao.getPagingSource() },
-        remoteMediator = PostRemoteMediator(apiService, postDao, postKeyDao, appDb)
+        pagingSourceFactory = { eventDao.getPagingSource() },
+        remoteMediator = EventRemoteMediator(apiService, eventDao, eventKeyDao, appDb)
     ).flow
-        .map { it.map(PostEntity::toDto) }
-
-    override suspend fun save(post: Post) {
+        .map { it.map(EventEntity::toDto) }
+    override suspend fun save(event: Event) {
         try {
-            val response = apiService.save(post)
+            val response = apiService.save(event)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
             val body = response.body() ?: throw ApiError(response.code(), response.message())
-            postDao.insert(PostEntity.fromDto(body))
+            eventDao.insert(EventEntity.fromDto(body))
         } catch (e: IOException) {
             throw NetworkError
         } catch (e: Exception) {
             throw UnknownError
         }
     }
-
     override suspend fun likeById(id: Int) {
         try {
             val response = apiService.likeById(id)
             val body = response.body() ?: throw ApiError(response.code(), response.message())
-            postDao.insert(PostEntity.fromDto(body.copy(likedByMe = true)))
+            eventDao.insert(EventEntity.fromDto(body.copy(likedByMe = true)))
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
@@ -76,7 +72,7 @@ class PostRepositoryImpl @Inject constructor(
         try {
             val response = apiService.dislikeById(id)
             val body = response.body() ?: throw ApiError(response.code(), response.message())
-            postDao.insert(PostEntity.fromDto(body.copy(likedByMe = false)))
+            eventDao.insert(EventEntity.fromDto(body.copy(likedByMe = false)))
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
@@ -89,7 +85,7 @@ class PostRepositoryImpl @Inject constructor(
 
     override suspend fun removeById(id: Int) {
         try {
-            postDao.removeById(id)
+            eventDao.removeById(id)
             val response = apiService.removeById(id)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
@@ -101,11 +97,11 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun saveWithAttachment(file: File, post: Post) {
+    override suspend fun saveWithAttachment(file: File, event: Event) {
         try {
             val media = upload(file)
             val response = apiService.save(
-                post.copy(
+                event.copy(
                     attachment = Attachment(
                         url = media.url,
                         type = AttachmentType.IMAGE
@@ -116,7 +112,7 @@ class PostRepositoryImpl @Inject constructor(
                 throw ApiError(response.code(), response.message())
             }
             val body = response.body() ?: throw ApiError(response.code(), response.message())
-            postDao.insert(PostEntity.fromDto(body))
+            eventDao.insert(EventEntity.fromDto(body))
         } catch (e: IOException) {
             throw NetworkError
         } catch (e: Exception) {
@@ -133,4 +129,34 @@ class PostRepositoryImpl @Inject constructor(
         val response = apiService.upload(part)
         return response.body() ?: throw ApiError(response.code(), response.message())
     }
+    override suspend fun takePartAtEvent(id: Int) {
+        try {
+            val response = apiService.takePartAtEvent(id)
+            val body = response.body() ?: throw ApiError(response.code(), response.message())
+            eventDao.insert(EventEntity.fromDto(body.copy(participatedByMe = true)))
+            if (!response.isSuccessful) {
+                throw ApiError(response.code(), response.message())
+            }
+        } catch (e: IOException) {
+            throw NetworkError
+        } catch (e: Exception) {
+            throw UnknownError
+        }
+    }
+    override suspend fun deleteTakingPart(id: Int) {
+        try {
+            val response = apiService.deleteTakingPart(id)
+            val body = response.body() ?: throw ApiError(response.code(), response.message())
+            eventDao.insert(EventEntity.fromDto(body.copy(participatedByMe = false)))
+            if (!response.isSuccessful) {
+                throw ApiError(response.code(), response.message())
+            }
+        } catch (e: IOException) {
+            throw NetworkError
+        } catch (e: Exception) {
+            throw UnknownError
+        }
+    }
+
+
 }

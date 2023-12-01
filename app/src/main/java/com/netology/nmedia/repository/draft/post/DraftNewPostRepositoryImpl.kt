@@ -49,8 +49,8 @@ class DraftNewPostRepositoryImpl @Inject constructor(
         sync()
     }
 
-    override fun saveDraftLink(link: String) {
-        draftLink = link
+    override fun saveDraftLink(content: String) {
+        draftLink = content
         dataLink.value = draftLink
         sync()
     }

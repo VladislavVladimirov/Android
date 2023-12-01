@@ -24,13 +24,13 @@ import com.google.android.material.snackbar.Snackbar
 import com.netology.nmedia.R
 import com.netology.nmedia.activity.ImageFragment.Companion.pictureArg
 import com.netology.nmedia.adapter.OnInteractionListener
+import com.netology.nmedia.adapter.event.EventAdapter
 import com.netology.nmedia.adapter.loading.LoadingStateAdapter
-import com.netology.nmedia.adapter.post.PostsAdapter
-import com.netology.nmedia.databinding.FragmentFeedBinding
-import com.netology.nmedia.dto.Post
+import com.netology.nmedia.databinding.FragmentEventBinding
+import com.netology.nmedia.dto.Event
 import com.netology.nmedia.util.AndroidUtils
 import com.netology.nmedia.viewmodel.AuthViewModel
-import com.netology.nmedia.viewmodel.PostViewModel
+import com.netology.nmedia.viewmodel.EventViewModel
 import com.netology.nmedia.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -39,20 +39,20 @@ import kotlinx.coroutines.launch
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
-class FeedFragment : Fragment() {
-    private val viewModel: PostViewModel by activityViewModels()
+class EventFragment : Fragment() {
+    private val viewModel: EventViewModel by activityViewModels()
     private val authViewModel: AuthViewModel by activityViewModels()
     private val userViewModel: UserViewModel by activityViewModels()
 
-
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
-        val binding = FragmentFeedBinding.inflate(layoutInflater)
-        val adapter = PostsAdapter(object : OnInteractionListener {
-            override fun onPostLike(post: Post) {
+        val binding = FragmentEventBinding.inflate(layoutInflater)
+        val adapter = EventAdapter(object : OnInteractionListener {
+            override fun onEventLike(event: Event) {
                 if (authViewModel.isAuthorized) {
-                    viewModel.likeById(post)
+                    viewModel.likeById(event)
                 } else {
                     Snackbar.make(binding.root, R.string.sign_in_error, Snackbar.LENGTH_LONG)
                         .setAction(R.string.sign_in) {
@@ -61,29 +61,39 @@ class FeedFragment : Fragment() {
                 }
             }
 
-            override fun onPostShare(post: Post) {
+            override fun onEventTakePart(event: Event) {
+                if (authViewModel.isAuthorized) {
+                    viewModel.takePartById(event)
+                } else {
+                    Snackbar.make(binding.root, R.string.sign_in_error, Snackbar.LENGTH_LONG)
+                        .setAction(R.string.Sign_in_to_take_part) {
+                            findNavController().navigate(R.id.action_feedFragment_to_signInFragment)
+                        }.show()
+                }
+            }
+
+            override fun onEventShare(event: Event) {
                 val intent = Intent().apply {
                     action = Intent.ACTION_SEND
-                    putExtra(Intent.EXTRA_TEXT, post.content)
+                    putExtra(Intent.EXTRA_TEXT, event.content)
                     type = "text/plain"
                 }
                 val shareIntent =
                     Intent.createChooser(intent, getString(R.string.chooser_share_post))
                 startActivity(shareIntent)
-
             }
 
-            override fun onPostRemove(post: Post) {
-                viewModel.removeById(post.id)
+            override fun onEventRemove(event: Event) {
+                viewModel.removeById(event.id)
             }
 
-            override fun onPostEdit(post: Post) {
-                viewModel.edit(post)
-                findNavController().navigate(R.id.action_feedFragment_to_editPostFragment)
+            override fun onEventEdit(event: Event) {
+                viewModel.edit(event)
+                findNavController().navigate(R.id.action_eventFragment_to_editEventFragment)
             }
 
-            override fun onPlay(post: Post) {
-                AndroidUtils.extractUrls(post.content).forEach {
+            override fun onPlayEvent(event: Event) {
+                AndroidUtils.extractUrls(event.content).forEach {
                     if (it.contains("youtu")) {
                         val playIntent = Intent(Intent.ACTION_VIEW, Uri.parse(it))
                         if (playIntent.resolveActivity(requireContext().packageManager) != null) {
@@ -93,23 +103,22 @@ class FeedFragment : Fragment() {
                 }
             }
 
-            override fun onImageClick(post: Post) {
+            override fun onImageClickEvent(event: Event) {
                 findNavController().navigate(
-                    R.id.action_feedFragment_to_imageFragment,
+                    R.id.action_eventFragment_to_imageFragment,
                     Bundle().apply {
-                        pictureArg = post.attachment?.url.toString()
+                        pictureArg = event.attachment?.url.toString()
                     })
             }
 
-            override fun onAuthorClick(post: Post) {
+            override fun onAuthorClickEvent(event: Event) {
                 viewLifecycleOwner.lifecycleScope.launch {
-                    userViewModel.getUserById(post.authorId).join()
+                    userViewModel.getUserById(event.authorId).join()
                     findNavController().navigate(R.id.action_feedFragment_to_wallFragment)
                 }
-
             }
         })
-        activity?.title = getString(R.string.feed_fragment_title)
+        activity?.title = getString(R.string.events)
         var currentMenuProvider: MenuProvider? = null
         authViewModel.authLiveData.observe(viewLifecycleOwner) {
             binding.add.isVisible = authViewModel.isAuthorized
@@ -124,12 +133,12 @@ class FeedFragment : Fragment() {
                 override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                     return when (menuItem.itemId) {
                         R.id.signIn -> {
-                            findNavController().navigate(R.id.action_feedFragment_to_signInFragment)
+                            findNavController().navigate(R.id.action_eventFragment_to_signInFragment)
                             true
                         }
 
                         R.id.signUp -> {
-                            findNavController().navigate(R.id.action_feedFragment_to_signUpFragment)
+                            findNavController().navigate(R.id.action_eventFragment_to_signUpFragment)
                             true
                         }
 
@@ -147,12 +156,10 @@ class FeedFragment : Fragment() {
                         }
 
                         else -> false
-
                     }
                 }
             }.also { currentMenuProvider = it }, viewLifecycleOwner)
         }
-
         binding.list.adapter = adapter.withLoadStateHeaderAndFooter(
             header = LoadingStateAdapter { adapter.retry() },
             footer = LoadingStateAdapter { adapter.retry() }
@@ -163,17 +170,16 @@ class FeedFragment : Fragment() {
             }
         }
         binding.list.itemAnimator = itemAnimator
-
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                binding.bottomNavigation.selectedItemId = R.id.feed
+                binding.bottomNavigation.selectedItemId = R.id.events
                 viewModel.data.collectLatest(adapter::submitData)
             }
         }
-
         binding.bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.feed -> {
+                    findNavController().navigate(R.id.action_eventFragment_to_feedFragment)
                     true
                 }
 
@@ -183,37 +189,31 @@ class FeedFragment : Fragment() {
                         if (myId != null) {
                             userViewModel.getUserById(myId).join()
                         }
-                        findNavController().navigate(R.id.action_feedFragment_to_wallFragment)
+                        findNavController().navigate(R.id.action_eventFragment_to_wallFragment)
                     }
                     true
                 }
 
                 R.id.events -> {
-                    findNavController().navigate(R.id.action_feedFragment_to_eventFragment)
                     true
                 }
 
                 else -> false
             }
+
         }
-
-        binding.postsSwipeRefresh.setOnRefreshListener { adapter.refresh() }
-
+        binding.eventsSwipeRefresh.setOnRefreshListener { adapter.refresh() }
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 adapter.loadStateFlow.collectLatest { state ->
-                    binding.postsSwipeRefresh.isRefreshing =
+                    binding.eventsSwipeRefresh.isRefreshing =
                         state.refresh is LoadState.Loading
                 }
-
             }
         }
         binding.add.setOnClickListener {
-            findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
+            findNavController().navigate(R.id.action_eventFragment_to_newEventFragment)
         }
-
         return binding.root
     }
-
-
 }

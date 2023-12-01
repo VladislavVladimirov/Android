@@ -11,8 +11,8 @@ import androidx.paging.map
 import com.netology.nmedia.auth.AppAuth
 import com.netology.nmedia.dto.Job
 import com.netology.nmedia.dto.Post
-import com.netology.nmedia.model.wall.WallModelState
-import com.netology.nmedia.repository.draft.post.job.DraftNewJobRepository
+import com.netology.nmedia.model.StateModel
+import com.netology.nmedia.repository.draft.job.DraftNewJobRepository
 import com.netology.nmedia.repository.wall.WallRepository
 import com.netology.nmedia.util.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -38,8 +38,8 @@ class WallViewModel @Inject constructor(
     private val draftRepository: DraftNewJobRepository,
     private val appAuth: AppAuth
 ) : ViewModel() {
-    private val _dataState = MutableLiveData<WallModelState>()
-    val dataState: LiveData<WallModelState>
+    private val _dataState = MutableLiveData<StateModel>()
+    val dataState: LiveData<StateModel>
         get() = _dataState
 
     @ExperimentalCoroutinesApi
@@ -67,11 +67,11 @@ class WallViewModel @Inject constructor(
     fun loadJobsById(id: Int) =
         viewModelScope.launch {
             try {
-                _dataState.value = WallModelState(loading = true)
+                _dataState.value = StateModel(loading = true)
                 repository.loadJobsById(id)
-                _dataState.value = WallModelState()
+                _dataState.value = StateModel()
             } catch (e: Exception) {
-                _dataState.value = WallModelState(error = true)
+                _dataState.value = StateModel(error = true)
             }
         }
 
@@ -80,11 +80,11 @@ class WallViewModel @Inject constructor(
             _jobCreated.value = Unit
             viewModelScope.launch {
                 try {
-                    _dataState.value = WallModelState(loading = true)
+                    _dataState.value = StateModel(loading = true)
                     repository.saveJob(job)
-                    _dataState.value = WallModelState(loading = false)
+                    _dataState.value = StateModel(loading = false)
                 } catch (e: Exception) {
-                    _dataState.value = WallModelState(error = true)
+                    _dataState.value = StateModel(error = true)
                 }
             }
         }
@@ -123,7 +123,7 @@ class WallViewModel @Inject constructor(
         try {
             repository.removeJobById(id)
         } catch (e: Exception) {
-            _dataState.value = WallModelState(error = true)
+            _dataState.value = StateModel(error = true)
         }
     }
 
@@ -136,11 +136,11 @@ class WallViewModel @Inject constructor(
     fun getLatestPostsById(id: Int) =
         viewModelScope.launch {
             try {
-                _dataState.value = WallModelState(loading = true)
+                _dataState.value = StateModel(loading = true)
                 repository.getLatestPostsById(id)
-                _dataState.value = WallModelState(loading = false)
+                _dataState.value = StateModel(loading = false)
             } catch (e: Exception) {
-                _dataState.value = WallModelState(error = true)
+                _dataState.value = StateModel(error = true)
             }
         }
     fun getDraftName(): String {

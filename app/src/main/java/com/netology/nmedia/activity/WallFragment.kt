@@ -1,6 +1,6 @@
 package com.netology.nmedia.activity
 
-import android.content.Intent
+import  android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -22,7 +22,6 @@ import com.netology.nmedia.R
 import com.netology.nmedia.activity.ImageFragment.Companion.pictureArg
 import com.netology.nmedia.adapter.OnInteractionListener
 import com.netology.nmedia.adapter.job.JobAdapter
-import com.netology.nmedia.adapter.loading.LoadingStateAdapter
 import com.netology.nmedia.adapter.post.PostsAdapter
 import com.netology.nmedia.databinding.FragmentWallBinding
 import com.netology.nmedia.dto.Job
@@ -55,6 +54,9 @@ class WallFragment : Fragment() {
         val authorId = userViewModel.user.value?.id ?: 0
         val myId = authViewModel.authLiveData.value?.id
 
+        wallViewModel.loadJobsById(authorId)
+        wallViewModel.getLatestPostsById(authorId)
+        activity?.title = getString(R.string.wall_fragment_title)
         val postAdapter = PostsAdapter(object : OnInteractionListener {
             override fun onPostLike(post: Post) {
                 if (authViewModel.isAuthorized) {
@@ -103,7 +105,7 @@ class WallFragment : Fragment() {
 
             override fun onImageClick(post: Post) {
                 findNavController().navigate(
-                    R.id.action_feedFragment_to_imageFragment,
+                    R.id.action_wallFragment_to_imageFragment,
                     Bundle().apply {
                         pictureArg = post.attachment?.url.toString()
                     })
@@ -122,9 +124,7 @@ class WallFragment : Fragment() {
             }
         }, myId == authorId)
 
-        wallViewModel.loadJobsById(authorId)
-        wallViewModel.getLatestPostsById(authorId)
-        activity?.title = getString(R.string.wall_fragment_title)
+
         binding.apply {
             if (authorAvatar != null) {
                 AndroidUtils.loadAvatar(authorAvatar, profile.avatar)
@@ -151,9 +151,7 @@ class WallFragment : Fragment() {
                 }
             }
             list.itemAnimator = itemAnimator
-            list.adapter = postAdapter.withLoadStateFooter(
-                footer = LoadingStateAdapter { postAdapter.retry() }
-            )
+            list.adapter = postAdapter
             add.isVisible = authViewModel.isAuthorized && myId == authorId
             add.setOnClickListener {
                 findNavController().navigate(R.id.action_wallFragment_to_newPostFragment)
@@ -175,6 +173,26 @@ class WallFragment : Fragment() {
                     binding.swipeRefresh.isRefreshing =
                         state.refresh is LoadState.Loading
                 }
+            }
+        }
+        binding.bottomNavigation.selectedItemId = R.id.profile
+        binding.bottomNavigation.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.feed -> {
+                    findNavController().navigate(R.id.action_wallFragment_to_feedFragment)
+                    true
+                }
+
+                R.id.events -> {
+                    findNavController().navigate(R.id.action_wallFragment_to_eventFragment)
+                    true
+                }
+
+                R.id.profile -> {
+                    true
+                }
+
+                else -> false
             }
         }
 

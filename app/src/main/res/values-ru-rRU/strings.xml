@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">НМедиа</string>
     <string name="nmedia">Нмедиа!</string>
     <string name="description_post_author_avatar">Аватар автора поста</string>
@@ -44,7 +44,7 @@
     <string name="authorization">Войти</string>
     <string name="logo">Логотип</string>
     <string name="error_empty_login_and_pass">Ошибка! Поля логина и пароля не могут быть пустыми</string>
-    <string name="sign_in_error">Авторизуйтесь, чтобы лайкать посты</string>
+    <string name="sign_in_error">Авторизуйтесь, чтобы поставить лайк</string>
     <string name="accept_sign_out">Вы действительно хотите выйти?</string>
     <string name="input_name">Введите имя</string>
     <string name="confirm_password">Подтвердите пароль</string>
@@ -74,4 +74,19 @@
     <string name="to">по</string>
     <string name="since">c</string>
     <string name="edit_job">Изменить данные</string>
+    <string name="my_profile">Мой профиль</string>
+    <string name="events">События</string>
+    <string name="take_part_at_event">Принять участие в событии</string>
+    <string name="event_content_sample" tools:ignore="ExtraTranslation">VK Fest — музыкально-развлекательный фестиваль под открытым небом, организованный социальной сетью «Вконтакте» и «Радио Рекорд» в 2015 году. Он традиционно проходит в выходные дни июля в «Парке имени 300-летия Санкт-Петербурга» в Санкт-Петербурге.</string>
+    <string name="event_format">Формат мероприятия:</string>
+    <string name="date_of_event_header">Дата проведения:</string>
+    <string name="you_participate">Вы участвуете</string>
+    <string name="Online">Онлайн</string>
+    <string name="Offline">Оффлайн</string>
+    <string name="Sign_in_to_take_part">Авторизуйтесь, чтобы принимать участия в мероприятиях</string>
+    <string name="choose_time">Выберите время</string>
+    <string name="choose_date">Выберите дату</string>
+    <string name="take_part">Принять участие</string>
+    <string name="new_event">Новое событие</string>
+    <string name="edit_event">Редактировать событие</string>
 </resources>

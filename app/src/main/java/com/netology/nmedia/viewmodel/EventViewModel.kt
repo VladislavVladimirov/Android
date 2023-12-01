@@ -1,6 +1,5 @@
 package com.netology.nmedia.viewmodel
 
-
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,12 +9,13 @@ import androidx.paging.cachedIn
 import androidx.paging.map
 import com.netology.nmedia.auth.AppAuth
 import com.netology.nmedia.dto.Attachment
-import com.netology.nmedia.dto.Post
+import com.netology.nmedia.dto.Event
 import com.netology.nmedia.enums.AttachmentType
+import com.netology.nmedia.enums.EventType
 import com.netology.nmedia.model.StateModel
 import com.netology.nmedia.model.media.PhotoModel
-import com.netology.nmedia.repository.draft.post.DraftNewPostRepository
-import com.netology.nmedia.repository.post.PostRepository
+import com.netology.nmedia.repository.draft.event.DraftNewEventRepository
+import com.netology.nmedia.repository.event.EventRepository
 import com.netology.nmedia.util.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -25,20 +25,21 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
-private val empty = Post(
+private val empty = Event(
     id = 0,
-    authorId = 0,
     author = "",
+    authorId = 0,
     content = "",
+    datetime = "",
     published = "",
+    type = EventType.ONLINE
 )
 
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class PostViewModel @Inject constructor(
-    private val repository: PostRepository,
-    private val draftRepository: DraftNewPostRepository,
+class EventViewModel @Inject constructor(
+    private val repository: EventRepository,
+    private val draftRepository: DraftNewEventRepository,
     appAuth: AppAuth
 ) : ViewModel() {
     private val cached = repository
@@ -47,24 +48,23 @@ class PostViewModel @Inject constructor(
     private val _dataState = MutableLiveData<StateModel>()
     val dataState: LiveData<StateModel>
         get() = _dataState
-
-    val data: Flow<PagingData<Post>> =
+    val data: Flow<PagingData<Event>> =
         appAuth.authStateFlow
             .flatMapLatest { (myId, _) ->
                 cached.map { pagingData ->
-                    pagingData.map { post ->
-                        post.copy(
-                            ownedByMe = post.authorId == myId,
-                            likedByMe = post.likeOwnerIds.contains(myId)
+                    pagingData.map { event ->
+                        event.copy(
+                            ownedByMe = event.authorId == myId,
+                            likedByMe = event.likeOwnerIds.contains(myId),
+                            participatedByMe = event.participantsIds.contains(myId)
                         )
                     }
                 }
             }
     private val edited = MutableLiveData(empty)
-    private val _postCreated = SingleLiveEvent<Unit>()
-    val postCreated: LiveData<Unit>
-        get() = _postCreated
-
+    private val _eventCreated = SingleLiveEvent<Unit>()
+    val eventCreated: LiveData<Unit>
+        get() = _eventCreated
     private val _photoState = MutableLiveData<PhotoModel?>()
     val photoState: LiveData<PhotoModel?>
         get() = _photoState
@@ -72,14 +72,15 @@ class PostViewModel @Inject constructor(
     fun changePhoto(photoModel: PhotoModel?) {
         _photoState.value = photoModel
     }
+
     fun save() {
-        edited.value?.let { post ->
-            _postCreated.value = Unit
+        edited.value?.let { event ->
+            _eventCreated.value = Unit
             viewModelScope.launch {
                 try {
                     _photoState.value?.let { photoModel ->
-                        photoModel.file?.let { repository.saveWithAttachment(it, post) }
-                    } ?: repository.save(post)
+                        photoModel.file?.let { repository.saveWithAttachment(it, event) }
+                    } ?: repository.save(event)
                     _dataState.value = StateModel()
                 } catch (e: Exception) {
                     _dataState.value = StateModel(error = true)
@@ -90,20 +91,39 @@ class PostViewModel @Inject constructor(
         clear()
     }
 
-    fun edit(post: Post) {
-        edited.value = post
+    fun edit(event: Event) {
+        edited.value = event
     }
 
-    fun changeContent(content: String, link: String) {
+    fun clear() {
+        edited.value?.let {
+            edited.value = empty
+        }
+    }
+
+    fun changeContent(content: String, link: String, date: String, isOnline: Boolean) {
         val text = content.trim()
         val linkText = link.trim()
-        if (edited.value?.content == text && edited.value?.link == linkText) {
+        val dateText = date.trim()
+        var type: EventType = if (isOnline) {
+            EventType.ONLINE
+        } else {
+            EventType.OFFLINE
+        }
+
+        if (edited.value?.content == text
+            && edited.value?.link == linkText
+            && edited.value?.datetime == dateText
+            && edited.value?.type == type
+        ) {
             return
         }
         if (link.isBlank()) {
-            edited.value = edited.value?.copy(content = text, link = null)
+            edited.value =
+                edited.value?.copy(content = text, link = null, datetime = date, type = type)
         } else {
-            edited.value = edited.value?.copy(content = text, link = linkText)
+            edited.value =
+                edited.value?.copy(content = text, link = linkText, datetime = date, type = type)
         }
     }
 
@@ -114,21 +134,16 @@ class PostViewModel @Inject constructor(
         if (url.isBlank()) {
             edited.value = edited.value?.copy(attachment = null)
         }
-        edited.value = edited.value?.copy(attachment = Attachment(url.trim(), type = AttachmentType.IMAGE))
+        edited.value =
+            edited.value?.copy(attachment = Attachment(url.trim(), type = AttachmentType.IMAGE))
     }
 
-    fun clear() {
-        edited.value?.let {
-            edited.value = empty
-        }
-    }
-
-    fun likeById(post: Post) = viewModelScope.launch {
+    fun likeById(event: Event) = viewModelScope.launch {
         try {
-            if (!post.likedByMe) {
-                repository.likeById(post.id)
+            if (!event.likedByMe) {
+                repository.likeById(event.id)
             } else {
-                repository.dislikeById(post.id)
+                repository.dislikeById(event.id)
             }
         } catch (e: Exception) {
             _dataState.value = StateModel(error = true)
@@ -143,7 +158,19 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun getEditedPost(): Post? {
+    fun takePartById(event: Event) = viewModelScope.launch {
+        try {
+            if (!event.participatedByMe) {
+                repository.takePartAtEvent(event.id)
+            } else {
+                repository.deleteTakingPart(event.id)
+            }
+        } catch (e: Exception) {
+            _dataState.value = StateModel(error = true)
+        }
+    }
+
+    fun getEditedEvent(): Event? {
         return edited.value
     }
 
@@ -155,6 +182,18 @@ class PostViewModel @Inject constructor(
         return draftRepository.getDraftLink()
     }
 
+    fun getDraftDate(): String {
+        return draftRepository.getDraftDate()
+    }
+
+    fun getDraftTime(): String {
+        return draftRepository.getDraftTime()
+    }
+
+    fun getDraftFormat(): String {
+        return draftRepository.getDraftFormat()
+    }
+
     fun saveDraftContent(text: String) {
         draftRepository.saveDraftContent(text)
     }
@@ -163,8 +202,19 @@ class PostViewModel @Inject constructor(
         draftRepository.saveDraftLink(text)
     }
 
+    fun saveDraftDate(text: String) {
+        draftRepository.saveDraftDate(text)
+    }
+
+    fun saveDraftTime(text: String) {
+        draftRepository.saveDraftTime(text)
+    }
+
+    fun saveDraftFormat(text: String) {
+        draftRepository.saveDraftFormat(text)
+    }
+
     fun clearDrafts() {
         draftRepository.clearDrafts()
     }
-
 }

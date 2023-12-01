@@ -41,7 +41,7 @@ class NewJobFragment : Fragment() {
                 draftPosition
             )
             startWork.text = draftStart
-            finishWork.setText(draftFinish)
+            finishWork.text = draftFinish
             link.setText(draftLink)
             if (link.text.isNotBlank()) {
                 link.visibility = View.VISIBLE

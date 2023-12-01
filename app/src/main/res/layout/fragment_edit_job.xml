@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/black"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/grey_900"
     tools:context="com.netology.nmedia.activity.EditPostFragment">
+
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        >
-
+        android:layout_gravity="center">
 
 
         <LinearLayout
@@ -21,11 +19,11 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/common_spacing"
             android:background="@drawable/background_rounded_grey_900"
+            android:elevation="100dp"
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            >
+            app:layout_constraintTop_toTopOf="parent">
 
             <EditText
                 android:id="@+id/company_name"
@@ -57,6 +55,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/common_spacing"
             android:background="@drawable/background_rounded_grey_900"
+            android:elevation="100dp"
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -67,11 +66,11 @@
                 style="@style/Widget.AppCompat.DropDownItem.Spinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/common_spacing"
                 android:autofillHints=""
                 android:background="@android:color/transparent"
                 android:hint="@string/start_work_date_hint"
                 android:padding="@dimen/common_spacing"
-                android:layout_marginHorizontal="@dimen/common_spacing"
                 android:textSize="@dimen/new_post_preview_text_size" />
 
             <com.google.android.material.button.MaterialButton
@@ -79,8 +78,8 @@
                 style="@style/Widget.AppCompat.DropDownItem.Spinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:autofillHints=""
                 android:layout_marginHorizontal="@dimen/common_spacing"
+                android:autofillHints=""
                 android:background="@android:color/transparent"
                 android:hint="@string/end_work_date_hint"
                 android:padding="@dimen/common_spacing"
@@ -94,6 +93,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/common_spacing"
             android:contentDescription="@string/description_post_menu"
+            android:elevation="100dp"
             app:icon="@drawable/ic_add_link_24"
             app:layout_constraintBottom_toTopOf="@id/link"
             app:layout_constraintEnd_toEndOf="parent"
@@ -108,6 +108,7 @@
             android:autoLink="web"
             android:autofillHints=""
             android:background="@drawable/background_rounded_grey_900"
+            android:elevation="100dp"
             android:hint="@string/add_a_link"
             android:inputType="text"
             android:padding="@dimen/common_spacing"
@@ -122,6 +123,7 @@
             android:layout_marginEnd="@dimen/common_spacing"
             android:layout_marginBottom="@dimen/common_spacing"
             android:contentDescription="@string/pick_a_photo_from_gallery_description"
+            android:elevation="100dp"
             android:src="@drawable/ic_cancel_24"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"

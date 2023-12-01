@@ -1,7 +1,15 @@
 <resources>
 
     <style name="Widget.AppTheme.LikeButton" parent="Widget.MaterialComponents.Button.TextButton.Icon">
-        <item name="iconTint">@color/like_checkbox_tint</item>
+        <item name="iconTint">@color/checkbox_tint</item>
+        <item name="android:minWidth">@dimen/icon_button_min_size</item>
+        <item name="android:minHeight">@dimen/icon_button_min_size</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:textColor">@color/white</item>
+
+    </style>
+    <style name="Widget.AppTheme.TakePartButton" parent="Widget.MaterialComponents.Button.TextButton.Icon">
+        <item name="iconTint">@color/checkbox_tint</item>
         <item name="android:minWidth">@dimen/icon_button_min_size</item>
         <item name="android:minHeight">@dimen/icon_button_min_size</item>
         <item name="android:background">@android:color/transparent</item>

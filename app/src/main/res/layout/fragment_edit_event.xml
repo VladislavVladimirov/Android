@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/grey_900"
+    tools:context="com.netology.nmedia.activity.EditEventFragment">
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/checkboxes"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autoLink="web"
+                android:autofillHints=""
+                android:background="@android:color/transparent"
+                android:hint="@string/post_text"
+                android:inputType="textMultiLine"
+                android:padding="@dimen/common_spacing"
+                android:textColorLink="@color/white"
+                android:textSize="@dimen/new_post_preview_text_size" />
+
+            <FrameLayout
+                android:id="@+id/photo_preview_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/photo_preview"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/photo_preview_description" />
+
+                <ImageView
+                    android:id="@+id/remove_photo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="@dimen/common_spacing"
+                    android:contentDescription="@string/photo_preview_description"
+                    android:src="@drawable/ic_cancel_24" />
+            </FrameLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/checkboxes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@id/date_time"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/online_or_offline"
+            style="@style/Widget.Material3.CompoundButton.MaterialSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/Online"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/date_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@id/linkText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/date"
+            style="@style/Widget.AppCompat.DropDownItem.Spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/common_spacing"
+            android:autofillHints=""
+            android:background="@android:color/transparent"
+            android:hint="@string/choose_date"
+            android:padding="@dimen/common_spacing"
+            android:textSize="@dimen/new_post_preview_text_size" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/time"
+            style="@style/Widget.AppCompat.DropDownItem.Spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/common_spacing"
+            android:autofillHints=""
+            android:background="@android:color/transparent"
+            android:hint="@string/choose_time"
+            android:padding="@dimen/common_spacing"
+            android:textSize="@dimen/new_post_preview_text_size" />
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/linkText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:autoLink="web"
+        android:autofillHints=""
+        android:background="@android:color/transparent"
+        android:hint="@string/add_a_link"
+        android:inputType="textUri"
+        android:padding="@dimen/common_spacing"
+        android:textColorLink="@color/white"
+        android:textSize="@dimen/new_post_preview_text_size"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/buttonPanel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/delete_link"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        android:contentDescription="@string/pick_a_photo_from_gallery_description"
+        android:src="@drawable/ic_cancel_24"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/linkText"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+
+    <LinearLayout
+        android:id="@+id/buttonPanel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:id="@+id/take_photo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/take_a_photo_description"
+            android:padding="@dimen/icon_button_padding"
+            android:src="@drawable/ic_add_photo_camera_24" />
+
+        <ImageView
+            android:id="@+id/pick_photo_from_gallery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/pick_a_photo_from_gallery_description"
+            android:padding="@dimen/icon_button_padding"
+            android:src="@drawable/ic_add_gallery_photo_24" />
+
+        <ImageView
+            android:id="@+id/add_link"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/add_link"
+            android:padding="@dimen/icon_button_padding"
+            android:src="@drawable/ic_add_link_24" />
+
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

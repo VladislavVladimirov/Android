@@ -1,6 +1,7 @@
 package com.netology.nmedia.util
 
 import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.content.Context
 import com.google.android.material.button.MaterialButton
 import java.math.RoundingMode
@@ -47,6 +48,7 @@ object Formatter {
         return DateTimeFormatter.ofPattern("dd.MM.yyyy")
             .format(jobDate)
     }
+
     fun formatJobDateForEdit(input: String): String {
         val jobDate = ZonedDateTime.parse(input, DateTimeFormatter.ISO_OFFSET_DATE_TIME)
             .withZoneSameInstant(ZoneId.systemDefault())
@@ -88,6 +90,26 @@ object Formatter {
         }
     }
 
+    fun formatEventDate(input: String): String {
+        val eventDate = ZonedDateTime.parse(input, DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+        val fullDate = DateTimeFormatter.ofPattern("dd MMMM yyyy в HH:mm")
+            .format(eventDate)
+        val formattedDate = DateTimeFormatter.ofPattern("d MMMM в HH:mm")
+            .format(eventDate)
+        val currentTime = LocalDateTime.now()
+        return when (currentTime.year - eventDate.year) {
+            0 -> {
+                formattedDate
+            }
+
+            else -> {
+                return fullDate
+            }
+
+        }
+    }
+
+
     fun showDatePicker(button: MaterialButton, context: Context) {
         val calendar = Calendar.getInstance()
         val datePickerDialog = DatePickerDialog(
@@ -105,6 +127,18 @@ object Formatter {
         datePickerDialog.show()
     }
 
-
+    fun showTimePicker(button: MaterialButton, context: Context) {
+        val calendar = Calendar.getInstance()
+        val timePickerDialog = TimePickerDialog.OnTimeSetListener { _, hour, minute ->
+            calendar[Calendar.HOUR_OF_DAY] = hour
+            calendar[Calendar.MINUTE] = minute
+            val formattedTime = SimpleDateFormat("HH:mm", Locale.getDefault()).format(calendar.time)
+            button.text = formattedTime
+        }
+        TimePickerDialog(
+            context, timePickerDialog, calendar.get(Calendar.HOUR_OF_DAY),
+            calendar.get(Calendar.MINUTE), true
+        ).show()
+    }
 }
 

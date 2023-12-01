@@ -1,5 +1,6 @@
 package com.netology.nmedia.adapter
 
+import com.netology.nmedia.dto.Event
 import com.netology.nmedia.dto.Job
 import com.netology.nmedia.dto.Post
 
@@ -13,4 +14,13 @@ interface OnInteractionListener {
     fun onAuthorClick(post: Post){}
     fun onJobEdit(job: Job){}
     fun onJobRemove(job: Job) {}
+    fun onEventEdit(event:Event) {}
+    fun onEventRemove(event: Event){}
+    fun onEventLike(event: Event) {}
+    fun onEventTakePart(event: Event) {}
+    fun onEventShare(event: Event) {}
+    fun onPlayEvent(event: Event) {}
+    fun onImageClickEvent(event: Event) {}
+    fun onAuthorClickEvent(event: Event){}
+
 }

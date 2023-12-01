@@ -44,7 +44,7 @@
     <string name="authorization">Sign in</string>
     <string name="logo">Logo</string>
     <string name="error_empty_login_and_pass">Error! Enter login and password</string>
-    <string name="sign_in_error">Sign in to like posts</string>
+    <string name="sign_in_error">"Sign in to like "</string>
     <string name="accept_sign_out">Are you sure you want to sign out?</string>
     <string name="input_name">Input name</string>
     <string name="confirm_password">Confirm password</string>
@@ -73,6 +73,20 @@
     <string name="to">to</string>
     <string name="since">since</string>
     <string name="edit_job">Edit job information</string>
+    <string name="my_profile">My profile</string>
+    <string name="events">Events</string>
+    <string name="take_part_at_event">Take part at event</string>
+    <string name="event_format">Format of event:</string>
+    <string name="date_of_event_header">Date of event:</string>
+    <string name="you_participate">You participate</string>
+    <string name="Online">Online</string>
+    <string name="Offline">Offline</string>
+    <string name="Sign_in_to_take_part">Sign in to take part at event</string>
+    <string name="choose_time">Choose time</string>
+    <string name="choose_date">Choose date</string>
+    <string name="take_part">Join event</string>
+    <string name="new_event">New event</string>
+    <string name="edit_event">Edit event</string>
 
 
 </resources>

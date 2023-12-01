@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.netology.nmedia.dto.User
-import com.netology.nmedia.model.user.UserModelState
+import com.netology.nmedia.model.StateModel
 import com.netology.nmedia.repository.user.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -18,8 +18,8 @@ class UserViewModel @Inject constructor(
     private val userRepository: UserRepository,
 ) : ViewModel() {
     val data: LiveData<List<User>> = userRepository.data.asLiveData(Dispatchers.Default)
-    private val _dataState = MutableLiveData<UserModelState>()
-    val dataState: LiveData<UserModelState>
+    private val _dataState = MutableLiveData<StateModel>()
+    val dataState: LiveData<StateModel>
         get() = _dataState
     private val _user = MutableLiveData<User>()
     val user: LiveData<User>
@@ -34,12 +34,12 @@ class UserViewModel @Inject constructor(
     }
 
     private fun getUserList() = viewModelScope.launch {
-        _dataState.postValue(UserModelState(loading = true))
+        _dataState.postValue(StateModel(loading = true))
         try {
             userRepository.getAll()
-            _dataState.postValue(UserModelState())
+            _dataState.postValue(StateModel())
         } catch (e: Exception) {
-            _dataState.value = UserModelState(error = true)
+            _dataState.value = StateModel(error = true)
         }
     }
 
@@ -47,12 +47,12 @@ class UserViewModel @Inject constructor(
         viewModelScope.launch { _userIdSet.value = set }
 
     fun  getUserById(id: Int) = viewModelScope.launch {
-        _dataState.postValue(UserModelState(loading = true))
+        _dataState.postValue(StateModel(loading = true))
         try {
             _user.value = userRepository.getUserById(id)
-            _dataState.postValue(UserModelState())
+            _dataState.postValue(StateModel())
         } catch (e: Exception) {
-            _dataState.postValue(UserModelState(error = true))
+            _dataState.postValue(StateModel(error = true))
         }
     }
 

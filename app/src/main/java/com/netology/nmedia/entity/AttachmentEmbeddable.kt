@@ -5,9 +5,9 @@ import com.netology.nmedia.enums.AttachmentType
 
 data class AttachmentEmbeddable(
     var url: String,
-    var type: AttachmentType,
+    var attachmentType: AttachmentType,
 ) {
-    fun toDto() = Attachment(url, type)
+    fun toDto() = Attachment(url, attachmentType)
 
     companion object {
         fun fromDto(dto: Attachment?) = dto?.let {

@@ -159,6 +159,5 @@ class NewPostFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        viewModel.changePhoto(null)
     }
 }
