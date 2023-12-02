@@ -9,18 +9,23 @@ interface OnInteractionListener {
     fun onPostShare(post: Post) {}
     fun onPostRemove(post: Post) {}
     fun onPostEdit(post: Post) {}
-    fun onPlay(post: Post) {}
+    fun onYouTubePlay(post: Post) {}
+    fun onAudioPlay(post: Post){}
+    fun onVideoPlay(post: Post){}
     fun onImageClick(post:Post) {}
     fun onAuthorClick(post: Post){}
+
     fun onJobEdit(job: Job){}
     fun onJobRemove(job: Job) {}
+
     fun onEventEdit(event:Event) {}
     fun onEventRemove(event: Event){}
     fun onEventLike(event: Event) {}
     fun onEventTakePart(event: Event) {}
     fun onEventShare(event: Event) {}
-    fun onPlayEvent(event: Event) {}
+    fun onYouTubePlay(event: Event) {}
     fun onImageClickEvent(event: Event) {}
     fun onAuthorClickEvent(event: Event){}
-
+    fun onAudioPlay(event: Event){}
+    fun onVideoPlay(event: Event) {}
 }

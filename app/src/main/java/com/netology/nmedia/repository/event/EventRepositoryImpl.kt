@@ -20,10 +20,11 @@ import com.netology.nmedia.error.UnknownError
 import com.netology.nmedia.paging.EventRemoteMediator
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
-import java.io.File
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
+import java.io.InputStream
 import javax.inject.Inject
 
 class EventRepositoryImpl @Inject constructor(
@@ -97,14 +98,14 @@ class EventRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun saveWithAttachment(file: File, event: Event) {
+    override suspend fun saveWithAttachment(inputStream: InputStream, type: AttachmentType, event: Event) {
         try {
-            val media = upload(file)
+            val media = upload(inputStream)
             val response = apiService.save(
                 event.copy(
                     attachment = Attachment(
                         url = media.url,
-                        type = AttachmentType.IMAGE
+                        type
                     )
                 )
             )
@@ -120,13 +121,12 @@ class EventRepositoryImpl @Inject constructor(
         }
     }
 
-    private suspend fun upload(file: File): Media {
-        val part = MultipartBody.Part.createFormData(
-            "file",
-            file.name,
-            file.asRequestBody()
+    private suspend fun upload(upload: InputStream): Media {
+        val data = MultipartBody.Part.createFormData(
+            "file", "name", upload.readBytes()
+                .toRequestBody("*/*".toMediaTypeOrNull())
         )
-        val response = apiService.upload(part)
+        val response = apiService.upload(data)
         return response.body() ?: throw ApiError(response.code(), response.message())
     }
     override suspend fun takePartAtEvent(id: Int) {

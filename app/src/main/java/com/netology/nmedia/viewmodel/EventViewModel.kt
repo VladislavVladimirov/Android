@@ -1,5 +1,6 @@
 package com.netology.nmedia.viewmodel
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,7 +14,7 @@ import com.netology.nmedia.dto.Event
 import com.netology.nmedia.enums.AttachmentType
 import com.netology.nmedia.enums.EventType
 import com.netology.nmedia.model.StateModel
-import com.netology.nmedia.model.media.PhotoModel
+import com.netology.nmedia.model.media.MediaModel
 import com.netology.nmedia.repository.draft.event.DraftNewEventRepository
 import com.netology.nmedia.repository.event.EventRepository
 import com.netology.nmedia.util.SingleLiveEvent
@@ -23,6 +24,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import java.io.InputStream
 import javax.inject.Inject
 
 private val empty = Event(
@@ -65,12 +67,12 @@ class EventViewModel @Inject constructor(
     private val _eventCreated = SingleLiveEvent<Unit>()
     val eventCreated: LiveData<Unit>
         get() = _eventCreated
-    private val _photoState = MutableLiveData<PhotoModel?>()
-    val photoState: LiveData<PhotoModel?>
-        get() = _photoState
+    private val _mediaState = MutableLiveData<MediaModel?>()
+    val mediaState: LiveData<MediaModel?>
+        get() = _mediaState
 
-    fun changePhoto(photoModel: PhotoModel?) {
-        _photoState.value = photoModel
+    fun changeMedia(uri: Uri?, inputStream: InputStream?, type: AttachmentType?) {
+        _mediaState.value = MediaModel(uri, inputStream, type)
     }
 
     fun save() {
@@ -78,8 +80,8 @@ class EventViewModel @Inject constructor(
             _eventCreated.value = Unit
             viewModelScope.launch {
                 try {
-                    _photoState.value?.let { photoModel ->
-                        photoModel.file?.let { repository.saveWithAttachment(it, event) }
+                    _mediaState.value?.let { media ->
+                        media.inputStream?.let { repository.saveWithAttachment(it,media.type!!, event) }
                     } ?: repository.save(event)
                     _dataState.value = StateModel()
                 } catch (e: Exception) {
@@ -87,7 +89,7 @@ class EventViewModel @Inject constructor(
                 }
             }
         }
-        _photoState.value = null
+        _mediaState.value = null
         clear()
     }
 
@@ -105,7 +107,7 @@ class EventViewModel @Inject constructor(
         val text = content.trim()
         val linkText = link.trim()
         val dateText = date.trim()
-        var type: EventType = if (isOnline) {
+        val type: EventType = if (isOnline) {
             EventType.ONLINE
         } else {
             EventType.OFFLINE
@@ -136,6 +138,26 @@ class EventViewModel @Inject constructor(
         }
         edited.value =
             edited.value?.copy(attachment = Attachment(url.trim(), type = AttachmentType.IMAGE))
+    }
+    fun changeAttachmentAudio(url: String) {
+        if (edited.value?.attachment?.url == url.trim()) {
+            return
+        }
+        if (url.isBlank()) {
+            edited.value = edited.value?.copy(attachment = null)
+        }
+        edited.value =
+            edited.value?.copy(attachment = Attachment(url.trim(), type = AttachmentType.AUDIO))
+    }
+    fun changeAttachmentVideo(url: String) {
+        if (edited.value?.attachment?.url == url.trim()) {
+            return
+        }
+        if (url.isBlank()) {
+            edited.value = edited.value?.copy(attachment = null)
+        }
+        edited.value =
+            edited.value?.copy(attachment = Attachment(url.trim(), type = AttachmentType.VIDEO))
     }
 
     fun likeById(event: Event) = viewModelScope.launch {

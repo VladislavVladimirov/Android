@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/grey_900"
+    tools:context="com.netology.nmedia.activity.AudioFragment">
+
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_audio_200dp"
+        android:contentDescription="@string/audiofile"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/audio_bar"
+        />
+    <SeekBar
+        android:id="@+id/audio_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/common_spacing"
+        android:layout_marginTop="@dimen/common_spacing"
+        android:indeterminate="false"
+        app:layout_constraintBottom_toTopOf="@id/control_panel"
+        android:progress="0" />
+
+    <LinearLayout
+        android:id="@+id/control_panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginBottom="200dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+       >
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/play"
+            style="@style/Widget.AppTheme.PlayerButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkable="true"
+            android:contentDescription="@string/play"
+            app:icon="@drawable/ic_play_icon" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/stop"
+            style="@style/Widget.AppTheme.PlayerButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/Stop"
+            app:icon="@drawable/ic_stop_48" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/remove_audio"
+            style="@style/Widget.AppTheme.PlayerButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/delete_audio"
+            app:icon="@drawable/ic_cancel_24" />
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

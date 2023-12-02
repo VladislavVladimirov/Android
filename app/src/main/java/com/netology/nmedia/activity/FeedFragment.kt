@@ -22,7 +22,9 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.netology.nmedia.R
+import com.netology.nmedia.activity.AudioFragment.Companion.audioArg
 import com.netology.nmedia.activity.ImageFragment.Companion.pictureArg
+import com.netology.nmedia.activity.VideoFragment.Companion.videoArg
 import com.netology.nmedia.adapter.OnInteractionListener
 import com.netology.nmedia.adapter.loading.LoadingStateAdapter
 import com.netology.nmedia.adapter.post.PostsAdapter
@@ -43,8 +45,6 @@ class FeedFragment : Fragment() {
     private val viewModel: PostViewModel by activityViewModels()
     private val authViewModel: AuthViewModel by activityViewModels()
     private val userViewModel: UserViewModel by activityViewModels()
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -82,7 +82,7 @@ class FeedFragment : Fragment() {
                 findNavController().navigate(R.id.action_feedFragment_to_editPostFragment)
             }
 
-            override fun onPlay(post: Post) {
+            override fun onYouTubePlay(post: Post) {
                 AndroidUtils.extractUrls(post.content).forEach {
                     if (it.contains("youtu")) {
                         val playIntent = Intent(Intent.ACTION_VIEW, Uri.parse(it))
@@ -107,6 +107,21 @@ class FeedFragment : Fragment() {
                     findNavController().navigate(R.id.action_feedFragment_to_wallFragment)
                 }
 
+            }
+
+            override fun onAudioPlay(post: Post) {
+                findNavController().navigate(
+                    R.id.action_feedFragment_to_audioFragment,
+                    Bundle().apply {
+                        audioArg = post.attachment?.url.toString()
+                    })
+            }
+            override fun onVideoPlay(post: Post) {
+                findNavController().navigate(
+                    R.id.action_feedFragment_to_videoFragment,
+                    Bundle().apply {
+                        videoArg = post.attachment?.url.toString()
+                    })
             }
         })
         activity?.title = getString(R.string.feed_fragment_title)

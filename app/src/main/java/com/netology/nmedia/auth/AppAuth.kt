@@ -14,11 +14,11 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import java.io.File
 import java.io.IOException
+import java.io.InputStream
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -105,15 +105,18 @@ class AppAuth @Inject constructor(
         }
     }
 
-    suspend fun signUpWithAvatar(login: String, pass: String, name: String, file: File) {
+    suspend fun signUpWithAvatar(login: String, pass: String, name: String, inputStream: InputStream) {
         try {
             val entryPoint = EntryPointAccessors.fromApplication(context, AppAuthEntryPoint::class.java)
-            val part = MultipartBody.Part.createFormData("file", file.name, file.asRequestBody())
+            val data = MultipartBody.Part.createFormData(
+                "file", "name", inputStream.readBytes()
+                    .toRequestBody("*/*".toMediaTypeOrNull())
+            )
             val response = entryPoint.getApiService().registerWithPhoto(
                 login.toRequestBody(),
                 pass.toRequestBody(),
                 name.toRequestBody(),
-                part
+                data
             )
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())

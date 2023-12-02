@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.net.toFile
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -18,7 +17,7 @@ import com.github.dhaval2404.imagepicker.constant.ImageProvider
 import com.google.android.material.snackbar.Snackbar
 import com.netology.nmedia.R
 import com.netology.nmedia.databinding.FragmentSignUpBinding
-import com.netology.nmedia.model.media.PhotoModel
+import com.netology.nmedia.enums.AttachmentType
 import com.netology.nmedia.util.AndroidUtils
 import com.netology.nmedia.viewmodel.SignUpViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -47,8 +46,11 @@ class SignUpFragment : Fragment() {
 
                     Activity.RESULT_OK -> {
                         val uri: Uri? = it.data?.data
-                        val file = uri?.toFile()
-                        viewModel.changePhoto(PhotoModel(uri, file))
+                        val stream = uri?.let { stream ->
+                            context?.contentResolver?.openInputStream(stream)
+                        }
+
+                        viewModel.changeMedia(uri, stream, AttachmentType.IMAGE)
                     }
                 }
             }
@@ -114,7 +116,7 @@ class SignUpFragment : Fragment() {
                 .createIntent(pickPhotoLauncher::launch)
         }
         binding.removePhoto.setOnClickListener {
-            viewModel.changePhoto(viewModel.noAvatar)
+            viewModel.changeMedia(null, null, null)
         }
         viewModel.photoState.observe(viewLifecycleOwner) { photoState ->
             if (photoState == viewModel.noAvatar) {
@@ -131,6 +133,6 @@ class SignUpFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        viewModel.changePhoto(viewModel.noAvatar)
+        viewModel.changeMedia(null, null, null)
     }
 }

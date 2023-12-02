@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import com.netology.nmedia.adapter.OnInteractionListener
 import com.netology.nmedia.databinding.CardPostBinding
+
 import com.netology.nmedia.dto.Post
 
 

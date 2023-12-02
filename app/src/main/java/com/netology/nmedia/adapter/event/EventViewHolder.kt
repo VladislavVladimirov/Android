@@ -71,6 +71,25 @@ class EventViewHolder(
             } else {
                 imageAttachment.visibility = View.GONE
             }
+            if (event.attachment?.type == AttachmentType.AUDIO) {
+                audioAttachment.visibility = View.VISIBLE
+            } else {
+                audioAttachment.visibility = View.GONE
+            }
+            play.setOnClickListener {
+                onInteractionListener.onAudioPlay(event)
+            }
+            audioAttachmentHeader.setOnClickListener { onInteractionListener.onAudioPlay(event) }
+
+            if (event.attachment?.type == AttachmentType.VIDEO) {
+                videoAttachment.visibility = View.VISIBLE
+            } else {
+                videoAttachment.visibility = View.GONE
+            }
+            playVideo.setOnClickListener {
+                onInteractionListener.onVideoPlay(event)
+            }
+            videoAttachmentHeader.setOnClickListener { onInteractionListener.onVideoPlay(event) }
             AndroidUtils.loadYouTubePreview(event.content, youtubePlayerPreview)
             like.setOnClickListener {
                 onInteractionListener.onEventLike(event)
@@ -105,7 +124,7 @@ class EventViewHolder(
                 onInteractionListener.onImageClickEvent(event)
             }
             youtubePlayerPreview.setOnClickListener {
-                onInteractionListener.onPlayEvent(event)
+                onInteractionListener.onYouTubePlay(event)
             }
             avatar.setOnClickListener {
                 onInteractionListener.onAuthorClickEvent(event)
@@ -118,4 +137,5 @@ class EventViewHolder(
             }
         }
     }
+
 }

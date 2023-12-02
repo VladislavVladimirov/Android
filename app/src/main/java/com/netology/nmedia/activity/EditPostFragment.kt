@@ -1,17 +1,22 @@
 package com.netology.nmedia.activity
 
 import android.app.Activity
+import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SeekBar
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.net.toFile
+import androidx.core.net.toUri
 import androidx.core.view.MenuProvider
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -19,8 +24,9 @@ import com.github.dhaval2404.imagepicker.ImagePicker
 import com.github.dhaval2404.imagepicker.constant.ImageProvider
 import com.google.android.material.snackbar.Snackbar
 import com.netology.nmedia.R
+import com.netology.nmedia.activity.VideoFragment.Companion.videoArg
 import com.netology.nmedia.databinding.FragmentEditPostBinding
-import com.netology.nmedia.model.media.PhotoModel
+import com.netology.nmedia.enums.AttachmentType
 import com.netology.nmedia.util.AndroidUtils
 import com.netology.nmedia.viewmodel.PostViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,33 +35,51 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class EditPostFragment : Fragment() {
-    private val viewModel: PostViewModel by activityViewModels(
-    )
+    private val viewModel: PostViewModel by activityViewModels()
+
+    companion object {
+        private var mediaPlayer: MediaPlayer? = null
+    }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
+        inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         val binding = FragmentEditPostBinding.inflate(inflater, container, false)
-
         val editedPost = viewModel.getEditedPost()
+        var type: AttachmentType? = null
+        val pickPhotoLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                when (it.resultCode) {
+                    ImagePicker.RESULT_ERROR -> {
+                        Snackbar.make(
+                            binding.root,
+                            ImagePicker.getError(it.data),
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                    }
 
+                    Activity.RESULT_OK -> {
+                        val uri: Uri? = it.data?.data
+                        val stream = uri?.let { stream ->
+                            context?.contentResolver?.openInputStream(stream)
+                        }
+
+                        viewModel.changeMedia(uri, stream, type)
+                    }
+                }
+            }
+        val mediaContract =
+            registerForActivityResult(ActivityResultContracts.GetContent()) {
+                it?.let {
+                    val stream = context?.contentResolver?.openInputStream(it)
+                    viewModel.changeMedia(it, stream, type)
+                }
+            }
         activity?.title = getString(R.string.description_edit_post)
-
         binding.edit.setText(editedPost?.content)
-        binding.linkText.setText(editedPost?.link)
 
-        val attachment = editedPost?.attachment
-        if (attachment != null) {
-            viewModel.changePhoto(PhotoModel(Uri.parse(attachment.url), file = null))
-        }
-        if (attachment?.url != null) {
-            AndroidUtils.loadImage(url = attachment.url, imageView = binding.photoPreview)
-            binding.photoPreviewContainer.visibility = View.VISIBLE
-        } else {
-            binding.photoPreviewContainer.visibility = View.GONE
-        }
+        binding.linkText.setText(editedPost?.link)
         if (binding.linkText.text.isNotBlank()) {
             binding.linkText.visibility = View.VISIBLE
             binding.deleteLink.visibility = View.VISIBLE
@@ -71,24 +95,91 @@ class EditPostFragment : Fragment() {
             binding.deleteLink.visibility = View.GONE
 
         }
-        val pickPhotoLauncher =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-                when (it.resultCode) {
-                    ImagePicker.RESULT_ERROR -> {
-                        Snackbar.make(
-                            binding.root,
-                            ImagePicker.getError(it.data),
-                            Snackbar.LENGTH_LONG
-                        ).show()
-                    }
 
-                    Activity.RESULT_OK -> {
-                        val uri: Uri? = it.data?.data
-                        val file = uri?.toFile()
-                        viewModel.changePhoto(PhotoModel(uri, file))
-                    }
+        val attachment = editedPost?.attachment
+
+        if (attachment?.url != null && attachment.type == AttachmentType.IMAGE) {
+            AndroidUtils.loadImage(attachment.url, binding.photoPreview)
+            binding.photoPreviewContainer.visibility = View.VISIBLE
+        } else {
+            binding.photoPreviewContainer.visibility = View.GONE
+        }
+        if (attachment?.url != null && attachment.type == AttachmentType.AUDIO) {
+            binding.audioAttachment.visibility = View.VISIBLE
+            binding.play.setOnClickListener {
+                if (mediaPlayer == null) {
+                    mediaPlayer = MediaPlayer.create(context, attachment.url.toUri())
+                    binding.audioBar.max = mediaPlayer!!.duration
+                    val handler = Handler(Looper.getMainLooper())
+                    handler.postDelayed(object : Runnable {
+                        override fun run() {
+                            try {
+                                binding.audioBar.progress = mediaPlayer!!.currentPosition
+                                handler.postDelayed(this, 1000)
+                            } catch (e: Exception) {
+                                binding.audioBar.progress = 0
+                            }
+                        }
+                    }, 0)
+                    mediaPlayer?.start()
+                } else {
+                    if (mediaPlayer!!.isPlaying) mediaPlayer?.pause() else mediaPlayer?.start()
                 }
             }
+            binding.stop.setOnClickListener {
+                if (mediaPlayer != null) {
+                    mediaPlayer?.release()
+                    mediaPlayer = null
+                }
+                binding.play.isChecked = false
+            }
+            binding.audioBar.setOnSeekBarChangeListener(object :
+                SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(
+                    seekBar: SeekBar?,
+                    progress: Int,
+                    fromUser: Boolean
+                ) {
+                    if (fromUser) mediaPlayer?.seekTo(progress)
+                }
+
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+                override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+            })
+            binding.removeAudio.setOnClickListener {
+                binding.audioAttachment.isVisible = false
+                viewModel.changeMedia(null, null, null)
+                viewModel.changeAttachmentAudio("")
+                mediaPlayer?.release()
+                mediaPlayer = null
+            }
+        }
+        if (attachment?.url != null && attachment.type == AttachmentType.VIDEO) {
+            binding.videoAttachment.isVisible = true
+            binding.deleteVideo.isVisible = true
+        }
+        binding.playVideo.setOnClickListener {
+            findNavController().navigate(
+                R.id.action_editPostFragment_to_videoFragment,
+                Bundle().apply {
+                    videoArg = attachment?.url.toString()
+                })
+            AndroidUtils.hideKeyboard(requireView())
+        }
+        binding.videoAttachmentHeader.setOnClickListener {
+            findNavController().navigate(
+                R.id.action_editPostFragment_to_videoFragment,
+                Bundle().apply {
+                    videoArg = attachment?.url.toString()
+                })
+            AndroidUtils.hideKeyboard(requireView())
+        }
+        binding.deleteVideo.setOnClickListener {
+            binding.videoAttachment.isVisible = false
+            binding.deleteVideo.isVisible = false
+            viewModel.changeMedia(null, null, null)
+            viewModel.changeAttachmentVideo("")
+        }
         activity?.addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.edit_post_menu, menu)
@@ -97,10 +188,11 @@ class EditPostFragment : Fragment() {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
                     R.id.save -> {
+
                         if (binding.edit.text.isNotBlank()) {
                             viewModel.changeContent(
                                 binding.edit.text.toString(),
-                                binding.linkText.text.toString()
+                                binding.linkText.text.toString(),
                             )
                             viewModel.save()
                             AndroidUtils.hideKeyboard(requireView())
@@ -113,11 +205,9 @@ class EditPostFragment : Fragment() {
                             false
                         }
                     }
-
                     R.id.cancel -> {
                         AndroidUtils.hideKeyboard(requireView())
                         findNavController().navigateUp()
-                        true
                     }
 
                     else -> false
@@ -126,15 +216,16 @@ class EditPostFragment : Fragment() {
 
         }, viewLifecycleOwner)
 
-
-
-
         binding.takePhoto.setOnClickListener {
             ImagePicker.with(this)
                 .crop()
                 .compress(2048)
                 .provider(ImageProvider.CAMERA)
                 .createIntent(pickPhotoLauncher::launch)
+            type = AttachmentType.IMAGE
+            binding.audioAttachment.isVisible = false
+            binding.videoAttachment.isVisible = false
+            binding.deleteVideo.isVisible = false
         }
         binding.pickPhotoFromGallery.setOnClickListener {
             ImagePicker.with(this)
@@ -148,24 +239,114 @@ class EditPostFragment : Fragment() {
                     )
                 )
                 .createIntent(pickPhotoLauncher::launch)
+            type = AttachmentType.IMAGE
+            binding.audioAttachment.isVisible = false
+            binding.videoAttachment.isVisible = false
+            binding.deleteVideo.isVisible = false
         }
+        binding.addAudio.setOnClickListener {
+            mediaContract.launch("audio/*")
+            type = AttachmentType.AUDIO
+            binding.videoAttachment.isVisible = false
+            binding.deleteVideo.isVisible = false
+            binding.photoPreviewContainer.isVisible = false
+        }
+        binding.addVideo.setOnClickListener {
+            mediaContract.launch("video/*")
+            type = AttachmentType.VIDEO
+            binding.photoPreviewContainer.isVisible = false
+            binding.audioAttachment.isVisible = false
+        }
+
         binding.removePhoto.setOnClickListener {
-            viewModel.changePhoto(null)
+            viewModel.changeMedia(null, null, null)
             viewModel.changeAttachmentPhoto("")
             binding.photoPreviewContainer.visibility = View.GONE
-
         }
-        viewModel.photoState.observe(viewLifecycleOwner) { photoState ->
-            if (photoState == null) {
+        viewModel.mediaState.observe(viewLifecycleOwner) { mediaState ->
+            if (mediaState == null) {
                 binding.photoPreviewContainer.visibility = View.GONE
-                binding.photoPreview.setImageURI(null)
                 return@observe
             }
-            binding.photoPreviewContainer.visibility = View.VISIBLE
-            binding.photoPreview.setImageURI(photoState.uri)
+            if (mediaState.type == AttachmentType.IMAGE) {
+                binding.photoPreviewContainer.isVisible = true
+                binding.photoPreview.setImageURI(mediaState.uri)
+            } else {
+                binding.photoPreviewContainer.isVisible = false
+            }
+            if (mediaState.type == AttachmentType.AUDIO) {
+
+                binding.play.setOnClickListener {
+                    if (mediaPlayer == null) {
+                        mediaPlayer = MediaPlayer.create(context, mediaState.uri)
+                        binding.audioBar.max = mediaPlayer!!.duration
+                        val handler = Handler(Looper.getMainLooper())
+                        handler.postDelayed(object : Runnable {
+                            override fun run() {
+                                try {
+                                    binding.audioBar.progress = mediaPlayer!!.currentPosition
+                                    handler.postDelayed(this, 1000)
+                                } catch (e: Exception) {
+                                    binding.audioBar.progress = 0
+                                }
+                            }
+                        }, 0)
+                        mediaPlayer?.start()
+                    } else {
+                        if (mediaPlayer!!.isPlaying) mediaPlayer?.pause() else mediaPlayer?.start()
+                    }
+                }
+                binding.stop.setOnClickListener {
+                    if (mediaPlayer != null) {
+                        mediaPlayer?.release()
+                        mediaPlayer = null
+                    }
+                    binding.play.isChecked = false
+                }
+                binding.audioBar.setOnSeekBarChangeListener(object :
+                    SeekBar.OnSeekBarChangeListener {
+                    override fun onProgressChanged(
+                        seekBar: SeekBar?,
+                        progress: Int,
+                        fromUser: Boolean
+                    ) {
+                        if (fromUser) mediaPlayer?.seekTo(progress)
+                    }
+
+                    override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+                    override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+                })
+                binding.removeAudio.setOnClickListener {
+                    binding.audioAttachment.isVisible = false
+                    viewModel.changeMedia(null, null, null)
+                    mediaPlayer?.release()
+                    mediaPlayer = null
+                }
+                binding.audioAttachment.isVisible = true
+            }
+            if (mediaState.type == AttachmentType.VIDEO) {
+                binding.videoAttachment.isVisible = true
+                binding.deleteVideo.isVisible = true
+                binding.playVideo.setOnClickListener {
+                    findNavController().navigate(
+                        R.id.action_editPostFragment_to_videoFragment,
+                        Bundle().apply {
+                            videoArg = mediaState.uri.toString()
+                        })
+                    AndroidUtils.hideKeyboard(requireView())
+                }
+                binding.videoAttachmentHeader.setOnClickListener {
+                    findNavController().navigate(
+                        R.id.action_editPostFragment_to_videoFragment,
+                        Bundle().apply {
+                            videoArg = mediaState.uri.toString()
+                        })
+                    AndroidUtils.hideKeyboard(requireView())
+                }
+
+            }
         }
         viewModel.postCreated.observe(viewLifecycleOwner) {
-            binding.photoPreview.setImageURI(null)
             findNavController().navigateUp()
         }
         return binding.root
@@ -174,6 +355,8 @@ class EditPostFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         viewModel.clear()
-        viewModel.changePhoto(null)
+        viewModel.changeMedia(null, null, null)
+        mediaPlayer?.release()
+        mediaPlayer = null
     }
 }

@@ -1,16 +1,20 @@
 package com.netology.nmedia.activity
 
 import android.app.Activity
+import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SeekBar
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.net.toFile
+import androidx.core.net.toUri
 import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -20,9 +24,10 @@ import com.github.dhaval2404.imagepicker.ImagePicker
 import com.github.dhaval2404.imagepicker.constant.ImageProvider
 import com.google.android.material.snackbar.Snackbar
 import com.netology.nmedia.R
+import com.netology.nmedia.activity.VideoFragment.Companion.videoArg
 import com.netology.nmedia.databinding.FragmentEditEventBinding
+import com.netology.nmedia.enums.AttachmentType
 import com.netology.nmedia.enums.EventType
-import com.netology.nmedia.model.media.PhotoModel
 import com.netology.nmedia.util.AndroidUtils
 import com.netology.nmedia.util.Formatter
 import com.netology.nmedia.viewmodel.EventViewModel
@@ -33,13 +38,18 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class EditEventFragment : Fragment() {
     private val viewModel: EventViewModel by activityViewModels()
+
+    companion object {
+        private var mediaPlayer: MediaPlayer? = null
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         val binding = FragmentEditEventBinding.inflate(inflater, container, false)
         val editedEvent = viewModel.getEditedEvent()
-
+        var type: AttachmentType? = null
         val pickPhotoLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                 when (it.resultCode) {
@@ -53,10 +63,19 @@ class EditEventFragment : Fragment() {
 
                     Activity.RESULT_OK -> {
                         val uri: Uri? = it.data?.data
-                        val file = uri?.toFile()
+                        val stream = uri?.let { stream ->
+                            context?.contentResolver?.openInputStream(stream)
+                        }
 
-                        viewModel.changePhoto(PhotoModel(uri, file))
+                        viewModel.changeMedia(uri, stream, type)
                     }
+                }
+            }
+        val mediaContract =
+            registerForActivityResult(ActivityResultContracts.GetContent()) {
+                it?.let {
+                    val stream = context?.contentResolver?.openInputStream(it)
+                    viewModel.changeMedia(it, stream, type)
                 }
             }
         activity?.title = getString(R.string.edit_event)
@@ -72,8 +91,9 @@ class EditEventFragment : Fragment() {
                 binding.onlineOrOffline.text = getString(R.string.Online)
                 binding.onlineOrOffline.isChecked = true
             }
+
             EventType.OFFLINE -> {
-                binding.onlineOrOffline.text =  getString(R.string.Offline)
+                binding.onlineOrOffline.text = getString(R.string.Offline)
                 binding.onlineOrOffline.isChecked = false
             }
 
@@ -81,9 +101,9 @@ class EditEventFragment : Fragment() {
         }
         binding.onlineOrOffline.setOnCheckedChangeListener { button, _ ->
             if (button.isChecked) {
-                binding.onlineOrOffline.text =  getString(R.string.Online)
+                binding.onlineOrOffline.text = getString(R.string.Online)
             } else {
-                binding.onlineOrOffline.text =  getString(R.string.Offline)
+                binding.onlineOrOffline.text = getString(R.string.Offline)
             }
         }
 
@@ -112,9 +132,93 @@ class EditEventFragment : Fragment() {
         binding.time.setOnClickListener {
             context?.let { Formatter.showTimePicker(binding.time, it) }
         }
+        val attachment = editedEvent?.attachment
+
+        if (attachment?.url != null && attachment.type == AttachmentType.IMAGE) {
+            AndroidUtils.loadImage(attachment.url, binding.photoPreview)
+            binding.photoPreviewContainer.visibility = View.VISIBLE
+        } else {
+            binding.photoPreviewContainer.visibility = View.GONE
+        }
+        if (attachment?.url != null && attachment.type == AttachmentType.AUDIO) {
+            binding.audioAttachment.visibility = View.VISIBLE
+            binding.play.setOnClickListener {
+                if (mediaPlayer == null) {
+                    mediaPlayer = MediaPlayer.create(context, attachment.url.toUri())
+                    binding.audioBar.max = mediaPlayer!!.duration
+                    val handler = Handler(Looper.getMainLooper())
+                    handler.postDelayed(object : Runnable {
+                        override fun run() {
+                            try {
+                                binding.audioBar.progress = mediaPlayer!!.currentPosition
+                                handler.postDelayed(this, 1000)
+                            } catch (e: Exception) {
+                                binding.audioBar.progress = 0
+                            }
+                        }
+                    }, 0)
+                    mediaPlayer?.start()
+                } else {
+                    if (mediaPlayer!!.isPlaying) mediaPlayer?.pause() else mediaPlayer?.start()
+                }
+            }
+            binding.stop.setOnClickListener {
+                if (mediaPlayer != null) {
+                    mediaPlayer?.release()
+                    mediaPlayer = null
+                }
+                binding.play.isChecked = false
+            }
+            binding.audioBar.setOnSeekBarChangeListener(object :
+                SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(
+                    seekBar: SeekBar?,
+                    progress: Int,
+                    fromUser: Boolean
+                ) {
+                    if (fromUser) mediaPlayer?.seekTo(progress)
+                }
+
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+                override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+            })
+            binding.removeAudio.setOnClickListener {
+                binding.audioAttachment.isVisible = false
+                viewModel.changeMedia(null, null, null)
+                viewModel.changeAttachmentAudio("")
+                mediaPlayer?.release()
+                mediaPlayer = null
+            }
+        }
+        if (attachment?.url != null && attachment.type == AttachmentType.VIDEO) {
+            binding.videoAttachment.isVisible = true
+            binding.deleteVideo.isVisible = true
+        }
+        binding.playVideo.setOnClickListener {
+            findNavController().navigate(
+                R.id.action_editEventFragment_to_videoFragment,
+                Bundle().apply {
+                    videoArg = attachment?.url.toString()
+                })
+            AndroidUtils.hideKeyboard(requireView())
+        }
+        binding.videoAttachmentHeader.setOnClickListener {
+            findNavController().navigate(
+                R.id.action_editEventFragment_to_videoFragment,
+                Bundle().apply {
+                    videoArg = attachment?.url.toString()
+                })
+            AndroidUtils.hideKeyboard(requireView())
+        }
+        binding.deleteVideo.setOnClickListener {
+            binding.videoAttachment.isVisible = false
+            binding.deleteVideo.isVisible = false
+            viewModel.changeMedia(null, null, null)
+            viewModel.changeAttachmentVideo("")
+        }
         activity?.addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.new_event_menu, menu)
+                menuInflater.inflate(R.menu.edit_post_menu, menu)
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
@@ -139,18 +243,28 @@ class EditEventFragment : Fragment() {
                             false
                         }
                     }
+                    R.id.cancel -> {
+                        AndroidUtils.hideKeyboard(requireView())
+                        findNavController().navigateUp()
+                    }
+
 
                     else -> false
                 }
             }
 
         }, viewLifecycleOwner)
+
         binding.takePhoto.setOnClickListener {
             ImagePicker.with(this)
                 .crop()
                 .compress(2048)
                 .provider(ImageProvider.CAMERA)
                 .createIntent(pickPhotoLauncher::launch)
+            type = AttachmentType.IMAGE
+            binding.audioAttachment.isVisible = false
+            binding.videoAttachment.isVisible = false
+            binding.deleteVideo.isVisible = false
         }
         binding.pickPhotoFromGallery.setOnClickListener {
             ImagePicker.with(this)
@@ -164,24 +278,124 @@ class EditEventFragment : Fragment() {
                     )
                 )
                 .createIntent(pickPhotoLauncher::launch)
+            type = AttachmentType.IMAGE
+            binding.audioAttachment.isVisible = false
+            binding.videoAttachment.isVisible = false
+            binding.deleteVideo.isVisible = false
+        }
+        binding.addAudio.setOnClickListener {
+            mediaContract.launch("audio/*")
+            type = AttachmentType.AUDIO
+            binding.videoAttachment.isVisible = false
+            binding.deleteVideo.isVisible = false
+            binding.photoPreviewContainer.isVisible = false
+        }
+        binding.addVideo.setOnClickListener {
+            mediaContract.launch("video/*")
+            type = AttachmentType.VIDEO
+            binding.photoPreviewContainer.isVisible = false
+            binding.audioAttachment.isVisible = false
         }
 
         binding.removePhoto.setOnClickListener {
-            viewModel.changePhoto(null)
+            viewModel.changeMedia(null, null, null)
+            viewModel.changeAttachmentPhoto("")
+            binding.photoPreviewContainer.visibility = View.GONE
         }
-        viewModel.photoState.observe(viewLifecycleOwner) { photoState ->
-            if (photoState == null) {
-                binding.photoPreviewContainer.isVisible = false
-
+        viewModel.mediaState.observe(viewLifecycleOwner) { mediaState ->
+            if (mediaState == null) {
+                binding.photoPreviewContainer.visibility = View.GONE
                 return@observe
             }
-            binding.photoPreviewContainer.isVisible = true
+            if (mediaState.type == AttachmentType.IMAGE) {
+                binding.photoPreviewContainer.isVisible = true
+                binding.photoPreview.setImageURI(mediaState.uri)
+            } else {
+                binding.photoPreviewContainer.isVisible = false
+            }
+            if (mediaState.type == AttachmentType.AUDIO) {
 
-            binding.photoPreview.setImageURI(photoState.uri)
+                binding.play.setOnClickListener {
+                    if (mediaPlayer == null) {
+                        mediaPlayer = MediaPlayer.create(context, mediaState.uri)
+                        binding.audioBar.max = mediaPlayer!!.duration
+                        val handler = Handler(Looper.getMainLooper())
+                        handler.postDelayed(object : Runnable {
+                            override fun run() {
+                                try {
+                                    binding.audioBar.progress = mediaPlayer!!.currentPosition
+                                    handler.postDelayed(this, 1000)
+                                } catch (e: Exception) {
+                                    binding.audioBar.progress = 0
+                                }
+                            }
+                        }, 0)
+                        mediaPlayer?.start()
+                    } else {
+                        if (mediaPlayer!!.isPlaying) mediaPlayer?.pause() else mediaPlayer?.start()
+                    }
+                }
+                binding.stop.setOnClickListener {
+                    if (mediaPlayer != null) {
+                        mediaPlayer?.release()
+                        mediaPlayer = null
+                    }
+                    binding.play.isChecked = false
+                }
+                binding.audioBar.setOnSeekBarChangeListener(object :
+                    SeekBar.OnSeekBarChangeListener {
+                    override fun onProgressChanged(
+                        seekBar: SeekBar?,
+                        progress: Int,
+                        fromUser: Boolean
+                    ) {
+                        if (fromUser) mediaPlayer?.seekTo(progress)
+                    }
+
+                    override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+                    override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+                })
+                binding.removeAudio.setOnClickListener {
+                    binding.audioAttachment.isVisible = false
+                    viewModel.changeMedia(null, null, null)
+                    mediaPlayer?.release()
+                    mediaPlayer = null
+                }
+                binding.audioAttachment.isVisible = true
+            }
+            if (mediaState.type == AttachmentType.VIDEO) {
+                binding.videoAttachment.isVisible = true
+                binding.deleteVideo.isVisible = true
+                binding.playVideo.setOnClickListener {
+                    findNavController().navigate(
+                        R.id.action_editEventFragment_to_videoFragment,
+                        Bundle().apply {
+                            videoArg = mediaState.uri.toString()
+                        })
+                    AndroidUtils.hideKeyboard(requireView())
+                }
+                binding.videoAttachmentHeader.setOnClickListener {
+                    findNavController().navigate(
+                        R.id.action_editEventFragment_to_videoFragment,
+                        Bundle().apply {
+                            videoArg = mediaState.uri.toString()
+                        })
+                    AndroidUtils.hideKeyboard(requireView())
+                }
+
+            }
         }
         viewModel.eventCreated.observe(viewLifecycleOwner) {
             findNavController().navigateUp()
         }
         return binding.root
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.clear()
+        viewModel.changeMedia(null, null, null)
+        mediaPlayer?.release()
+        mediaPlayer = null
     }
 }

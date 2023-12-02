@@ -9,7 +9,7 @@
 
     </style>
     <style name="Widget.AppTheme.TakePartButton" parent="Widget.MaterialComponents.Button.TextButton.Icon">
-        <item name="iconTint">@color/checkbox_tint</item>
+        <item name="iconTint">@color/white</item>
         <item name="android:minWidth">@dimen/icon_button_min_size</item>
         <item name="android:minHeight">@dimen/icon_button_min_size</item>
         <item name="android:background">@android:color/transparent</item>
@@ -31,6 +31,11 @@
         <item name="android:minWidth">@dimen/icon_button_min_size</item>
         <item name="android:minHeight">@dimen/icon_button_min_size</item>
         <item name="android:background">@android:color/transparent</item>
+    </style>
+    <style name="Widget.AppTheme.PlayerButton" parent="Widget.MaterialComponents.Button.Icon">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="iconSize">36dp</item>
+
     </style>
     <style name="Widget.AppTheme.AddJobButton" parent="Widget.MaterialComponents.Button.Icon">
 

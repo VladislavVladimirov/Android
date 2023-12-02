@@ -200,7 +200,7 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/participate"
-        style="@style/Widget.AppTheme.LikeButton"
+        style="@style/Widget.AppTheme.TakePartButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/common_spacing"
@@ -252,5 +252,72 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/youtube_player_preview" />
+
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/audio_attachment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="play, audio_attachment_header"
+        />
+
+    <TextView
+        android:id="@+id/audio_attachment_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/audiofile"
+        android:textStyle="bold"
+        android:layout_marginHorizontal="@dimen/common_spacing"
+        android:background="@android:color/transparent"
+        android:textColorLink="@color/white"
+        app:layout_constraintBottom_toBottomOf="@id/play"
+        android:textSize="16sp"
+        app:layout_constraintStart_toEndOf="@id/play"
+        app:layout_constraintTop_toTopOf="@id/play"
+        />
+
+    <ImageView
+        android:id="@+id/play"
+        android:src="@drawable/ic_audio"
+        android:contentDescription="@string/play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/common_spacing"
+        app:layout_constraintTop_toBottomOf="@id/linkText"
+        app:layout_constraintBottom_toTopOf="@id/barrierActions"/>
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/video_attachment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="play_video, video_attachment_header"
+        />
+
+    <TextView
+        android:id="@+id/video_attachment_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/videofile"
+        android:textStyle="bold"
+        android:layout_marginHorizontal="@dimen/common_spacing"
+        android:background="@android:color/transparent"
+        android:textColorLink="@color/white"
+        app:layout_constraintBottom_toBottomOf="@id/play_video"
+        android:textSize="16sp"
+        app:layout_constraintStart_toEndOf="@id/play_video"
+        app:layout_constraintTop_toTopOf="@id/play_video"
+        />
+
+    <ImageView
+        android:id="@+id/play_video"
+        android:src="@drawable/ic_video_24"
+        android:contentDescription="@string/play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/common_spacing"
+        app:layout_constraintTop_toBottomOf="@id/linkText"
+        app:layout_constraintBottom_toTopOf="@id/barrierActions"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

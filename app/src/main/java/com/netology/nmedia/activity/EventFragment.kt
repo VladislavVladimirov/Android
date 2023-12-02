@@ -22,7 +22,9 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.netology.nmedia.R
+import com.netology.nmedia.activity.AudioFragment.Companion.audioArg
 import com.netology.nmedia.activity.ImageFragment.Companion.pictureArg
+import com.netology.nmedia.activity.VideoFragment.Companion.videoArg
 import com.netology.nmedia.adapter.OnInteractionListener
 import com.netology.nmedia.adapter.event.EventAdapter
 import com.netology.nmedia.adapter.loading.LoadingStateAdapter
@@ -92,7 +94,7 @@ class EventFragment : Fragment() {
                 findNavController().navigate(R.id.action_eventFragment_to_editEventFragment)
             }
 
-            override fun onPlayEvent(event: Event) {
+            override fun onYouTubePlay(event: Event) {
                 AndroidUtils.extractUrls(event.content).forEach {
                     if (it.contains("youtu")) {
                         val playIntent = Intent(Intent.ACTION_VIEW, Uri.parse(it))
@@ -116,6 +118,20 @@ class EventFragment : Fragment() {
                     userViewModel.getUserById(event.authorId).join()
                     findNavController().navigate(R.id.action_feedFragment_to_wallFragment)
                 }
+            }
+            override fun onAudioPlay(event: Event) {
+                findNavController().navigate(
+                    R.id.action_eventFragment_to_audioFragment,
+                    Bundle().apply {
+                        audioArg = event.attachment?.url.toString()
+                    })
+            }
+            override fun onVideoPlay(event: Event) {
+                findNavController().navigate(
+                    R.id.action_eventFragment_to_videoFragment,
+                    Bundle().apply {
+                        videoArg = event.attachment?.url.toString()
+                    })
             }
         })
         activity?.title = getString(R.string.events)

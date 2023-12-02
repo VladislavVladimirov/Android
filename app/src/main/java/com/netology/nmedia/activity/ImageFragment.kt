@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.bumptech.glide.Glide
 import com.netology.nmedia.databinding.FragmentImageBinding
+import com.netology.nmedia.util.AndroidUtils
 import com.netology.nmedia.util.StringArg
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -27,12 +27,7 @@ class ImageFragment : Fragment() {
 
         val binding = FragmentImageBinding.inflate(inflater, container, false)
         val url = requireNotNull(requireArguments().pictureArg)
-        Glide.with(binding.photo)
-            .load(url)
-            .timeout(10_000)
-            .into(binding.photo)
-
-
+        AndroidUtils.loadImage(url, binding.photo)
         binding.back.setOnClickListener {
             findNavController().navigateUp()
         }

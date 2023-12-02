@@ -46,7 +46,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:contentDescription="@string/photo_preview_description" />
+
+                    android:contentDescription="@string/photo_preview_description"
+                    tools:src="@drawable/youtube_preview" />
 
                 <ImageView
                     android:id="@+id/remove_photo"
@@ -59,6 +61,103 @@
             </FrameLayout>
         </LinearLayout>
     </ScrollView>
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/audio_attachment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="audio_bar, control_panel"
+         />
+
+    <SeekBar
+        android:id="@+id/audio_bar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/common_spacing"
+        android:layout_marginTop="@dimen/common_spacing"
+        android:indeterminate="false"
+        android:progress="0"
+        app:layout_constraintBottom_toTopOf="@id/control_panel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/control_panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/linkText"
+        android:gravity="center">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/play"
+            style="@style/Widget.AppTheme.PlayerButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkable="true"
+            android:contentDescription="@string/play"
+            app:icon="@drawable/ic_play_icon" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/stop"
+            style="@style/Widget.AppTheme.PlayerButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/Stop"
+            app:icon="@drawable/ic_stop_48" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/remove_audio"
+            style="@style/Widget.AppTheme.PlayerButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/delete_audio"
+            app:icon="@drawable/ic_cancel_24" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/video_attachment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@id/linkText"
+        android:gravity="center"
+        android:visibility="gone">
+        <TextView
+            android:id="@+id/video_attachment_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/videofile"
+            android:textStyle="bold"
+            android:layout_marginHorizontal="@dimen/common_spacing"
+            android:background="@android:color/transparent"
+            android:textColorLink="@color/white"
+            app:layout_constraintBottom_toBottomOf="@id/play_video"
+            android:textSize="16sp"
+            />
+        <ImageView
+            android:id="@+id/play_video"
+            android:src="@drawable/ic_video_24"
+            android:contentDescription="@string/play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/common_spacing"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/linkText"/>
+    </LinearLayout>
+    <ImageView
+        android:id="@+id/delete_video"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/pick_a_photo_from_gallery_description"
+        android:src="@drawable/ic_cancel_24"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/video_attachment"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+
 
     <EditText
         android:id="@+id/linkText"
@@ -81,9 +180,9 @@
         android:id="@+id/delete_link"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="8dp"
         android:contentDescription="@string/pick_a_photo_from_gallery_description"
         android:src="@drawable/ic_cancel_24"
+        android:translationY="25dp"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/linkText"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -113,6 +212,21 @@
             android:contentDescription="@string/pick_a_photo_from_gallery_description"
             android:padding="@dimen/icon_button_padding"
             android:src="@drawable/ic_add_gallery_photo_24" />
+
+        <ImageView
+            android:id="@+id/add_audio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/add_link"
+            android:padding="@dimen/icon_button_padding"
+            android:src="@drawable/ic_audio" />
+        <ImageView
+            android:id="@+id/add_video"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/add_link"
+            android:padding="@dimen/icon_button_padding"
+            android:src="@drawable/ic_video_24" />
 
         <ImageView
             android:id="@+id/add_link"

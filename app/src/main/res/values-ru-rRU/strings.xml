@@ -13,7 +13,7 @@
     <string name="description_post_publish">Опубликовать пост</string>
     <string name="error_empty_content">Содержимое поста не может быть пустым</string>
     <string name="description_cancel">Отменить</string>
-    <string name="description_edit_post">Редактировать запись</string>
+    <string name="description_edit_post">"Редактировать"</string>
     <string name="chooser_share_post">Поделиться</string>
     <string name="ok">Ок</string>
     <string name="add_post">Добавить пост</string>
@@ -88,5 +88,10 @@
     <string name="choose_date">Выберите дату</string>
     <string name="take_part">Принять участие</string>
     <string name="new_event">Новое событие</string>
-    <string name="edit_event">Редактировать событие</string>
+    <string name="edit_event">"Редактировать "</string>
+    <string name="play">Воспроизвести</string>
+    <string name="Stop">Стоп</string>
+    <string name="delete_audio">Удалить аудио</string>
+    <string name="audiofile">Аудиофайл</string>
+    <string name="videofile">Видеофайл</string>
 </resources>

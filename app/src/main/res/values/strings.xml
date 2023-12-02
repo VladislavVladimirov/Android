@@ -87,6 +87,11 @@
     <string name="take_part">Join event</string>
     <string name="new_event">New event</string>
     <string name="edit_event">Edit event</string>
+    <string name="play">Play</string>
+    <string name="Stop">Stop</string>
+    <string name="delete_audio">Delete audio</string>
+    <string name="audiofile">audiofile</string>
+    <string name="videofile">videofile</string>
 
 
 </resources>

@@ -52,6 +52,27 @@ class PostViewHolder(
             } else {
                 imageAttachment.visibility = View.GONE
             }
+            if (post.attachment?.type == AttachmentType.AUDIO) {
+                audioAttachment.visibility = View.VISIBLE
+            } else {
+                audioAttachment.visibility = View.GONE
+            }
+            play.setOnClickListener {
+                onInteractionListener.onAudioPlay(post)
+            }
+            audioAttachmentHeader.setOnClickListener { onInteractionListener.onAudioPlay(post) }
+
+            if (post.attachment?.type == AttachmentType.VIDEO) {
+                videoAttachment.visibility = View.VISIBLE
+            } else {
+                videoAttachment.visibility = View.GONE
+            }
+            playVideo.setOnClickListener {
+                onInteractionListener.onVideoPlay(post)
+            }
+            videoAttachmentHeader.setOnClickListener { onInteractionListener.onVideoPlay(post) }
+
+
             AndroidUtils.loadYouTubePreview(post.content, youtubePlayerPreview)
             like.setOnClickListener {
                 onInteractionListener.onPostLike(post)
@@ -84,7 +105,7 @@ class PostViewHolder(
                 onInteractionListener.onImageClick(post)
             }
             youtubePlayerPreview.setOnClickListener {
-                onInteractionListener.onPlay(post)
+                onInteractionListener.onYouTubePlay(post)
             }
             avatar.setOnClickListener {
                 onInteractionListener.onAuthorClick(post)
@@ -98,3 +119,4 @@ class PostViewHolder(
         }
     }
 }
+

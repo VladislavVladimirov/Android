@@ -9,22 +9,23 @@
     android:padding="@dimen/common_spacing"
     tools:context="com.netology.nmedia.activity.FeedFragment">
 
-<androidx.cardview.widget.CardView
-    android:id="@+id/avatarContainer"
-    android:layout_width="@dimen/avatar_size"
-    android:layout_height="@dimen/avatar_size"
-    app:cardCornerRadius="@dimen/avatar_corner_radius"
-    app:layout_constraintBottom_toBottomOf="@id/barrierContent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent">
-    <ImageView
-        android:id="@+id/avatar"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/description_post_author_avatar"
-        tools:srcCompat="@sample/post_avatars" />
-</androidx.cardview.widget.CardView>
+    <androidx.cardview.widget.CardView
+        android:id="@+id/avatarContainer"
+        android:layout_width="@dimen/avatar_size"
+        android:layout_height="@dimen/avatar_size"
+        app:cardCornerRadius="@dimen/avatar_corner_radius"
+        app:layout_constraintBottom_toBottomOf="@id/barrierContent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/avatar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/description_post_author_avatar"
+            tools:srcCompat="@sample/post_avatars" />
+    </androidx.cardview.widget.CardView>
 
 
     <TextView
@@ -33,9 +34,9 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/common_spacing"
         android:background="@android:color/transparent"
-        android:textSize="14sp"
         android:ellipsize="end"
         android:maxLines="1"
+        android:textSize="14sp"
         app:layout_constraintBottom_toTopOf="@id/authorJob"
         app:layout_constraintEnd_toStartOf="@id/menu"
         app:layout_constraintStart_toEndOf="@id/avatarContainer"
@@ -50,9 +51,9 @@
         android:layout_marginHorizontal="@dimen/common_spacing"
         android:background="@android:color/transparent"
         android:ellipsize="end"
-        android:textSize="12sp"
         android:maxLines="1"
         android:textColor="@color/grey_400"
+        android:textSize="12sp"
         android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@id/published"
         app:layout_constraintEnd_toStartOf="@id/menu"
@@ -66,9 +67,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/common_spacing"
+        android:background="@android:color/transparent"
         android:textColor="@color/grey_400"
         android:textSize="12sp"
-        android:background="@android:color/transparent"
         app:layout_constraintBottom_toTopOf="@id/barrierContent"
         app:layout_constraintStart_toEndOf="@id/avatarContainer"
         app:layout_constraintTop_toBottomOf="@id/authorJob"
@@ -97,11 +98,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/common_spacing"
-        android:textSize="16sp"
         android:autoLink="web"
-        android:textColorLink="@color/white"
         android:background="@android:color/transparent"
+        android:textColorLink="@color/white"
+        android:textSize="16sp"
         app:layout_constraintTop_toBottomOf="@id/barrierContent"
+        app:layout_constraintBottom_toTopOf="@id/linkText"
         tools:text="@sample/posts.json/data/content" />
 
     <ImageView
@@ -122,10 +124,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
         android:autoLink="web"
-        android:textColorLink="@color/white"
         android:background="@android:color/transparent"
         android:ellipsize="end"
         android:maxLines="1"
+        android:textColorLink="@color/white"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/linkHeader"
         app:layout_constraintStart_toEndOf="@id/linkHeader"
@@ -138,7 +140,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:barrierDirection="bottom"
-        app:constraint_referenced_ids="content,linkHeader,linkText" />
+        app:constraint_referenced_ids="content,linkHeader,linkText,play,youtube_player_preview,audio_attachment_header" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/like"
@@ -194,5 +196,74 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/youtube_player_preview" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/audio_attachment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="play, audio_attachment_header"
+       />
+
+    <TextView
+        android:id="@+id/audio_attachment_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/audiofile"
+        android:textStyle="bold"
+        android:layout_marginHorizontal="@dimen/common_spacing"
+        android:background="@android:color/transparent"
+        android:textColorLink="@color/white"
+        app:layout_constraintBottom_toBottomOf="@id/play"
+        android:textSize="16sp"
+        app:layout_constraintStart_toEndOf="@id/play"
+        app:layout_constraintTop_toTopOf="@id/play"
+     />
+
+        <ImageView
+            android:id="@+id/play"
+            android:src="@drawable/ic_audio"
+            android:contentDescription="@string/play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/common_spacing"
+            app:layout_constraintTop_toBottomOf="@id/linkText"
+            app:layout_constraintBottom_toTopOf="@id/barrierActions"/>
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/video_attachment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="play_video, video_attachment_header"
+        />
+
+    <TextView
+        android:id="@+id/video_attachment_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/videofile"
+        android:textStyle="bold"
+        android:layout_marginHorizontal="@dimen/common_spacing"
+        android:background="@android:color/transparent"
+        android:textColorLink="@color/white"
+        app:layout_constraintBottom_toBottomOf="@id/play_video"
+        android:textSize="16sp"
+        app:layout_constraintStart_toEndOf="@id/play_video"
+        app:layout_constraintTop_toTopOf="@id/play_video"
+        />
+
+    <ImageView
+        android:id="@+id/play_video"
+        android:src="@drawable/ic_video_24"
+        android:contentDescription="@string/play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/common_spacing"
+        app:layout_constraintTop_toBottomOf="@id/linkText"
+        app:layout_constraintBottom_toTopOf="@id/barrierActions"/>
+
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

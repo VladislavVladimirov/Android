@@ -1,6 +1,7 @@
 package com.netology.nmedia.viewmodel
 
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,7 +14,7 @@ import com.netology.nmedia.dto.Attachment
 import com.netology.nmedia.dto.Post
 import com.netology.nmedia.enums.AttachmentType
 import com.netology.nmedia.model.StateModel
-import com.netology.nmedia.model.media.PhotoModel
+import com.netology.nmedia.model.media.MediaModel
 import com.netology.nmedia.repository.draft.post.DraftNewPostRepository
 import com.netology.nmedia.repository.post.PostRepository
 import com.netology.nmedia.util.SingleLiveEvent
@@ -23,6 +24,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import java.io.InputStream
 import javax.inject.Inject
 
 
@@ -65,20 +67,20 @@ class PostViewModel @Inject constructor(
     val postCreated: LiveData<Unit>
         get() = _postCreated
 
-    private val _photoState = MutableLiveData<PhotoModel?>()
-    val photoState: LiveData<PhotoModel?>
-        get() = _photoState
+    private val _mediaState = MutableLiveData<MediaModel?>()
+    val mediaState: LiveData<MediaModel?>
+        get() = _mediaState
 
-    fun changePhoto(photoModel: PhotoModel?) {
-        _photoState.value = photoModel
+    fun changeMedia(uri: Uri?, inputStream: InputStream?, type: AttachmentType?) {
+        _mediaState.value = MediaModel(uri, inputStream, type)
     }
     fun save() {
         edited.value?.let { post ->
             _postCreated.value = Unit
             viewModelScope.launch {
                 try {
-                    _photoState.value?.let { photoModel ->
-                        photoModel.file?.let { repository.saveWithAttachment(it, post) }
+                    _mediaState.value?.let { media ->
+                        media.inputStream?.let { repository.saveWithAttachment(it, media.type!!, post) }
                     } ?: repository.save(post)
                     _dataState.value = StateModel()
                 } catch (e: Exception) {
@@ -86,7 +88,7 @@ class PostViewModel @Inject constructor(
                 }
             }
         }
-        _photoState.value = null
+        _mediaState.value = null
         clear()
     }
 
@@ -111,10 +113,31 @@ class PostViewModel @Inject constructor(
         if (edited.value?.attachment?.url == url.trim()) {
             return
         }
-        if (url.isBlank()) {
+        if (url == "") {
             edited.value = edited.value?.copy(attachment = null)
+        } else {
+            edited.value = edited.value?.copy(attachment = Attachment(url.trim(), type = AttachmentType.IMAGE))
         }
-        edited.value = edited.value?.copy(attachment = Attachment(url.trim(), type = AttachmentType.IMAGE))
+    }
+    fun changeAttachmentAudio(url: String) {
+        if (edited.value?.attachment?.url == url.trim()) {
+            return
+        }
+        if (url == "") {
+            edited.value = edited.value?.copy(attachment = null)
+        } else {
+            edited.value = edited.value?.copy(attachment = Attachment(url.trim(), type = AttachmentType.AUDIO))
+        }
+    }
+    fun changeAttachmentVideo(url: String) {
+        if (edited.value?.attachment?.url == url.trim()) {
+            return
+        }
+        if (url == "") {
+            edited.value = edited.value?.copy(attachment = null)
+        } else {
+            edited.value = edited.value?.copy(attachment = Attachment(url.trim(), type = AttachmentType.VIDEO))
+        }
     }
 
     fun clear() {
