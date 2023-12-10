@@ -99,11 +99,11 @@ class EditPostFragment : Fragment() {
         val attachment = editedPost?.attachment
 
         if (attachment?.url != null && attachment.type == AttachmentType.IMAGE) {
+            binding.photoPreviewContainer.isVisible = true
             AndroidUtils.loadImage(attachment.url, binding.photoPreview)
-            binding.photoPreviewContainer.visibility = View.VISIBLE
-        } else {
-            binding.photoPreviewContainer.visibility = View.GONE
+
         }
+
         if (attachment?.url != null && attachment.type == AttachmentType.AUDIO) {
             binding.audioAttachment.visibility = View.VISIBLE
             binding.play.setOnClickListener {
@@ -205,6 +205,7 @@ class EditPostFragment : Fragment() {
                             false
                         }
                     }
+
                     R.id.cancel -> {
                         AndroidUtils.hideKeyboard(requireView())
                         findNavController().navigateUp()
@@ -346,6 +347,7 @@ class EditPostFragment : Fragment() {
 
             }
         }
+
         viewModel.postCreated.observe(viewLifecycleOwner) {
             findNavController().navigateUp()
         }

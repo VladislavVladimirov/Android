@@ -38,15 +38,14 @@
             <FrameLayout
                 android:id="@+id/photo_preview_container"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone">
+                android:layout_height="500dp"
+                android:visibility="visible">
 
                 <ImageView
                     android:id="@+id/photo_preview"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="400dp"
+                    android:layout_height="400dp"
                     android:layout_gravity="center"
-
                     android:contentDescription="@string/photo_preview_description"
                     tools:src="@drawable/youtube_preview" />
 

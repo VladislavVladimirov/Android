@@ -116,7 +116,7 @@ class EventFragment : Fragment() {
             override fun onAuthorClickEvent(event: Event) {
                 viewLifecycleOwner.lifecycleScope.launch {
                     userViewModel.getUserById(event.authorId).join()
-                    findNavController().navigate(R.id.action_feedFragment_to_wallFragment)
+                    findNavController().navigate(R.id.action_eventFragment_to_wallFragment)
                 }
             }
             override fun onAudioPlay(event: Event) {
