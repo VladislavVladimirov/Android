@@ -1,5 +1,9 @@
-# NetologyAndroid
-Дипломный проект профессии "Android-разработчик"
+<h1 align="center">Приветствую, меня зовут<a href="https://daniilshat.ru/" target="_blank"> Владимиров Владислав</a> 
+<img src="https://github.com/blackcater/blackcater/raw/main/images/Hi.gif" height="32"/></h1>
+<h3 align="center">Я начинающий Android разработчик, представляю вам мой дипломный проект</h3>
+
+
+
 Приложение представляет с собой небольшую социальную сеть с лентой постов, лентой событий и профилем пользователя.
 Проект реализован на архитектуре MVVM с использованием ViewModel, LiveData, Flow, Repository, Entity, Dao. Данные хранятся в локальной базе данных Room и подгружаются с удаленного сервера с помощью OkHttp.
 
